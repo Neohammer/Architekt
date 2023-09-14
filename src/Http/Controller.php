@@ -5,7 +5,7 @@ namespace Architekt\Http;
 use Architekt\Application;
 use Architekt\View\Message;
 use Architekt\View\Template;
-use Auth\User;
+use Architekt\Auth\User;
 
 abstract class Controller
 {
