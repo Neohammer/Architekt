@@ -5,7 +5,7 @@ namespace Architekt\View;
 use Architekt\Application;
 use Architekt\Http\Controller;
 use Architekt\Http\Request;
-use Smarty\Smarty;
+use Smarty;
 
 class Template extends Smarty
 {
@@ -28,10 +28,6 @@ class Template extends Smarty
         parent::__construct();
     }
 
-    /**
-     * @return $this
-     * @throws \SmartyException
-     */
     public function render(): self
     {
         return $this->display($this->controller->viewFile());
@@ -161,8 +157,10 @@ class Template extends Smarty
         return $this;
     }
 
-    public function assign($tpl_var, $value = null, $nocache = false): self
+    public function assign($tpl_var, $value = null, $nocache = false, $scope = null): self
     {
-        return parent::assign($tpl_var, $value, $nocache);
+        parent::assign($tpl_var, $value, $nocache);
+
+        return $this;
     }
 }
