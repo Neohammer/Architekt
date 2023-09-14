@@ -60,7 +60,7 @@ class Logger
     protected static function addRow(string $file, string $message, string $type): void
     {
         $filename = sprintf(
-            self::$path.self::PATH_FORMAT,
+            self::$path.DIRECTORY_SEPARATOR.self::PATH_FORMAT,
             $file
         );
         @file_put_contents(
