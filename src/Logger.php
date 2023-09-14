@@ -24,8 +24,14 @@ class Logger
         E_ALL => self::TYPE_NOTICE,
     ];
 
-    const PATH = PATH_FILER . 'Logs/%s.log';
+    private static string $path;
+    const PATH_FORMAT = '%s-%%s.log';
     const MESSAGE_FORMAT = '%s;%s;%s;%s;%s;%s';
+
+    public static function setPath(string $path): void
+    {
+        self::$path = $path;
+    }
 
     public static function addPhpError(
         int    $errno,
@@ -43,14 +49,15 @@ class Logger
             $errline
         );
 
-        self::addRow('php/%s', $message, $type);
-        return true;//self::TYPE_NOTICE !== $type;
+        self::addRow('php-%s', $message, $type);
+
+        return true;
     }
 
     protected static function addRow(string $file, string $message, string $type): void
     {
         $filename = sprintf(
-            self::PATH,
+            self::$path.self::PATH_FORMAT,
             $file
         );
         @file_put_contents(
@@ -58,10 +65,11 @@ class Logger
                 $filename,
                 date('Y-m-d')
             ),
-            Logger . phpself::buildRow(
+            self::buildRow(
                 $message,
                 $type
-            ),
+            )
+            . PHP_EOL,
             FILE_APPEND
         );
     }
