@@ -30,6 +30,9 @@ class Logger
 
     public static function setPath(string $path): void
     {
+        if(!is_dir($path)){
+            mkdir($path);
+        }
         self::$path = $path;
     }
 
