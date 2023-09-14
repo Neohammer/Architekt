@@ -61,7 +61,7 @@ abstract class Controller
 
         $chosenMethod = $askParams[1] ?? 'index';
 
-        $calledMethod = Controller . phpself::methodVerb();
+        $calledMethod = self::methodVerb() . $chosenMethod;
         if (!method_exists($controller, $calledMethod)) {
             Request::to404();
         }
