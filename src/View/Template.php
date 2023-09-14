@@ -5,7 +5,7 @@ namespace Architekt\View;
 use Architekt\Application;
 use Architekt\Http\Controller;
 use Architekt\Http\Request;
-use Smarty;
+use Smarty\Smarty;
 
 class Template extends Smarty
 {
