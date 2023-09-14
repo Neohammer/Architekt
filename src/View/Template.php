@@ -81,7 +81,7 @@ class Template extends Smarty
         }
         $scripts = [];
         foreach ($this->medias['js_internal'] as $js) {
-            $scripts[] = sprintf('<script src="%s "></script>', $js);
+            $scripts[] = sprintf('<script src="%s"></script>', $js);
         }
         return implode('', $scripts);
     }
@@ -96,19 +96,19 @@ class Template extends Smarty
     public function addMediaCss(string $css): self
     {
         $this->medias['css'][] =
-        $configurator = Template . phpApplication::$configurator->get('medias');
+        $configurator = Application::$configurator->get('medias').$css;
         return $this;
     }
 
     public function addMediaJs(string $js): self
     {
-        $this->medias['js'][] = preg_match('|^http|', $js) ? $js : Template . phpApplication::$configurator->get('medias') . '.js';
+        $this->medias['js'][] = preg_match('|^http|',$js)?$js:Application::$configurator->get('medias').$js.'.js';
         return $this;
     }
 
     public function addMediaJsInternal(string $js): self
     {
-        $this->medias['js_internal'][] = Template . phpApplication::$configurator->get('medias');
+        $this->medias['js_internal'][] = Application::$configurator->get('medias').$js;
         return $this;
     }
 
