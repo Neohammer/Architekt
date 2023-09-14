@@ -68,7 +68,10 @@ abstract class Controller
 
         $reflectionMethod = new \ReflectionMethod($calledController, $chosenMethod);
 
-        if (count($askParams) - 2 !== $reflectionMethod->getNumberOfRequiredParameters()) {
+        $nbParams = count($askParams);
+        if($nbParams < 2) $nbParams = 2;
+
+        if ($nbParams -2 !== $reflectionMethod->getNumberOfRequiredParameters()) {
             Request::to404();
         }
 
