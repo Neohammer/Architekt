@@ -32,7 +32,7 @@ abstract class User extends Entity
 
         if (array_key_exists(self::SESSION_NAME, $_COOKIE)) {
             $User = new static();
-            $User->_search()->filter('cle', $_COOKIE[self::SESSION_NAME]);
+            $User->_search()->filter('hash', $_COOKIE[self::SESSION_NAME]);
             if ($User->_next()) {
                 $User->sessionRegister();
                 return $User;
@@ -45,8 +45,8 @@ abstract class User extends Entity
     {
         if ($this->_isLoaded()) {
             $_SESSION[self::SESSION_NAME] = $this->_primary();
-            setcookie(self::SESSION_NAME, $this->_get('cle'), strtotime('+ 7 days'), '/');
-            $_COOKIE[self::SESSION_NAME] = $this->_get('cle');
+            setcookie(self::SESSION_NAME, $this->_get('hash'), strtotime('+ 7 days'), '/');
+            $_COOKIE[self::SESSION_NAME] = $this->_get('hash');
         }
     }
 
@@ -61,12 +61,12 @@ abstract class User extends Entity
         }
     }
 
-    public function save(bool $force_insert = false): bool
+    public function _save(bool $forceInsert = false): bool
     {
-        if (!$this->_has('cle') || $this->_isNull('cle')) {
-            $this->_set('cle', self::generateHash());
+        if (!$this->_isLoaded() || !$this->_get('hash')) {
+            $this->_get('hash', self::generateHash());
         }
 
-        return parent::_save($force_insert);
+        return parent::_save($forceInsert);
     }
 }
