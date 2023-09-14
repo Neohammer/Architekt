@@ -1,0 +1,32 @@
+{
+    "name": "neohammer/architekt",
+    "description": "Build quick with Architekt library",
+    "type": "library",
+    "license": "None",
+    "autoload": {
+        "psr-4": {
+            "Architekt\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\Architekt\\": "tests/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Neohammer",
+            "email": "m.marceau@gmail.com"
+        }
+    ],
+    "require": {
+        "smarty/smarty": "^4.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "10",
+        "friendsofphp/php-cs-fixer": "^3.19",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-phpunit": "^1.3"
+    },
+    "minimum-stability": "dev"
+}

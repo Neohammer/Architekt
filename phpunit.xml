@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         beStrictAboutChangesToGlobalState="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         columns="max"
+         defaultTimeLimit="10"
+         failOnRisky="true"
+         failOnWarning="true"
+         timeoutForSmallTests="10"
+         timeoutForMediumTests="20"
+         timeoutForLargeTests="30"
+         displayDetailsOnTestsThatTriggerDeprecations ="true"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd">
+</phpunit>
