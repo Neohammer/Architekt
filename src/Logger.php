@@ -52,7 +52,7 @@ class Logger
             $errline
         );
 
-        self::addRow('php-%%s', $message, $type);
+        self::addRow('php', $message, $type);
 
         return true;
     }
