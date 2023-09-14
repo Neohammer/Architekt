@@ -92,7 +92,17 @@ class Logger
 
     public static function info(string $description): void
     {
-        self::addRow('website', $description, self::TYPE_NOTICE);
+        self::addRow('web-info', $description, self::TYPE_NOTICE);
+    }
+
+    public static function warning(string $description): void
+    {
+        self::addRow('web-warning', $description, self::TYPE_WARNING);
+    }
+
+    public static function critical(string $description): void
+    {
+        self::addRow('web-critical', $description, self::TYPE_CRITICAL);
     }
 
 }
