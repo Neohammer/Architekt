@@ -109,12 +109,12 @@ class Mysqli implements DBEngineInterface
 
     public function startTransaction(): bool
     {
-        return  $this->connexion()->begin_transaction(0 );
+        return  $this->disableAutocommit() && $this->connexion()->begin_transaction(0 );
     }
 
     public function commitTransaction(): bool
     {
-        return $this->connexion()->commit(0);
+        return $this->connexion()->commit(0) && $this->enableAutocommit();
     }
 
     public function enableAutocommit(): bool
