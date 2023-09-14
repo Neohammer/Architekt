@@ -64,7 +64,7 @@ abstract class User extends Entity
     public function _save(bool $forceInsert = false): bool
     {
         if (!$this->_isLoaded() || !$this->_get('hash')) {
-            $this->_get('hash', self::generateHash());
+            $this->_set('hash', self::generateHash());
         }
 
         return parent::_save($forceInsert);
