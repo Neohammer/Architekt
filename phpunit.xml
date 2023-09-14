@@ -13,5 +13,6 @@
          timeoutForMediumTests="20"
          timeoutForLargeTests="30"
          displayDetailsOnTestsThatTriggerDeprecations ="true"
+         displayDetailsOnTestsThatTriggerWarnings ="true"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd">
 </phpunit>

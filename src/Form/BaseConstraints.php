@@ -11,6 +11,23 @@ use Architekt\DB\Entity;
 
 class BaseConstraints
 {
+    public final static function _autoCheckString(
+        ?string $string,
+        ?string $regexp = null
+    ): ?string
+    {
+        if (!$string || self::isEmptyString($string)) {
+            return null;
+        }
+
+        if($regexp && !preg_match(sprintf('|^%s$|',$regexp),$string)){
+            return null;
+        }
+
+        return strip_tags(trim($string));
+    }
+
+
     public static function isEmptyString(string $value): bool
     {
         return strlen(trim($value)) === 0;
