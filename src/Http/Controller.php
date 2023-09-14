@@ -126,7 +126,7 @@ abstract class Controller
 
     protected function forward(string $methodName): static
     {
-        $pathView = Controller . phpApplication::$configurator->get('path') . 'views';
+        $pathView = Application::$configurator->get('path') . DIRECTORY_SEPARATOR . 'views';
         if (!$this->hasAccess($methodName)) {
             self::noAccessRedirect();
         }
