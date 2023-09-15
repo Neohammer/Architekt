@@ -23,7 +23,7 @@ class Template extends Smarty
     {
         $this->medias = [
             'css' => [],
-            'js' => [],
+            'js' => ['top'=>[],'bottom'=>[]],
             'js_internal' => [],
         ];
         $this->htmlTitle = '';
