@@ -74,9 +74,4 @@ abstract class Token extends Entity
     {
         return $this->_get('key');
     }
-
-    public function user(): User
-    {
-        return User::fromCache($this->_get('user_id'));
-    }
 }
