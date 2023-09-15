@@ -38,6 +38,7 @@ abstract class Token extends Entity
 
     protected static function build(
         User   $user,
+        string $code,
         string $dateTag
     ): static
     {
@@ -46,6 +47,7 @@ abstract class Token extends Entity
             ->_set([
                 $user,
                 'key' => static::generateKey(),
+                'code' => $code,
                 'datetime' => date('Y-m-d H:i:s', strtotime($dateTag))
             ])
             ->_save();
