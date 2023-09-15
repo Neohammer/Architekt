@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `nickname` VARCHAR(12) NOT NULL , `email` VARCHAR(254) NOT NULL , `password` VARCHAR(32) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+ALTER TABLE `user` ADD `hash` VARCHAR(32) NOT NULL AFTER `password`;
+ALTER TABLE `user` ADD INDEX(`nickname`, `password`);
+ALTER TABLE `user` ADD `confirmed` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `hash`;
+ALTER TABLE `user` ADD INDEX(`hash`);

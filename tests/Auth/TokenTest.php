@@ -16,7 +16,7 @@ class TokenTestSample extends Token
 
         $query = 'CREATE TABLE  `token`  (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `user_id` INT UNSIGNED NOT NULL , `datetime` DATETIME NOT NULL , `key` VARCHAR(32) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;';
         Database::engine()->execute($query);
-        $query = 'ALTER TABLE `token` ADD INDEX(`user_id`, `key`);';
+        $query = 'ALTER TABLE `token` ADD INDEX(`user_id`);';
         Database::engine()->execute($query);
     }
 
