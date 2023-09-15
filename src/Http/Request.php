@@ -123,7 +123,7 @@ class Request
         throw new InvalidServerConfigurationException("Session is not started");
     }
 
-    static public function session(string $key, $default = null): ?string
+    static public function session(string $key, $default = null): string|bool|null
     {
         return self::sessionAll()[$key] ?? $default;
     }

@@ -99,6 +99,7 @@ final class RequestTest extends TestCase
         self::assertSame($_SESSION, Request::sessionAll());
         self::assertSame('test', Request::session('toto'));
         self::assertSame('default', Request::session('unexisting', 'default'));
+        self::assertSame(false, Request::session('unexisting', false));
         self::assertSame([
             1 => 'row1',
             2 => 'row2'
