@@ -63,4 +63,9 @@ class Environment
 
         return $_SERVER['SERVER_NAME'];
     }
+
+    public static function serverProtocol(): string
+    {
+        return $_SERVER['SERVER_PORT'] === '80' ? 'http':'https';
+    }
 }
