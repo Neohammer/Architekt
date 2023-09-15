@@ -25,6 +25,11 @@ abstract class Controller
 
     abstract protected function fillMedias(): static;
 
+    protected function theme(): string
+    {
+        return '';
+    }
+
     static public function init(): void
     {
         $configurator = Application::$configurator;

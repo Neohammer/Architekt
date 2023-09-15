@@ -25,6 +25,7 @@ class Template extends Smarty
             'js_internal' => [],
         ];
         $this->htmlTitle = '';
+        $this->theme = '';
         parent::__construct();
     }
 
@@ -91,20 +92,21 @@ class Template extends Smarty
 
     public function addMediaCss(string $css): self
     {
-        $this->medias['css'][] =
-        $configurator = Application::$configurator->get('medias').$css;
+        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . $css;
+
         return $this;
     }
 
-    public function addMediaJs(string $js): self
+    public function addMediaJs(string $js, string $position = 'bottom'): self
     {
-        $this->medias['js'][] = preg_match('|^http|',$js)?$js:Application::$configurator->get('medias').$js.'.js';
+        $this->medias['js'][$position][] = str_starts_with($js, 'http',) ? $js : Application::$configurator->get('medias') . $js . '.js';
+
         return $this;
     }
 
     public function addMediaJsInternal(string $js): self
     {
-        $this->medias['js_internal'][] = Application::$configurator->get('medias').$js;
+        $this->medias['js_internal'][] = Application::$configurator->get('medias') . $js;
         return $this;
     }
 
@@ -112,11 +114,27 @@ class Template extends Smarty
     {
         $this->init();
 
+        $header = '';
+        $footer = '';
+        if (!$this->controller->isJson) {
+            $header = sprintf(
+                'interface/header%s.%s',
+                $this->controller->theme() ? '_' . $this->controller->theme() : '',
+                self::EXTENSION
+            );
+
+            $footer = sprintf(
+                'interface/footer%s.%s',
+                $this->controller->theme() ? '_' . $this->controller->theme() : '',
+                self::EXTENSION
+            );
+        }
+
         return
-            (!$this->controller->isJson ? $this->fetch('interface/header.' . self::EXTENSION) : '')
+            ($header ? $this->fetch($header) : '')
             . $this->fetch($template . '.' . self::EXTENSION)
             . ($this->controller->isJson && !$this->controller->isModal ? $this->getHtmlTitleScript() : '')
-            . (!$this->controller->isJson ? $this->fetch('interface/footer.' . self::EXTENSION) : '');
+            . ($footer ? $this->fetch($footer) : '');
     }
 
     private function init()
