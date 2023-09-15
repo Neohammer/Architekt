@@ -3,12 +3,9 @@
 namespace Architekt\Auth;
 
 use Architekt\DB\Entity;
-use Architekt\DB\EntityCache;
 
 abstract class User extends Entity
 {
-    use EntityCache;
-
     public const SESSION_NAME = 'User';
 
     public static function encryptPassword(string $password): string
