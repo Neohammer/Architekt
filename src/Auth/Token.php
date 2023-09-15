@@ -9,9 +9,9 @@ abstract class Token extends Entity
     protected static ?string $_table = 'token';
 
     public static function get(
-        string|User $userPrimary,
-        string      $code,
-        string      $key
+        User   $user,
+        string $code,
+        string $key
     ): ?static
     {
         if (!static::checkKey($key)) {
@@ -21,7 +21,7 @@ abstract class Token extends Entity
         $that = new static;
         $that
             ->_search()
-            ->filter($userPrimary instanceof User ? $userPrimary : User::fromCache($userPrimary));
+            ->filter($user);
 
         while ($that->_next()) {
             if ($that->hasExpired()) {
