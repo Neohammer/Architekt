@@ -25,11 +25,6 @@ abstract class Controller
 
     abstract protected function fillMedias(): static;
 
-    protected function theme(): string
-    {
-        return '';
-    }
-
     static public function init(): void
     {
         $configurator = Application::$configurator;
@@ -189,13 +184,14 @@ abstract class Controller
     }
 
 
-    protected function initView(): Template
+    protected function initView(string $theme = ''): Template
     {
         $this->view = new Template();
         $this->view->setController($this);
         if (!$this->isJson) {
             $this->fillMedias();
         }
+        $this->view->theme = $theme;
 
         return $this->view;
     }

@@ -15,6 +15,8 @@ class Template extends Smarty
 
     private array $medias;
 
+    public string $theme;
+
     private string $htmlTitle;
 
     public function __construct()
@@ -119,13 +121,13 @@ class Template extends Smarty
         if (!$this->controller->isJson) {
             $header = sprintf(
                 'interface/header%s.%s',
-                $this->controller->theme() ? '_' . $this->controller->theme() : '',
+                $this->theme ? '_' . $this->theme : '',
                 self::EXTENSION
             );
 
             $footer = sprintf(
                 'interface/footer%s.%s',
-                $this->controller->theme() ? '_' . $this->controller->theme() : '',
+                $this->theme ? '_' . $this->theme : '',
                 self::EXTENSION
             );
         }
