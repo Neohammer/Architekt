@@ -66,7 +66,7 @@ abstract class Controller
             Request::to404();
         }
 
-        $reflectionMethod = new \ReflectionMethod($calledController, $chosenMethod);
+        $reflectionMethod = new \ReflectionMethod($calledController, $calledMethod);
 
         $nbParams = count($askParams);
         if($nbParams < 2) $nbParams = 2;
