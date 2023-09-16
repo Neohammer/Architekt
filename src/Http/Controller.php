@@ -199,7 +199,7 @@ abstract class Controller
 
     public function appSettings(): Settings
     {
-        return Settings::byApp(Application::$configurator->get('name'));
+        return Settings::byApp();
     }
 
     public function templateVars(): array

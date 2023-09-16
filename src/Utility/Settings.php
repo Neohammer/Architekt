@@ -2,22 +2,34 @@
 
 namespace Architekt\Utility;
 
+use Architekt\Application;
 use Architekt\DB\Entity;
 
 class Settings extends Entity
 {
+    /**
+     * @var static[]
+     */
+    private static array $cache = [];
+
     protected static ?string $_table = 'settings';
 
-    public static function byApp(string $app): static
+    public static function byApp(?string $app = null): static
     {
-        $that = new self;
-        $that->_search()->filter('app', $app);
+        $app = $app ?? Application::$configurator->get('name');
 
-        if (!$that->_next()) {
-            $that->_set('app', $app)->_save();
+        if(!array_key_exists($app , self::$cache)){
+
+            $that = new self;
+            $that->_search()->filter('app', $app);
+
+            if (!$that->_next()) {
+                $that->_set('app', $app)->_save();
+            }
+            self::$cache[$app] = clone $that;
         }
 
-        return $that;
+        return self::$cache[$app];
     }
 
     public function is(string $module, string $key): bool
