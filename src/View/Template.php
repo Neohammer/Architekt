@@ -150,7 +150,8 @@ class Template extends Smarty
             ->assign([
                 'QUERY' => Request::getFilters(),
                 'TITLE' => $this->htmlTitle,
-                'USER' => $this->controller->__user()
+                'USER' => $this->controller->__user(),
+                'SETTINGS' => $this->controller->appSettings()
             ]);
 
         $this->registerObject('Formatter', new Formatter());
