@@ -144,10 +144,10 @@ abstract class Controller
     {
         if (!$this->isJson) {
             Message::addError($message ?? 'Page non autorisée. Contacter l\'administrateur');
+            Request::redirect('/Redirect',true);
         } else {
-            Request::to403();
+            Request::to403('/Redirect');
         }
-        Request::redirect('/Redirect');
     }
 
     public function viewPath(): string

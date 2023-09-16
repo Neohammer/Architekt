@@ -3,7 +3,6 @@
 namespace Architekt\Http;
 
 use Architekt\Http\Exceptions\InvalidServerConfigurationException;
-use Architekt\Transaction;
 
 class Request
 {
@@ -14,7 +13,7 @@ class Request
         return self::get(self::URI_PARAMETERS);
     }
 
-    static public function get(string $key ,$default = null): ?string
+    static public function get(string $key, $default = null): ?string
     {
         return self::getAll()[$key] ?? $default;
     }
@@ -27,12 +26,12 @@ class Request
     static public function getFilters(): ?array
     {
         $filters = self::get('q');
-        if(null === $filters) return null;
+        if (null === $filters) return null;
 
         return self::parseFilters($filters);
     }
 
-    static private function parseFilters(string $query) :array
+    static private function parseFilters(string $query): array
     {
         $filters = explode(',', $query);
         foreach ($filters as $k => $v) {
@@ -58,18 +57,18 @@ class Request
 
     static public function isXhrRequest(): bool
     {
-        if (array_key_exists('HTTP_X_REQUESTED_WITH' , $_SERVER)) {
-           return 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'];
+        if (array_key_exists('HTTP_X_REQUESTED_WITH', $_SERVER)) {
+            return 'XMLHttpRequest' === $_SERVER['HTTP_X_REQUESTED_WITH'];
         }
         return false;
     }
 
     static public function isModalRequest(): bool
     {
-        return in_array('modal' , [
+        return in_array('modal', [
             Request::get('returnType'),
             Request::post('returnType')
-        ],true);
+        ], true);
     }
 
     static public function postAll(): ?array
@@ -77,28 +76,28 @@ class Request
         return $_POST ?? null;
     }
 
-    static public function post(string $key ,$default=null): ?string
+    static public function post(string $key, $default = null): ?string
     {
         return self::postAll()[$key] ?? $default;
     }
 
-    static public function postSet(string $key ,mixed $value): void
+    static public function postSet(string $key, mixed $value): void
     {
         $_POST[$key] = $value;
     }
 
-    static public function postArray(string $key ,$default=null): ?array
+    static public function postArray(string $key, $default = null): ?array
     {
         $value = self::postAll()[$key] ?? $default;
 
-        return (is_array($value)?$value:$default);
+        return (is_array($value) ? $value : $default);
     }
 
-    static public function postTags(string $key, $default=null): ?array
+    static public function postTags(string $key, $default = null): ?array
     {
-        if(isset($_POST) && array_key_exists($key, $_POST)  ){
-            $tags = explode(',',$_POST[$key]);
-            foreach ($tags as $k=>$v) {
+        if (isset($_POST) && array_key_exists($key, $_POST)) {
+            $tags = explode(',', $_POST[$key]);
+            foreach ($tags as $k => $v) {
                 $tags[$k] = trim(ucfirst($v));
             }
             return $tags;
@@ -106,9 +105,9 @@ class Request
         return $default;
     }
 
-    static public function file(string $key, $default=null): ?array
+    static public function file(string $key, $default = null): ?array
     {
-        if(isset($_FILES) && array_key_exists($key, $_FILES) ){
+        if (isset($_FILES) && array_key_exists($key, $_FILES)) {
             return $_FILES[$key];
         }
         return $default;
@@ -116,7 +115,7 @@ class Request
 
     static public function sessionAll(): ?array
     {
-        if(isset($_SESSION)) {
+        if (isset($_SESSION)) {
             return $_SESSION;
         }
 
@@ -130,7 +129,7 @@ class Request
 
     static public function sessionFlush(string $key, $default = null): ?string
     {
-        $value = self::session($key,$default);
+        $value = self::session($key, $default);
         self::sessionUnset($key);
         return $value;
     }
@@ -146,24 +145,24 @@ class Request
 
     static public function sessionUnset(string $key): void
     {
-        if (array_key_exists($key,self::sessionAll())) {
-           unset($_SESSION[$key]);
+        if (array_key_exists($key, self::sessionAll())) {
+            unset($_SESSION[$key]);
         }
     }
 
     static public function sessionArray(string $key, $default = null): ?array
     {
         $value = self::sessionAll()[$key] ?? null;
-        return (is_array($value)?$value:$default);
+        return (is_array($value) ? $value : $default);
     }
 
     static public function hasHimselfReferer(): bool
     {
 
-        if(!array_key_exists('HTTP_REFERER',$_SERVER)) {
+        if (!array_key_exists('HTTP_REFERER', $_SERVER)) {
             return false;
         }
-        preg_match('|^http?://([^/]+)|',$_SERVER['HTTP_REFERER'],$matches);
+        preg_match('|^http?://([^/]+)|', $_SERVER['HTTP_REFERER'], $matches);
 
         return $matches[1] === $_SERVER['SERVER_NAME'];
 
@@ -173,14 +172,14 @@ class Request
     static public function to301(string $route): void
     {
         http_response_code(301);
-        self::redirect($route);
+        self::redirect($route, true);
     }
 
     static public function to403(?string $redirectRoute = '/Redirect/error/403'): void
     {
         http_response_code(403);
         if (!Request::isXhrRequest()) {
-            self::redirect($redirectRoute);
+            self::redirect($redirectRoute, true);
         }
     }
 
@@ -188,7 +187,7 @@ class Request
     {
         http_response_code(404);
         if (!Request::isXhrRequest()) {
-            self::redirect('/Redirect/error/404');
+            self::redirect('/Redirect/error/404', true);
         }
         exit();
     }
@@ -197,17 +196,16 @@ class Request
     {
         http_response_code(500);
         if (!Request::isXhrRequest()) {
-            self::redirect('/Redirect/error/500');
+            self::redirect('/Redirect/error/500', true);
         }
         exit();
     }
 
-    static public function redirect($route): void
+    static public function redirect(string $route, bool $isError = false): void
     {
-        if (Request::isXhrRequest()) {
+        if (Request::isXhrRequest() && $isError) {
             echo $route;
-        }
-        else{
+        } else {
             header('Location: ' . $route);
         }
         exit();

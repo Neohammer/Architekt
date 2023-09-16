@@ -38,12 +38,14 @@ abstract class User extends Entity
         return null;
     }
 
-    public function sessionRegister(): void
+    public function sessionRegister(bool $useCookie = false): void
     {
         if ($this->_isLoaded()) {
             $_SESSION[self::SESSION_NAME] = $this->_primary();
-            setcookie(self::SESSION_NAME, $this->_get('hash'), strtotime('+ 7 days'), '/');
-            $_COOKIE[self::SESSION_NAME] = $this->_get('hash');
+            if($useCookie) {
+                setcookie(self::SESSION_NAME, $this->_get('hash'), strtotime('+ 7 days'), '/');
+                $_COOKIE[self::SESSION_NAME] = $this->_get('hash');
+            }
         }
     }
 
