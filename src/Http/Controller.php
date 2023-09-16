@@ -202,4 +202,9 @@ abstract class Controller
         return Settings::byApp(Application::$configurator->get('name'));
     }
 
+    public function templateVars(): array
+    {
+        return [];
+    }
+
 }
