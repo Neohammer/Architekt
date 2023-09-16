@@ -3,9 +3,10 @@
 namespace Architekt\Http;
 
 use Architekt\Application;
+use Architekt\Auth\User;
+use Architekt\Utility\Settings;
 use Architekt\View\Message;
 use Architekt\View\Template;
-use Architekt\Auth\User;
 
 abstract class Controller
 {
@@ -69,9 +70,9 @@ abstract class Controller
         $reflectionMethod = new \ReflectionMethod($calledController, $calledMethod);
 
         $nbParams = count($askParams);
-        if($nbParams < 2) $nbParams = 2;
+        if ($nbParams < 2) $nbParams = 2;
 
-        if ($nbParams -2 !== $reflectionMethod->getNumberOfRequiredParameters()) {
+        if ($nbParams - 2 !== $reflectionMethod->getNumberOfRequiredParameters()) {
             Request::to404();
         }
 
@@ -82,11 +83,11 @@ abstract class Controller
         $finalMethod = $calledMethod . "(";
         if ($askParams) {
             foreach ($askParams as $k => $v) {
-                if($k < 2) {
+                if ($k < 2) {
                     unset($askParams[$k]);
                 }
 
-                if(is_numeric($v)) {
+                if (is_numeric($v)) {
                     $askParams[$k] = $v;
                 } elseif (is_string($v)) {
                     $askParams[$k] = '"' . addcslashes($v, '"') . '"';
@@ -144,7 +145,7 @@ abstract class Controller
     {
         if (!$this->isJson) {
             Message::addError($message ?? 'Page non autorisée. Contacter l\'administrateur');
-            Request::redirect('/Redirect',true);
+            Request::redirect('/Redirect', true);
         } else {
             Request::to403('/Redirect');
         }
@@ -195,4 +196,10 @@ abstract class Controller
 
         return $this->view;
     }
+
+    public function appSettings(): Settings
+    {
+        return Settings::byApp(Application::$configurator->get('name'));
+    }
+
 }
