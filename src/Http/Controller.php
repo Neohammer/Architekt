@@ -197,12 +197,12 @@ abstract class Controller
         return $this->view;
     }
 
-    public function appSettings(): Settings
+    public function __appSettings(): Settings
     {
         return Settings::byApp();
     }
 
-    public function templateVars(): array
+    public function __templateVars(): array
     {
         return [];
     }

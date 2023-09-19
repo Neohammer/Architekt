@@ -151,11 +151,11 @@ class Template extends Smarty
                 'QUERY' => Request::getFilters(),
                 'TITLE' => $this->htmlTitle,
                 'USER' => $this->controller->__user(),
-                'SETTINGS' => $this->controller->appSettings()
+                'SETTINGS' => $this->controller->__appSettings()
             ]);
 
         if(!$this->controller->isJson && !$this->controller->isModal) {
-            $this->assign($this->controller->templateVars());
+            $this->assign($this->controller->__templateVars());
         }
 
         $this->registerObject('Formatter', new Formatter());
