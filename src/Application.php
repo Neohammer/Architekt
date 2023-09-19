@@ -8,9 +8,11 @@ class Application
 {
     public static Configurator $configurator;
 
-    static public function start(Configurator $configurator)
+    static public function start(Configurator $configurator, bool $autoInit = true)
     {
         self::$configurator = $configurator;
-        Controller::init();
+        if ($autoInit) {
+            Controller::init();
+        }
     }
 }
