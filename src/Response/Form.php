@@ -3,6 +3,7 @@
 namespace Architekt\Response;
 
 use Architekt\Form\Validation;
+use Architekt\View\Message;
 
 class Form extends BaseResponse
 {
@@ -67,5 +68,15 @@ class Form extends BaseResponse
     public function message(): ?string
     {
         return $this->isSuccess() ? $this->successMessage() : $this->failMessage();
+    }
+
+    public function sendMessage(): void
+    {
+        if($this->isSuccess()){
+            Message::addSuccess($this->message());
+        }
+        else{
+            Message::addError($this->message());
+        }
     }
 }
