@@ -70,7 +70,7 @@ class Form extends BaseResponse
         return $this->isSuccess() ? $this->successMessage() : $this->failMessage();
     }
 
-    public function sendMessage(): void
+    public function sendMessage(): static
     {
         if($this->isSuccess()){
             Message::addSuccess($this->message());
@@ -78,5 +78,7 @@ class Form extends BaseResponse
         else{
             Message::addError($this->message());
         }
+
+        return $this;
     }
 }
