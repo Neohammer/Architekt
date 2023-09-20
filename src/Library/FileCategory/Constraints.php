@@ -5,7 +5,7 @@ namespace Architekt\Library\FileCategory;
 use Architekt\Form\BaseConstraints;
 use Architekt\Form\Validation;
 use Architekt\Library\FileCategory;
-use Architekt\Response\Form as Response;
+use Architekt\Response\FormResponse as Response;
 
 class Constraints extends BaseConstraints
 {

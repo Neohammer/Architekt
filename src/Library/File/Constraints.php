@@ -9,7 +9,7 @@ use Architekt\Form\Exceptions\FileUploadRequiredException;
 use Architekt\Form\Validation;
 use Architekt\Library\File;
 use Architekt\Library\FileCategory;
-use Architekt\Response\Form as Response;
+use Architekt\Response\FormResponse as Response;
 use Gmao\User;
 use Gmao\Equipment;
 use Gmao\Operation;

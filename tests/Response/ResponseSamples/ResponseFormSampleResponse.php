@@ -2,9 +2,9 @@
 
 namespace tests\Architekt\Response\ResponseSamples;
 
-use Architekt\Response\Form;
+use Architekt\Response\FormResponse;
 
-class ResponseFormSample extends Form
+class ResponseFormSampleResponse extends FormResponse
 {
     public function test_init(?array $args = null): void
     {

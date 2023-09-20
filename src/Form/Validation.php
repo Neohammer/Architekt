@@ -2,7 +2,7 @@
 
 namespace Architekt\Form;
 
-use Architekt\Response\Form as ResponseForm;
+use Architekt\Response\FormResponse as ResponseForm;
 use Architekt\Transaction;
 
 class Validation

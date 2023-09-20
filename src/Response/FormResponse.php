@@ -5,7 +5,7 @@ namespace Architekt\Response;
 use Architekt\Form\Validation;
 use Architekt\View\Message;
 
-class Form extends BaseResponse
+class FormResponse extends BaseResponse
 {
     private Validation $validation;
     private ?string $successMessage;

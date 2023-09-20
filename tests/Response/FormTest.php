@@ -4,13 +4,13 @@ namespace tests\Architekt\Response;
 
 use Architekt\Form\Validation;
 use PHPUnit\Framework\TestCase;
-use tests\Architekt\Response\ResponseSamples\ResponseFormSample;
+use tests\Architekt\Response\ResponseSamples\ResponseFormSampleResponse;
 
 final class FormTest extends TestCase
 {
     public function test_send_emptySuccessWillReturnAsExpected(): void
     {
-        $response = new ResponseFormSample(
+        $response = new ResponseFormSampleResponse(
             new Validation(),
             "Success message",
             "Fail message"
@@ -33,7 +33,7 @@ final class FormTest extends TestCase
         $validation->addSuccess('input2', 'Field 2 is really good');
         $validation->addSuccess('input3[toto][titi]', 'Field 3 is really array');
 
-        $response = new ResponseFormSample(
+        $response = new ResponseFormSampleResponse(
             $validation,
             "Success message",
             "Fail message"
@@ -70,7 +70,7 @@ final class FormTest extends TestCase
         $validation = new Validation();
         $validation->addError('input', 'Field is required');
 
-        $response = new ResponseFormSample(
+        $response = new ResponseFormSampleResponse(
             $validation,
             "Success message",
             "Fail message"
