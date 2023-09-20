@@ -49,14 +49,9 @@ class Form extends BaseResponse
 
     private function buildMessage(): array
     {
-        $message = $this->isSuccess() ? $this->successMessage : $this->failMessage;
-
-        if (null !== $message) {
-            return [
-                'message' => $message,
-            ];
-        }
-        return [];
+        return [
+            'message' => $this->message(),
+        ];
     }
 
     public function successMessage(): string
@@ -67,5 +62,10 @@ class Form extends BaseResponse
     public function failMessage(): string
     {
         return $this->failMessage;
+    }
+
+    public function message(): ?string
+    {
+        return $this->isSuccess() ? $this->successMessage() : $this->failMessage();
     }
 }
