@@ -58,4 +58,14 @@ class Form extends BaseResponse
         }
         return [];
     }
+
+    public function successMessage(): string
+    {
+        return $this->successMessage;
+    }
+
+    public function failMessage(): string
+    {
+        return $this->failMessage;
+    }
 }
