@@ -19,6 +19,9 @@
             "email": "m.marceau@gmail.com"
         }
     ],
+    "bin": [
+        "architekt"
+    ],
     "require": {
         "smarty/smarty": "^4.3"
     },
