@@ -1,0 +1,10 @@
+{
+  "NobleUI-light" : {
+    "images": "images",
+    "css":"style"
+  },
+  "NobleUI-dark" : {
+    "images": "images",
+    "css":"style"
+  }
+}

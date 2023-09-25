@@ -24,7 +24,7 @@ class Logger
         E_ALL => self::TYPE_NOTICE,
     ];
 
-    const PATH = PATH_FILER . 'Logs/%s.log';
+    const PATH = PATH_FILER . '/Logs/%s.log';
     const MESSAGE_FORMAT = '%s;%s;%s;%s;%s;%s';
 
     public static function addPhpError(

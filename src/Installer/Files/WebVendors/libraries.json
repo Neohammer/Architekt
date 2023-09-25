@@ -1,0 +1,25 @@
+{
+  "architekt": {
+    "js" : "motor",
+    "require": "jquery"
+  },
+  "jquery": {
+    "js" : "jquery.min"
+  },
+  "datatables.net": {
+    "js" : "jquery.dataTables",
+    "require" : [
+      "jquery"
+    ]
+  },
+  "datatables.net-bs5": {
+    "js" : "dataTables.bootstrap5",
+    "css": "dataTables.bootstrap5",
+    "require" : [
+      "datatables.net"
+    ]
+  },
+  "feather-icons": {
+    "js" : "feather.min"
+  }
+}

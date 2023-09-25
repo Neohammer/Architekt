@@ -1,0 +1,21 @@
+
+<a class="nav-link dropdown-toggle" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <i data-feather="bell"></i>
+    <div class="indicator">
+        <div class="circle"></div>
+    </div>
+</a>
+<div class="dropdown-menu p-0" aria-labelledby="notificationDropdown">
+    <div class="px-3 py-2 d-flex align-items-center justify-content-between border-bottom">
+        <p>{count($NOTIFICATIONS)} Notification(s)</p>
+        <a href="javascript:;" class="text-muted">Clear all</a>
+    </div>
+    <div class="p-1">
+        {foreach from=$NOTIFICATIONS item=notification}
+            {include file="Notifications/Internals/{$notification->_get('code')}.html"}
+        {/foreach}
+    </div>
+    <div class="px-3 py-2 d-flex align-items-center justify-content-center border-top">
+        <a href="javascript:;">View all</a>
+    </div>
+</div>

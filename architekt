@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+use Architekt\Installer\Installer;
+
+for ($i = 1; $i <= 2; $i++) {
+    $dir = dirname(__DIR__, $i);
+    if (file_exists($file = $dir . DIRECTORY_SEPARATOR . 'autoload.php')) {
+        define('ARCHITEKT_COMPOSER_AUTOLOADER', $file);
+        define('ARCHITEKT_COMPOSER_INSTALL_DIR', dirname(__DIR__, $i + 1));
+    }
+}
+
+require ARCHITEKT_COMPOSER_AUTOLOADER;
+
+if (array_key_exists(1, $_SERVER['argv'])) {
+    switch ($_SERVER['argv'][1]) {
+        case "install":
+            \Architekt\Installer\Command::install(ARCHITEKT_COMPOSER_INSTALL_DIR);
+            break;
+        case "update":
+            Installer::update(ARCHITEKT_COMPOSER_INSTALL_DIR);
+            break;
+        default:
+            die('unknown command');
+            break;
+    }
+} else {
+    echo 'help';
+}
+
+
+?>
