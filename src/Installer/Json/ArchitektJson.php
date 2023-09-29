@@ -36,6 +36,11 @@ class ArchitektJson
         return $this->content['cache'] ?? null;
     }
 
+    public function databases(): ?array
+    {
+        return $this->content['databases'] ?? null;
+    }
+
     public function project(string $project): ?array
     {
         return $this->content['projects'][$project] ?? null;

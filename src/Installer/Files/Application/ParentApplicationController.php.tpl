@@ -3,7 +3,7 @@
 namespace Controllers;
 
 use Architekt\Plugin;
-use Architekt\DB\Entity;
+use Architekt\DB\Interfaces\DBEntityInterface;
 use Architekt\Http\Controller;
 use Architekt\Http\Request;
 use Architekt\Logger;
@@ -140,7 +140,7 @@ abstract class {$APPLICATION_CAMEL}Controller extends Controller
         return $this->__administrator;
     }
 
-    private function _entityCheck(Entity $entity, ?string $id = null): mixed
+    private function _entityCheck(DBEntityInterface $entity, ?string $id = null): mixed
     {
         if (null === $id) {
             Request::to403();

@@ -3,7 +3,7 @@
 namespace Architekt\Library;
 
 use Architekt\DB\Entity;
-use Architekt\DB\EntityCache;
+use Architekt\DB\DBEntityCache;
 use Gmao\User;
 use Gmao\Equipment;
 use Gmao\Operation;
@@ -14,7 +14,7 @@ use Gmao\WorkOrder;
 
 class File extends Entity
 {
-    use EntityCache;
+    use DBEntityCache;
 
     private const DIRECTORY_DEPTH = 2;
     private const DIRECTORY_LETTERS = 1;

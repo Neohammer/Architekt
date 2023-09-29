@@ -77,14 +77,32 @@ class Project
 
                 continue;
             }
-
-            $this->fileCreate(
-                $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . substr($file, 0, -4),
-                $this->template(),
-                $filePath
-            );
+            if (substr($file, -4, 4) === '.tpl') {
+                $this->fileCreate(
+                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . substr($file, 0, -4),
+                    $this->template(),
+                    $filePath
+                );
+            }
+            else{
+                $this->fileCopy(
+                    $filePath,
+                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . $file
+                );
+            }
         }
     }
+
+    public function sql(): static
+    {
+
+        foreach($this->applications as $application){
+            $application->sql();
+        }
+
+        return $this;
+    }
+
 
     public function templateVars(): array
     {
@@ -92,7 +110,8 @@ class Project
             'PATH_CLASSES' => $this->nameClasses(),
             'PROJECT_CODE' => $this->code,
             'PROJECT_CAMEL' => $this->architekt->toCamelCase($this->code),
-            'PROJECT_NAME' => $this->architekt->json->project($this->code)['name'] ?? 'NoName',
+            'PROJECT_NAME' => $name = ($this->architekt->json->project($this->code)['name'] ?? 'NoName'),
+            'PROJECT_NAME_CAMEL' => $this->architekt->toCamelCase($name),
         ];
     }
 

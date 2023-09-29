@@ -2,6 +2,9 @@
 
 namespace Architekt\Installer;
 
+use Architekt\DB\Database;
+use Users\User;
+
 class Application
 {
     private Architekt $architekt;
@@ -53,6 +56,13 @@ class Application
         $this->installPlugins();
     }
 
+    public function sql(): static
+    {
+
+
+        return $this;
+    }
+
     private function build(): void
     {
         $this->directories = [
@@ -68,6 +78,13 @@ class Application
                 'controllers' => $this->directoryControllers(),
                 'views' => $this->directoryViews(),
             ];
+
+            if (!$this->cdnUsed) {
+                $this->webVendors = $this->webVendors();
+                if ($theme = $this->theme()) {
+                    $this->themes[] = $theme;
+                }
+            }
         } else {
             $applications = $this->project->applicationsWithCdn($this->code);
             if ($applications) {
@@ -77,22 +94,22 @@ class Application
                         $this->themes[] = $theme;
                     }
                 }
-
-                if ($this->webVendors) {
-                    $this->webVendors = array_unique($this->webVendors);
-                    $this->directories[] = $this->directoryWebVendors();
-                    foreach ($this->webVendors as $webVendor) {
-                        $this->directories[] = $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $webVendor;
-                    }
-                }
             }
+        }
 
-            if ($this->themes) {
-                $this->themes = array_unique($this->themes);
-                $this->directories[] = $this->directoryWebThemes();
-                foreach ($this->themes as $theme) {
-                    $this->directories[] = $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme;
-                }
+        if ($this->webVendors) {
+            $this->webVendors = array_unique($this->webVendors);
+            $this->directories[] = $this->directoryWebVendors();
+            foreach ($this->webVendors as $webVendor) {
+                $this->directories[] = $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $webVendor;
+            }
+        }
+
+        if ($this->themes) {
+            $this->themes = array_unique($this->themes);
+            $this->directories[] = $this->directoryWebThemes();
+            foreach ($this->themes as $theme) {
+                $this->directories[] = $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme;
             }
         }
 
@@ -102,15 +119,14 @@ class Application
     {
         $template = $this->template();
 
+        $applications = [];
         if ($this->isCdn) {
-
-
-            foreach ($this->project->environments() as $environment){
-                if($cors = $this->generateCdnCors($environment)){
+            foreach ($this->project->environments() as $environment) {
+                if ($cors = $this->generateCdnCors($environment)) {
                     $this->fileCreate(
                         sprintf(
                             $this->directoryWeb() . DIRECTORY_SEPARATOR . '.htaccess%s',
-                            ($environment === 'local' ? '':'.'.$environment)
+                            ($environment === 'local' ? '' : '.' . $environment)
                         ),
                         $template->assign('CORS_VALUES', $cors),
                         '.htaccess-cdn.tpl'
@@ -118,98 +134,74 @@ class Application
                 }
             }
 
-            if ($this->themes) {
-                foreach ($this->themes as $theme) {
-                    $this->directoryCreate(
-                        $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme
-                    );
-
-                    foreach ($this->architekt->themesJson->javascripts($theme) as $js) {
-                        $this->fileCopy(
-                            $this->architekt->directoryFilesThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR . $js . '.js',
-                            $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $js . '.js'
-                        );
-                    }
-                    foreach ($this->architekt->themesJson->styleSheets($theme) as $css) {
-                        $this->fileCopy(
-                            $this->architekt->directoryFilesThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR . $css . '.css',
-                            $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $css . '.css'
-                        );
-                    }
-
-                    if ($directoryImage = $this->architekt->themesJson->directoryImages($theme)) {
-                        $this->directoryCopy(
-                            $this->architekt->directoryFilesThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR . $directoryImage,
-                            $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $directoryImage
-                        );
-                    }
-                }
-            }
-
-
             $applications = $this->project->applicationsWithCdn($this->code);
-            if ($applications) {
-                $files = ['javascripts' => [], 'stylesheets' => []];
-                foreach ($applications as $application) {
-                    $applicationFiles = $application->webVendorsFiles();
-                    $files['javascripts'] += $applicationFiles['javascripts'];
-                    $files['stylesheets'] += $applicationFiles['stylesheets'];
-                }
-                if ($files['javascripts']) {
-                    $files['javascripts'] = array_unique($files['javascripts']);
-                    foreach ($files['javascripts'] as $file) {
-                        $this->fileCopy(
-                            $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.js',
-                            $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.js'
-                        );
-                    }
-                }
-                if ($files['stylesheets']) {
-                    $files['stylesheets'] = array_unique($files['stylesheets']);
-                    foreach ($files['stylesheets'] as $file) {
-                        $this->fileCopy(
-                            $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.css',
-                            $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.css'
-                        );
-                    }
+        } elseif(!$this->cdnUsed) {
+            $applications = [$this];
+        }
+
+        if ($applications) {
+            $files = ['javascripts' => [], 'stylesheets' => []];
+            foreach ($applications as $application) {
+                $applicationFiles = $application->webVendorsFiles();
+                $files['javascripts'] += $applicationFiles['javascripts'];
+                $files['stylesheets'] += $applicationFiles['stylesheets'];
+            }
+            if ($files['javascripts']) {
+                $files['javascripts'] = array_unique($files['javascripts']);
+                foreach ($files['javascripts'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.js',
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.js'
+                    );
                 }
             }
+            if ($files['stylesheets']) {
+                $files['stylesheets'] = array_unique($files['stylesheets']);
+                foreach ($files['stylesheets'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.css',
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.css'
+                    );
+                }
+            }
+        }
 
+        if ($this->themes) {
+            foreach ($this->themes as $theme) {
+                $directoryThemeFrom = $this->architekt->directoryFilesThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
+                $directoryThemeTo = $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme. DIRECTORY_SEPARATOR;
+
+                foreach ($this->architekt->themesJson->javascripts($theme) as $js) {
+                    $this->fileCopy(
+                        $directoryThemeFrom. $js . '.js',
+                        $directoryThemeTo . $js . '.js'
+                    );
+                }
+                foreach ($this->architekt->themesJson->styleSheets($theme) as $css) {
+                    $this->fileCopy(
+                        $directoryThemeFrom . $css . '.css',
+                        $directoryThemeTo  . $css . '.css'
+                    );
+                }
+
+                if ($directoryImage = $this->architekt->themesJson->directoryImages($theme)) {
+                    $this->directoryCopy(
+                        $directoryThemeFrom . $directoryImage,
+                        $directoryThemeTo . $directoryImage
+                    );
+                }
+            }
+        }
+
+        if ($this->isCdn) {
             return;
         }
 
         $this
             ->fileCreate(
                 $this->project->directoryClassesControllers() . DIRECTORY_SEPARATOR . sprintf('%sController.php', $this->architekt->toCamelCase($this->code)),
-                $template->assign([
-                    'WEBVENDORS_FILES'=> $this->webVendorsFiles(),
-                    'THEME_FILES'=> $this->themeFiles(),
-                ]),
+                $template,
                 'ParentApplicationController.php.tpl'
-            )
-            ->fileCreate(
-                $this->directory() . DIRECTORY_SEPARATOR . 'bootstrap.php',
-                $template,
-                'bootstrap.php.tpl'
-            )
-            ->fileCreate(
-                $this->directory() . DIRECTORY_SEPARATOR . 'constants.php',
-                $template,
-                'constants.php.tpl'
-            )
-            ->directoryCopy(
-                $this->architekt->directoryTemplatesApplication() . DIRECTORY_SEPARATOR . 'interface',
-                $this->directoryViews() . DIRECTORY_SEPARATOR . 'interface'
-            )
-            ->fileCreate(
-                $this->directoryWeb() . DIRECTORY_SEPARATOR . '.htaccess',
-                $template,
-                '.htaccess.tpl'
-            )
-            ->fileCreate(
-                $this->directoryWeb() . DIRECTORY_SEPARATOR . 'index.php',
-                $template,
-                'index.php.tpl'
             );
 
         $applicationUser = $this->user() ?? 'User';
@@ -229,17 +221,6 @@ class Application
                 );
 
         }
-
-        $this
-            ->fileCopy(
-                $this->architekt->directoryTemplatesApplication() . DIRECTORY_SEPARATOR . 'UserInterface.php.tpl',
-                $this->project->directoryClassesUsers() . DIRECTORY_SEPARATOR . 'UserInterface.php',
-            )
-            ->fileCopy(
-                $this->architekt->directoryTemplatesApplication() . DIRECTORY_SEPARATOR . 'UserLoginTrait.php.tpl',
-                $this->project->directoryClassesUsers() . DIRECTORY_SEPARATOR . 'UserLoginTrait.php',
-            );
-
     }
 
     private function directoryRead(string $directory, string $directoryAdd = ''): void
@@ -259,11 +240,18 @@ class Application
                 continue;
             }
 
-            $this->fileCreate(
-                $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . substr($file, 0, -4),
-                $this->template(),
-                $filePath
-            );
+            if (substr($file, -4, 4) === '.tpl') {
+                $this->fileCreate(
+                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . substr($file, 0, -4),
+                    $this->template(),
+                    $filePath
+                );
+            } else {
+                $this->fileCopy(
+                    $filePath,
+                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . $file
+                );
+            }
         }
     }
 
@@ -275,17 +263,24 @@ class Application
             ->assign($this->project->templateVars())
             ->assign([
                 'APPLICATION_CODE' => $this->code,
-                'APPLICATION_NAME' => $this->architekt->json->applicationName($this->project->code, $this->code) ?? $this->code,
+                'APPLICATION_NAME' => $name = ($this->architekt->json->applicationName($this->project->code, $this->code) ?? $this->code),
+                'APPLICATION_NAME_CAMEL' => $this->architekt->toCamelCase($name),
                 'APPLICATION_CAMEL' => $this->architekt->toCamelCase($this->code),
                 'APPLICATION_UPPER' => strtoupper($this->code),
+                'APPLICATION_CDN' => (bool)$this->cdnUsed,
+                'APPLICATION_MEDIAS' => $this->cdnUsed ? false : '/medias/',
+                'APPLICATION_IS_CDN' => $this->isCdn,
                 'APPLICATION_CDN_CODE_UPPER' => strtoupper($this->cdnUsed ?? ''),
                 'APPLICATION_USER' => false,
+                'APPLICATION_THEME' => false,
+                'WEBVENDORS_FILES' => $this->webVendorsFiles(),
+                'THEME_FILES' => $this->themeFiles(),
             ]);
 
-        if($theme = $this->theme()){
+        if ($theme = $this->theme()) {
             $template->assign([
-                'THEME' => $theme,
-                'THEME_IMAGES' => $this->architekt->themesJson->directoryImages($theme) ?? 'images',
+                'APPLICATION_THEME' => $theme,
+                'APPLICATION_THEME_IMAGES' => $this->architekt->themesJson->directoryImages($theme) ?? 'images',
             ]);
         }
         $applicationUser = $this->user() ?? 'User';
@@ -310,24 +305,70 @@ class Application
             return;
         }
 
-        $this->directoryRead(
-            $this->architekt->directoryPlugins() . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'application'
-        );
-        $this->project->directoryRead(
-            $this->architekt->directoryPlugins() . DIRECTORY_SEPARATOR . 'Install' . DIRECTORY_SEPARATOR . 'project'
-        );
+        $this->installPlugin('Architekt');
+    }
+
+    public function installPlugin(string $name): void
+    {
+        $baseDirectory = $this->architekt->directoryPlugins() . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
+
+        if (is_dir($applicationDirectory = $baseDirectory . 'application')) {
+            $this->directoryRead($applicationDirectory);
+        }
+
+        if (is_dir($projectDirectory = $baseDirectory . 'project')) {
+            $this->project->directoryRead($projectDirectory);
+        }
+
+
+        if(file_exists($sql  = $baseDirectory . 'requests.sql')){
+            if($databaseCode = $this->database()){
+                $database = $this->architekt->database('local',$databaseCode);
+            }
+            if($database){
+
+                Database::configure(
+                    $this->code,
+                    $database['engine'],
+                    $database['host'],
+                    $database['user'],
+                    $database['password'],
+                    //$database['name']
+                );
+
+                Database::get($this->code)->databaseCreate($database['name']);
+
+                $user = new User();
+
+                if( Database::engine($this->code)->motor()->databaseCreate($user, $database['name']) )
+                {
+                    Database::configure(
+                        $this->code,
+                        $database['engine'],
+                        $database['host'],
+                        $database['user'],
+                        $database['password'],
+                        $database['name']
+                    );
+                }
+
+                var_dump($query);
+
+            }
+        }
+
     }
 
     public function webVendors(): ?array
     {
-        $webVendors = $this->architekt->json->applicationWebVendors($this->project->code, $this->code);
+        $webVendors = $this->architekt->json->applicationWebVendors($this->project->code, $this->code) ?? [];
 
-        if ($webVendors) {
-            $webVendors = array_merge(['architekt'], $webVendors);
-            $webVendors = $this->architekt->webVendorsJson->addPrerequisites($webVendors);
+        //architekt is mandatory web vendor
+        if (!in_array('architekt', $webVendors)) {
+            $webVendors[] = 'architekt';
         }
 
-        return $webVendors;
+        return $this->architekt->webVendorsJson->addPrerequisites($webVendors);
     }
 
     public function theme(): ?string
@@ -376,16 +417,16 @@ class Application
     public function themeFiles(): array
     {
         $files = [
-            'directory' => $this->nameThemes().'/',
-            'javascripts' =>[],
+            'directory' => $this->nameThemes() . '/',
+            'javascripts' => [],
             'stylesheets' => []
         ];
-        if($theme = $this->theme()) {
+        if ($theme = $this->theme()) {
             foreach ($this->architekt->themesJson->javascripts($theme) as $js) {
-                $files['javascripts'][] =   $theme.'/'.$js;
+                $files['javascripts'][] = $theme . '/' . $js;
             }
             foreach ($this->architekt->themesJson->styleSheets($theme) as $css) {
-                $files['stylesheets'][] = $theme.'/'. $css ;
+                $files['stylesheets'][] = $theme . '/' . $css;
             }
         }
 
@@ -430,6 +471,11 @@ class Application
         return $urls[0];
     }
 
+    private function database(): ?string
+    {
+        return $this->architekt->json->application($this->project->code,$this->code)['database'] ?? null;
+    }
+
     private function directory(): string
     {
         return $this->project->directory() . DIRECTORY_SEPARATOR . '_' . $this->code;
@@ -447,7 +493,7 @@ class Application
 
     private function directoryWeb(): string
     {
-        return $this->directory() . DIRECTORY_SEPARATOR . 'www';
+        return $this->directory() . DIRECTORY_SEPARATOR . 'web';
     }
 
     private function directoryWebVendors(): string
@@ -469,8 +515,8 @@ class Application
     private function generateCdnCors(string $environment): array
     {
         $cors = [];
-        foreach($this->project->applicationsWithCdn($this->code) as $application){
-            foreach($application->urls($environment) as $url){
+        foreach ($this->project->applicationsWithCdn($this->code) as $application) {
+            foreach ($application->urls($environment) as $url) {
                 $cors[] = preg_quote($url);
             }
         }

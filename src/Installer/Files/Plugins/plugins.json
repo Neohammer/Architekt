@@ -1,0 +1,8 @@
+{
+  "Architekt" : {
+    "type": "website"
+  },
+  "ArchitektCdn" : {
+    "type": "cdn"
+  }
+}

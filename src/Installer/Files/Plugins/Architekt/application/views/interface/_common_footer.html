@@ -1,0 +1,26 @@
+{foreach from=$MEDIAS.JAVASCRIPTS.external.bottom item=js}
+<script src="{$js}" crossorigin="anonymous"></script>
+{/foreach}
+
+
+{assign var="message" value=Architekt\View\Message::get()}
+{if $message}
+<script>
+    var messageToLaunch = {
+        'type': "{$message.type}",
+        'text': "{$message.text|escape}",
+    }
+</script>
+{/if}
+<script>
+    var URL_CDN = '{URL_CDN}/';
+</script>
+
+<div class="fixed-top collapse"  id="message" style="z-index: 1056">
+    <div class="alert alert-dismissible fade show " role="alert">
+        <span class="message-content"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+
+{include file='./modal.html'}

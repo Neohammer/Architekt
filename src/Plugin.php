@@ -5,11 +5,11 @@ namespace Architekt;
 use Architekt\Auth\Access\ClassAttributesParser;
 use Architekt\Auth\Access\ControllerParser;
 use Architekt\DB\Entity;
-use Architekt\DB\EntityCache;
+use Architekt\DB\DBEntityCache;
 
 class Plugin extends Entity
 {
-    use EntityCache;
+    use DBEntityCache;
 
     protected static ?string $_table = 'plugin';
 

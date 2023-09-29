@@ -2,12 +2,12 @@
 
 namespace Users;
 
-use Architekt\DB\Entity;
-use Architekt\DB\EntityCache;
+use Architekt\DB\DBEntity;
+use Architekt\DB\DBEntityCache;
 
-class {$APPLICATION_USER_CAMEL} extends Entity implements UserInterface
+class {$APPLICATION_USER_CAMEL} extends DBEntity implements UserInterface
 {
-    use EntityCache;
+    use DBEntityCache;
     use UserLoginTrait;
 
     const SESSION_NAME = '{$APPLICATION_USER_LOW}';

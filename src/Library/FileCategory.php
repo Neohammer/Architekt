@@ -3,11 +3,11 @@
 namespace Architekt\Library;
 
 use Architekt\DB\Entity;
-use Architekt\DB\EntityCache;
+use Architekt\DB\DBEntityCache;
 
 class FileCategory extends Entity
 {
-    use EntityCache;
+    use DBEntityCache;
 
     public const OTHER = 8;
     public const WORK_ORDER = 9;

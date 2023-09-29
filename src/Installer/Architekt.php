@@ -2,6 +2,7 @@
 
 namespace Architekt\Installer;
 
+use Architekt\DB\Database;
 use Architekt\Installer\Json\ArchitektJson;
 use Architekt\Installer\Json\WebVendorsJson;
 use Architekt\Installer\Json\ThemesJson;
@@ -43,6 +44,16 @@ class Architekt
         return new self($installPath);
     }
 
+    public function sql(): static
+    {
+
+        foreach($this->projects as $project){
+            $project->sql();
+        }
+
+        return $this;
+    }
+
     public function install(): void
     {
         $this->directoriesCreate();
@@ -66,6 +77,26 @@ class Architekt
             $this->projects[$project] = Project::init($this, $project);
         }
 
+    }
+
+    public function databases(): ?array
+    {
+        return $this->json->databases();
+    }
+
+    public function database(string $environment, string $name): ?array
+    {
+        $databases = $this->databases();
+
+        if(!array_key_exists($name,$databases)){
+            return null;
+        }
+
+        if(!array_key_exists($environment,$databases[$name])){
+            return null;
+        }
+
+        return $databases[$name][$environment];
     }
 
     private function filesCreate(): void

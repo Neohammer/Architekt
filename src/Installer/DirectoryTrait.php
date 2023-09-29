@@ -16,10 +16,10 @@ trait DirectoryTrait
     private function directoryCreate(string $dir): static
     {
         if (!is_dir($dir)) {
-            echo sprintf("Creating directory : %s\n", $dir);
+            //echo sprintf("Creating directory : %s\n", $dir);
             mkdir($dir);
         } else {
-            echo sprintf("Directory found : %s\n", $dir);
+            //echo sprintf("Directory found : %s\n", $dir);
         }
 
         return $this;
@@ -57,13 +57,13 @@ trait DirectoryTrait
     private function fileCreate(string $file, Template $template, string $fileTemplate): static
     {
         if ($this->fileReplace || !file_exists($file)) {
-            echo sprintf("Creating file : %s\n", $file);
+            //echo sprintf("Creating file : %s\n", $file);
             file_put_contents(
                 $file,
                 $template->fetch($fileTemplate)
             );
         } else {
-            echo sprintf("File found : %s\n", $file);
+            //echo sprintf("File found : %s\n", $file);
         }
 
         return $this;
@@ -72,7 +72,7 @@ trait DirectoryTrait
     private function fileCopy(string $fileFrom, string $fileTo): static
     {
         if ($this->fileReplace || !file_exists($fileTo)) {
-            echo sprintf("Creating file : %s\n", $fileTo);
+            //echo sprintf("Creating file : %s\n", $fileTo);
             if (file_exists($fileTo)) {
                 unlink($fileTo);
             }
@@ -81,7 +81,7 @@ trait DirectoryTrait
                 $fileTo
             );
         } else {
-            echo sprintf("File found : %s\n", $fileTo);
+            //echo sprintf("File found : %s\n", $fileTo);
         }
 
         return $this;

@@ -58,7 +58,7 @@ class Template extends Smarty
         return $this->htmlTitle ? sprintf('<script>$(document).prop("title","%s")</script>', $this->htmlTitle) : '';
     }
 
-    private function getMediasVars(): array
+    public function getMediasVars(): array
     {
         $internal = $this->buildInternalJs();
         return [
@@ -94,14 +94,14 @@ class Template extends Smarty
 
     public function addMediaCss(string $css): self
     {
-        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . $css;
+        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . '/'. $css;
 
         return $this;
     }
 
     public function addMediaJs(string $js, string $position = 'bottom'): self
     {
-        $this->medias['js'][$position][] = str_starts_with($js, 'http',) ? $js : Application::$configurator->get('medias') . $js . '.js';
+        $this->medias['js'][$position][] = str_starts_with($js, 'http') ? $js : Application::$configurator->get('medias') . '/'. $js . '.js';
 
         return $this;
     }

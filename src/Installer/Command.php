@@ -8,4 +8,9 @@ class Command
     {
         Architekt::init($path)->install();
     }
+
+    public static function sql(string $path): void
+    {
+        Architekt::init($path)->sql();
+    }
 }
