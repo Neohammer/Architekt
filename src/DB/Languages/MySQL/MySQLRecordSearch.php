@@ -19,10 +19,15 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     /** @var DBDatatable[] $datatables */
     private array $datatables;
 
+    /** @var mixed[] $datatablesFilters */
+    private array $datatablesFilters;
+
     /** @var DBRecordRow[] $filterRows */
     private array $filterRows;
 
     private array $filters;
+
+    private array $leftFilters;
 
     private array $params;
 
@@ -35,8 +40,10 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     {
         $this->select = [];
         $this->datatables = [];
+        $this->datatablesFilters = [];
         $this->filterRows = [];
         $this->filters = [];
+        $this->leftFilters = [];
         $this->params = [];
         $this->limit = [];
         $this->orders = [];
@@ -52,7 +59,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
         $command = sprintf(
             'SELECT %s FROM %s',
             $this->buildSelect(),
-            implode(', ', self::quote($this->datatables)),
+            $this->buildTables(),
         );
 
         if ($this->filters) {
@@ -149,9 +156,12 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
         return sprintf(' ORDER BY %s', implode(', ', $orders));
     }
 
-    public function datatable(DBDatatable $datatable): static
+    public function datatable(DBDatatable $datatable, mixed $filters = null): static
     {
         $this->datatables[$datatable->name()] = $datatable;
+        if($filters){
+            $this->datatablesFilters[$datatable->name()] = $filters;
+        }
 
         return $this;
     }
@@ -210,6 +220,30 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     public function orderDesc(DBRecordColumn $DBRecordColumn): static
     {
         return $this->order($DBRecordColumn, false);
+    }
+
+    private function buildTables(): string
+    {
+        $output = [];
+
+        foreach($this->datatables as $datatableName=>$datatable){
+            if(array_key_exists($datatableName, $this->datatablesFilters)){
+                $this->leftFilters = [];
+                $this->buildLeftFilters($this->datatablesFilters, true);
+                $output[] = sprintf(
+                    ' LEFT JOIN %s%s',
+                    self::quote($datatable->name()),
+                    join('',$this->leftFilters)
+
+                );
+            }
+            else{
+                $output[] = (sizeof($output)?', ':'').self::quote($datatable->name());
+            }
+        }
+
+
+        return implode('', $output);
     }
 
 }

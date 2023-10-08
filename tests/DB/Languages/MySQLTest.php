@@ -312,6 +312,26 @@ class MySQLTest extends TestCase
 
     }
 
+
+    public function test_recordSearchLeft(): void
+    {
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` LEFT JOIN `testTable2` ON `testTable`.`field1`=`testTable2`.`field2`'
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->datatable(new DBDatatable('testTable'))
+                ->datatable(
+                    new DBDatatable('testTable2'),
+                    (new DBRecordRow('testTable'))
+                        ->and('field1' , new DBRecordColumn('testTable2', 'field2'))
+                )
+                ->query()
+        );
+    }
+
+
     public function test_recordSearchFilter(): void
     {
         self::assertEquals(

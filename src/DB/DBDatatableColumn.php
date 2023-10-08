@@ -7,6 +7,7 @@ class DBDatatableColumn
 
     const TYPE_NUMERIC = 'numeric';
     const TYPE_STRING = 'string';
+    const TYPE_DATETIME = 'datetime';
     const TYPE_BOOLEAN = 'boolean';
 
 
@@ -67,6 +68,15 @@ class DBDatatableColumn
             ))
                 ->setLength($length)
                 ->setMultiLines($multiLines);
+    }
+
+    public static function buildDatetime(string $name): static
+    {
+        return
+            (new self(
+                $name,
+                self::TYPE_DATETIME
+            ));
     }
 
     public static function buildInt(string $name, int $length, bool $signed = false): static

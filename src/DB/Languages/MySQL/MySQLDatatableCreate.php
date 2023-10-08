@@ -89,6 +89,14 @@ class MySQLDatatableCreate extends MySQLTools implements DBQueryBuilderInterface
                         );
                     }
                     break;
+                case DBDatatableColumn::TYPE_DATETIME:
+                    $field = [
+                        self::quote($column->name()),
+                        'DATETIME',
+                        $column->nullable() ? 'NULL' : 'NOT NULL'
+                    ];
+
+                    break;
                 default:
                     throw new MissingConfigurationException(sprintf('MySQL does not support %s column type on datatable creation', $column->type()));
             }

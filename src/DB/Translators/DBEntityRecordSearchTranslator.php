@@ -40,6 +40,17 @@ class DBEntityRecordSearchTranslator
         return $this;
     }
 
+    public function leftDatatable(DBEntityInterface $entity1, DBEntityInterface $entity2): static
+    {
+        $this->search->datatable(
+            new DBDatatable($entity2->_table()),
+            (new DBRecordRow($entity1->_table()))->and(
+                $entity1->_primaryKey() , new DBRecordColumn($entity2->_table(), $entity1->_strangerKey()))
+        );
+
+        return $this;
+    }
+
     public function filter(DBEntityInterface $entity, string $method, array $args): static
     {
         if (sizeof($args) === 0) {

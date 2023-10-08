@@ -3,7 +3,9 @@
 namespace tests\Architekt\Auth;
 
 use Architekt\Auth\Token;
-use Architekt\DB\Database;
+use Architekt\DB\DBConnexion;
+use Architekt\DB\DBDatatable;
+use Architekt\DB\DBDatatableColumn;
 use PHPUnit\Framework\TestCase;
 use tests\Auth\UserTestSample;
 
@@ -13,23 +15,26 @@ class TokenTestSample extends Token
     public static function install(): void
     {
         self::uninstall();
-
-        $query = 'CREATE TABLE  `token`  (`id` INT UNSIGNED NOT NULL AUTO_INCREMENT , `user_id` INT UNSIGNED NOT NULL , `datetime` DATETIME NOT NULL , `key` VARCHAR(32) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;';
-        Database::engine()->execute($query);
-        $query = 'ALTER TABLE `token` ADD INDEX(`user_id`);';
-        Database::engine()->execute($query);
+        DBConnexion::get()->datatableCreate(
+            (new DBDatatable('token'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('user_id',4))
+            ->addColumn(DBDatatableColumn::buildDatetime('datetime'))
+            ->addColumn(DBDatatableColumn::buildString('key', 32))
+            ->addColumn(DBDatatableColumn::buildString('code', 32))
+        );
     }
 
     public static function uninstall(): void
     {
-        $query = 'DROP TABLE IF EXISTS `token`;';
-        Database::engine()->execute($query);
+        DBConnexion::get()->datatableDelete(new DBDatatable('token'));
     }
 
     public static function buildFake(): static
     {
         return self::build(
             UserTestSample::buildFake(),
+            'test',
             '+5 minutes'
         );
     }
