@@ -101,7 +101,7 @@ trait MySQLRecordFilterTrait
 
         foreach ($DBRecordRows as $DBRecordRow) {
             foreach ($DBRecordRow->filters() as $filter) {
-                if (sizeof($this->filters) > 0) {
+                if (sizeof($this->leftFilters) > 0) {
                     if ($filter->type() === DBRecordRowFilter::TYPE_AND) {
                         $filterText = 'AND ';
                     } elseif ($filter->type() === DBRecordRowFilter::TYPE_OR) {
