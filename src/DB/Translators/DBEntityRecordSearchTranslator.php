@@ -73,9 +73,19 @@ class DBEntityRecordSearchTranslator
 
                 return $this;
             } else {
+                if($args[0] instanceof DBEntity){
+
+                    $this->search->filter(
+                        (new DBRecordRow($entity->_table()))->$method($args[0]->_strangerKey(), $args[0]->_primary())
+                    );
+
+                    return $this;
+                }
+
                 $this->search->filter(
                     (new DBRecordRow($entity->_table()))->$method($entity->_primaryKey(), $args[0])
                 );
+
                 return $this;
             }
         }

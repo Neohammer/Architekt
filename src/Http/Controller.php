@@ -3,7 +3,13 @@
 namespace Architekt\Http;
 
 use Architekt\Application;
+use Architekt\Auth\Profile;
 use Architekt\Auth\User;
+use Architekt\DB\Interfaces\DBEntityInterface;
+use Architekt\Logger;
+use Architekt\Plugin;
+use Architekt\Utility\ApplicationSettings;
+use Architekt\Utility\ControllerSettings;
 use Architekt\Utility\Settings;
 use Architekt\View\Message;
 use Architekt\View\Template;
@@ -17,95 +23,192 @@ abstract class Controller
     protected string $name;
     protected string $baseViewPath;
     protected ?Template $view;
+    protected Controller $__controller;
 
     abstract public function __user(): ?User;
 
     abstract protected function initUser(): static;
 
-    abstract protected function hasAccess(string $method): bool;
-
     abstract protected function fillMedias(): static;
+
+
+    abstract public function __application(): Application;
+
+    abstract public function __plugin(): Plugin;
+
+    abstract public function __controller(): \Architekt\Controller;
+
+    abstract public function __templateVars(): array;
+
+
+    protected function hasAccess(string $method): bool
+    {
+        $settings = $this->__controller()->parse();
+
+        $hasToBeLoggedAsUser = $settings->method($method)->loggedUser()->hasToBeLogged() ?? $settings->loggedUser()->hasToBeLogged();
+
+        if (!$hasToBeLoggedAsUser) {
+            Logger::info(sprintf('%s : not logged require', $method));
+
+            return true;
+        }
+
+        if (!$this->__user()) {
+            Logger::warning(sprintf('%s : require logged user', $method));
+
+            return false;
+        }
+
+        if (!$accesses = $settings->method($method)->accessesUser()->get()) {
+            Logger::info(sprintf('%s : not user accesses require', $method));
+
+            return true;
+        }
+
+        if (!$this->__user()) {
+            Logger::warning(sprintf('%s : require logged user to check access', $method));
+
+            return false;
+        }
+
+        $profile = $this->__user()->profile();
+
+        $userController = \Architekt\Controller::byApplicationAndNameSystem($this->__application(),'User/Index');
+
+        foreach ($accesses as $accessToCheck) {
+            if($accessToCheck->code === 'none'){
+                return true;
+            }
+            if ($profile->allowController($userController, $accessToCheck->code)) {
+                Logger::info(sprintf('%s : access found > %s', $method, $accessToCheck->code));
+                return true;
+            }
+        }
+
+        Logger::warning(sprintf('%s : generic user fail', $method));
+
+        return false;
+    }
+
+    protected function _entityCheck(DBEntityInterface $entity, ?string $id = null): mixed
+    {
+        if (null === $id) {
+            Request::to403();
+        }
+
+        $entity->__construct($id);
+        if (!$entity->_isLoaded()) {
+            Request::to404();
+        }
+
+        return $entity;
+    }
 
     static public function init(): void
     {
         $configurator = Application::$configurator;
-        $pathController = $configurator->get('path') . DIRECTORY_SEPARATOR . 'controllers';
+        $pathControllers = $configurator->get('path') . DIRECTORY_SEPARATOR . 'controllers';
 
-        $parameters = explode('/', Request::getUri());
-        $askParams = self::format($parameters);
+        $askParams = self::format(explode('/', Request::getUri()));
 
-        $chosenPath = sprintf(
-            '%s%s%sController.php',
-            $pathController,
-            DIRECTORY_SEPARATOR,
-            $askParams[0] ?? 'Home'
-        );
+        $askParams[0] ??= 'index';
+        $askParams[1] ??= 'index';
 
-        if (!file_exists($chosenPath)) {
-            Request::to404();
+
+        $callables = [];
+
+        $dirExists = is_dir($pathControllers . DIRECTORY_SEPARATOR.$askParams[0]);
+        $dirIndexExists = is_dir($pathControllers . DIRECTORY_SEPARATOR.'Index');
+
+
+        if ($dirExists) {
+            $callables[] = [
+                'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                'method' => $askParams[2] ?? 'index',
+                'params' => array_slice($askParams, array_key_exists(2,$askParams)?3:2),
+            ];
+            $callables[] = [
+                'class' => ucfirst($askParams[0]) . '\\Index',
+                'method' => $askParams[1],
+                'params' => array_slice($askParams, 2),
+            ];
         }
-        require_once($chosenPath);
 
-        $chosenController = ucfirst(strtolower($configurator->get('name')));
+        $callables[] = [
+            'class' => ucfirst($askParams[0]),
+            'method' => $askParams[1],
+            'params' => array_slice($askParams, 2),
+        ];
 
-        $calledController = sprintf(
-            '\\Website\\%s\\%sController',
-            $chosenController,
-            $askParams[0] ?? 'Home'
-        );
+        if($dirIndexExists){
+            $callables[] = [
+                'class' => 'Index\\'.$askParams[0],
+                'method' => $askParams[1],
+                'params' => array_slice($askParams, 1),
+            ];
 
-        /**
-         * @var ?self
-         */
+            $callables[] = [
+                'class' => 'Index\\Index',
+                'method' => $askParams[0],
+                'params' => array_slice($askParams, 3),
+            ];
+        }
+
+        $callables[] = [
+            'class' => 'Index',
+            'method' => $askParams[0],
+            'params' => array_slice($askParams, 1),
+        ];
+
+
+
         $controller = null;
-        eval(sprintf('$controller = new %s();', $calledController));
+        foreach($callables as $callable){
+            try{
 
-        $chosenMethod = $askParams[1] ?? 'index';
+                $controllerClass = sprintf(
+                    'Website\\%s\\%sController',
+                    ucfirst(Application::get()->_get('name_system')),
+                    $callable['class']
+                );
 
-        $calledMethod = self::methodVerb() . $chosenMethod;
-        if (!method_exists($controller, $calledMethod)) {
+                $controller = new $controllerClass();
+                $methodCalled = $callable['method'];
+                $methodToCall = self::addVerbToMethod($methodCalled);
+
+                if (!method_exists($controller, $methodToCall)) {
+                    $controller = null;
+                    continue;
+                }
+
+
+                $controllerName = str_replace('\\','/', $callable['class']);
+                $askParams = $callable['params'];
+
+                break;
+            }
+            catch (\Error){
+               continue;
+            }
+        }
+
+        if(!$controller){
             Request::to404();
         }
 
-        $reflectionMethod = new \ReflectionMethod($calledController, $calledMethod);
-
-        $nbParams = count($askParams);
-        if ($nbParams < 2) $nbParams = 2;
-
-        if ($nbParams - 2 !== $reflectionMethod->getNumberOfRequiredParameters()) {
+        if (count($askParams) !== (new \ReflectionMethod($controller, $methodToCall))->getNumberOfRequiredParameters()) {
             Request::to404();
         }
 
         $controller->isJson = Request::isXhrRequest();
         $controller->isModal = Request::isModalRequest();
-        $controller->name = $askParams[0] ?? 'Home';
-
-        $finalMethod = $calledMethod . "(";
-        if ($askParams) {
-            foreach ($askParams as $k => $v) {
-                if ($k < 2) {
-                    unset($askParams[$k]);
-                }
-
-                if (is_numeric($v)) {
-                    $askParams[$k] = $v;
-                } elseif (is_string($v)) {
-                    $askParams[$k] = '"' . addcslashes($v, '"') . '"';
-                } else {
-                    unset($askParams[$k]);
-                }
-            }
-            if ($askParams) {
-                $finalMethod .= implode(", ", $askParams);
-            }
-        }
-        $finalMethod .= ")";
+        $controller->name = $controllerName;
 
         $controller
             ->initUser()
-            ->forward($chosenMethod);
+            ->forward($methodCalled)
+            ->$methodToCall(...$askParams);
 
-        eval('$controller->' . $finalMethod . ';');
     }
 
     static private function format(array $toFormat): array
@@ -126,6 +229,16 @@ abstract class Controller
             return '';
         }
         return $verb;
+    }
+
+    private static function addVerbToMethod(string $method): string
+    {
+        $verb = self::methodVerb();
+        if (!$verb) {
+            return $method;
+        }
+
+        return $verb . ucfirst($method);
     }
 
     protected function forward(string $methodName): static
@@ -197,14 +310,18 @@ abstract class Controller
         return $this->view;
     }
 
-    public function __appSettings(): Settings
+    public function __appSettings(): ApplicationSettings
     {
-        return Settings::byApp();
+        return Settings::byApplication()->overload($this->__settings());
     }
 
-    public function __templateVars(): array
+    public function __settings(): ControllerSettings
     {
-        return [];
+        return Settings::byController($this->__controller());
     }
 
+    protected function _profile(string $primary): Profile
+    {
+        return $this->_entityCheck(new Profile(), $primary);
+    }
 }

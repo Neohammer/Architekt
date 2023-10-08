@@ -102,4 +102,27 @@ class DBRecordRow implements DBRecordRowInterface
     {
         return $this->filters;
     }
+
+    public function toJson(): string
+    {
+        return json_encode($this->toArray());
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'datatable' => $this->datatableName,
+            'fields' => $this->values
+        ];
+    }
+
+    public static function fromJson(string $json): static
+    {
+        return self::fromArray(json_decode($json, true));
+    }
+
+    public static function fromArray(array $array): static
+    {
+        return (new self($array['datatable']))->aset($array['fields']);
+    }
 }

@@ -1,0 +1,62 @@
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Profils</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <h4 class="card-title">Profils </h4>
+                    </div>
+                    <div class="dropdown">
+                        <a type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="icon-lg pb-3px" data-feather="more-horizontal"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item d-flex align-items-center" href="/Profile/addModal" eventType="modal"><i data-feather="plus" class="icon-sm me-2"></i> <span class="">Ajouter</span></a>
+                        </div>
+                    </div>
+                </div>
+
+                <table class="list table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:1%">#</th>
+                            <th>ID</th>
+                            <th>Type</th>
+                            <th>Application</th>
+                            <th>Nom</th>
+                            <th>Defaut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {foreach from=$PROFILES item=profile}
+                        <tr>
+                            <td data-sort="">
+                                {include file='./list_options.html'}
+                            </td>
+                            <td>{$profile->_primary()}</td>
+                            <td>{if $profile->_get('user')}Utilisateur{else}Application{/if}</td>
+                            <td>{$profile->application()->label()}</td>
+                            <td>{$profile->_get('name')}</td>
+                            <td data-sort="{$profile->_get('default')}">
+                                {if $profile->_get('default')}
+                                <i class="icon-lg text-success" data-feather="check-circle"></i>
+                                {else}
+                                <i class="icon-lg text-warning" data-feather="x-circle"></i>
+                                {/if}
+                            </td>
+                        </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,7 +17,11 @@ interface DBDatatableInterface
      */
     public function columns(): array;
 
+    public function toArray(): array;
+
     public function toJson(): string;
 
     public static function fromJson(string $json): static;
+
+    public static function fromArray(array $array): static;
 }

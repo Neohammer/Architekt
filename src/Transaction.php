@@ -2,7 +2,7 @@
 
 namespace Architekt;
 
-use Architekt\DB\Database;
+use Architekt\DB\DBConnexion;
 use Architekt\Library\File;
 
 class Transaction
@@ -14,9 +14,7 @@ class Transaction
         $name = uniqid();
         if (!count(self::$list[$dataBaseInstanceName] ?? [])) {
             self::$list[$dataBaseInstanceName][] = $name;
-            Database::engine($dataBaseInstanceName)->disableAutocommit();
-
-            return Database::engine($dataBaseInstanceName)->startTransaction($name) && File::transactionStart();
+            return DBConnexion::get()->transactionStart() && File::transactionStart();
         }
 
         self::$list[$dataBaseInstanceName][] = $name;
@@ -35,7 +33,7 @@ class Transaction
 
         if (!count(self::$list[$dataBaseInstanceName] ?? [])) {
 
-            return Database::engine($dataBaseInstanceName)->commitTransaction($last) && File::transactionCommit();
+            return DBConnexion::get()->transactionCommit() &&  File::transactionCommit();
         }
 
         return true;
@@ -50,7 +48,7 @@ class Transaction
         self::remove($dataBaseInstanceName, $last);
 
         if (!count(self::$list[$dataBaseInstanceName] ?? [])) {
-            return Database::engine($dataBaseInstanceName)->rollbackTransaction($last) && File::transactionRollback();
+            return DBConnexion::get()->transactionRollBack() && File::transactionRollback();
         }
 
         return true;
@@ -75,10 +73,6 @@ class Transaction
         $key = array_search($name, self::$list[$dataBaseInstanceName]);
         if ($key !== false) {
             unset(self::$list[$dataBaseInstanceName][$key]);
-        }
-
-        if (!count(self::$list[$dataBaseInstanceName] ?? [])) {
-            Database::engine($dataBaseInstanceName)->disableAutocommit();
         }
     }
 

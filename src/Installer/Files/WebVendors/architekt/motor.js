@@ -121,11 +121,20 @@ var LinkManager = {
             }
         }
         let real = on.attr('real');
-        let eventType = on.attr('eventType');
 
         if (typeof real !== "undefined") {
             return true;
         }
+
+        let confirmText = on.attr('confirm');
+
+        if(typeof confirmText !== "undefined"){
+            if(!confirm(confirmText)){
+                return false;
+            }
+        }
+
+        let eventType = on.attr('eventType');
 
         if ("action" === eventType) {
             this.action(on);
@@ -280,7 +289,7 @@ var MessageManager = {
 var MenuManager = {
 
     manageVerticalSidebarSelection : function(){
-        uri = '/'+document.location.href.replace(URL_APP,'');
+        uri = document.location.href.replace(URL_APP,'');
         uriSplit = uri.split('#');
         uri = uriSplit[0];
         $('.nav a[href]')
@@ -345,7 +354,7 @@ var ListManager = {
             let datatable = $(this).DataTable({
                 order: [],
                 language: {
-                    url: URL_CDN+'assets/vendors/datatables.net/datatables.fr.json',
+                    url: URL_CDN+'/vendors/datatables.net/datatables.fr.json',
                 },
                 columnDefs: [ {
                     targets: 'no-sort',

@@ -1,0 +1,44 @@
+{
+  "Architekt/Application" : {
+    "name": "Gestion des applications"
+  },
+  "Architekt/Controller" : {
+    "name": "Gestion des controllers"
+  },
+  "User/Redirect": {
+    "name": "Redirection manager",
+    "settings": {
+      "default": {
+        "urls": {
+          "homepage": "/User/login",
+          "user": "/Home"
+        }
+      }
+    }
+  },
+  "User/Index": {
+    "name": "User manager",
+    "settings": {
+      "default": {
+        "account": {
+          "create": false,
+          "create_confirm": false,
+          "create_login": false
+        }
+      },
+      "administration": {
+        "account": {
+          "create": true,
+          "create_confirm": false,
+          "create_login": true
+        }
+      }
+    }
+  },
+  "Index/Index": {
+    "name": "Homepage"
+  },
+  "Redirect": {
+    "name": "Global redirections"
+  }
+}

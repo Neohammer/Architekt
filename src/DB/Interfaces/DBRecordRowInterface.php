@@ -2,6 +2,8 @@
 
 namespace Architekt\DB\Interfaces;
 
+use Architekt\DB\DBDatatable;
+use Architekt\DB\DBDatatableColumn;
 use Architekt\DB\DBRecordRowFilter;
 
 interface DBRecordRowInterface
@@ -36,4 +38,13 @@ interface DBRecordRowInterface
      * @return DBRecordRowFilter[]
      */
     public function filters(): array;
+
+
+    public function toJson(): string;
+
+    public function toArray(): array;
+
+    public static function fromJson(string $json): static;
+
+    public static function fromArray(array $array): static;
 }

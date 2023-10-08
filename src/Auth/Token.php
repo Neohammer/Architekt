@@ -2,10 +2,16 @@
 
 namespace Architekt\Auth;
 
-use Architekt\DB\Entity;
+use Architekt\DB\DBEntity;
 
-abstract class Token extends Entity
+abstract class Token extends DBEntity
 {
+
+
+    public const USER_CREATE_CONFIRMATION = 'accountCreate';
+    public const PASSWORD_RECOVER = 'passwordRecover';
+    public const PASSWORD_CHOOSE = 'passwordChoose';
+
     protected static ?string $_table = 'token';
 
     public static function get(
@@ -21,7 +27,7 @@ abstract class Token extends Entity
         $that = new static;
         $that
             ->_search()
-            ->filter($user);
+            ->and($user);
 
         while ($that->_next()) {
             if ($that->hasExpired()) {

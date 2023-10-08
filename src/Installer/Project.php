@@ -2,6 +2,12 @@
 
 namespace Architekt\Installer;
 
+use Architekt\DB\DBConnexion;
+use Architekt\DB\DBDatabase;
+use Architekt\DB\DBDatatable;
+use Architekt\DB\DBDatatableColumn;
+use Architekt\DB\DBRecordRow;
+
 class Project
 {
 
@@ -16,6 +22,40 @@ class Project
     private array $directories;
     protected bool $fileReplace;
     protected bool $directoryReplace;
+    public ?\Architekt\Project $projectRow;
+
+    /**
+     * @return DBDatatable[]
+     */
+    public static function datatablesRequired(): array
+    {
+        $datatables = [];
+
+        $datatables[] = (new DBDatatable('project'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildString('name', 100))
+            ->addColumn(DBDatatableColumn::buildString('name_system', 50));
+
+        return $datatables;
+
+    }
+
+    public static function datatablesRequiredToJson(string $outputDir): void
+    {
+        $datatables = self::datatablesRequired();
+        foreach($datatables as $k=>$v){
+            $datatables[$k] = $v->toArray();
+        }
+
+        file_put_contents(
+            $file = $outputDir.DIRECTORY_SEPARATOR.'datatables.json' ,
+            json_encode($datatables)
+        );
+        
+        Command::info(sprintf('json project datatables generated'));
+
+    }
+
 
     private function __construct(Architekt $architekt, string $code)
     {
@@ -23,6 +63,7 @@ class Project
         $this->code = $code;
         $this->applications = [];
         $this->directories = [];
+        $this->projectRow = null;
 
         $this->directoryReplace = false;
         $this->fileReplace = false;
@@ -35,19 +76,128 @@ class Project
         return new self($architekt, $code);
     }
 
-    public function install(): void
+    public function install(string $environment): void
     {
+        Command::info(sprintf('%s - Install %s', $this->code, $environment));
         $this->directoriesCreate();
         $this->fileReplace = true;
         $this->filesCreate();
 
-        foreach ($this->applications as $application) {
-            $application->install();
+        if($this->hasDatabase()){
+            $this->databaseCreate($environment);
+
+            $this->databaseConnect($environment);
+            $this->datatablesCreate($environment);
         }
+
+        $this->projectRow = \Architekt\Project::byNameSystem($this->code);
+        if($this->projectRow){
+            Command::warning(sprintf('%s already exists in project datatable',$this->code));
+        }
+        else{
+            $this->projectRow = (new \Architekt\Project())
+                ->_set([
+                    'name' => $this->code,
+                    'name_system' => $this->code,
+                ]);
+
+            $this->projectRow->_save();
+            Command::info(sprintf('%s project n°%d created',$this->code,$this->projectRow->_primary()));
+        }
+
+
+        foreach ($this->applications as $application) {
+            $application->install($environment);
+        }
+
+
+        foreach ($this->applications as $application) {
+            $application->buildSettings();
+        }
+
+    }
+
+    public function databaseConnect(string $environment = 'local'): void
+    {
+        if ($databaseCode = $this->database()) {
+            $databaseInfos = $this->architekt->database($environment, $databaseCode);
+
+            DBConnexion::add(
+                'main',
+                $databaseInfos['engine'],
+                $databaseInfos['host'],
+                $databaseInfos['user'],
+                $databaseInfos['password'],
+                $databaseInfos['name'],
+            );
+        }
+    }
+
+    private function hasDatabase(): bool
+    {
+        return $this->database();
+    }
+
+    private function databaseCreate(string $environment): ?array
+    {
+        $databaseInfos = null;
+        if ($databaseCode = $this->database()) {
+            $databaseInfos = $this->architekt->database($environment, $databaseCode);
+            if (!$databaseInfos) {
+                Command::info(sprintf('%s - Database %s not found, please check json file', $this->code, $databaseCode));
+                return null;
+            }
+        }
+        else{
+            return null;
+        }
+
+        DBConnexion::add(
+            'architekt',
+            $databaseInfos['engine'],
+            $databaseInfos['host'],
+            $databaseInfos['user'],
+            $databaseInfos['password'],
+        );
+
+        $database = new DBDatabase($databaseInfos['name']);
+
+        if (DBConnexion::get('architekt')->databaseExists($database)) {
+            Command::info(sprintf('%s - Database %s exists', $this->code, $databaseInfos['name']));
+            return $databaseInfos;
+        }
+
+        if (DBConnexion::get('architekt')->databaseCreate($database)) {
+            Command::info(sprintf('%s - Database %s created', $this->code, $databaseInfos['name']));
+            return $databaseInfos;
+        }
+
+        Command::error(sprintf('%s - Fail to create database %s', $this->code, $databaseInfos['name']));
+
+        return null;
+    }
+
+
+    private function datatablesCreate(string $environment): void
+    {
+
+        $connexion = DBConnexion::get();
+
+        foreach(self::datatablesRequired() as $datatable){
+            if($connexion->datatableExists($datatable)){
+                Command::warning(sprintf('%s - Datatable %s already exists', $this->code, $datatable->name()));
+                continue;
+            }
+            $connexion->datatableCreate($datatable);
+            Command::info(sprintf('%s - Datatable %s created', $this->code, $datatable->name()));
+
+        }
+
     }
 
     public function build(): void
     {
+        Command::info(sprintf('%s - build', $this->code));
         $this->directories = [
             'project' => $this->directory(),
             'classes' => $this->directoryClasses(),
@@ -83,24 +233,13 @@ class Project
                     $this->template(),
                     $filePath
                 );
-            }
-            else{
+            } else {
                 $this->fileCopy(
                     $filePath,
                     $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . $file
                 );
             }
         }
-    }
-
-    public function sql(): static
-    {
-
-        foreach($this->applications as $application){
-            $application->sql();
-        }
-
-        return $this;
     }
 
 
@@ -112,6 +251,7 @@ class Project
             'PROJECT_CAMEL' => $this->architekt->toCamelCase($this->code),
             'PROJECT_NAME' => $name = ($this->architekt->json->project($this->code)['name'] ?? 'NoName'),
             'PROJECT_NAME_CAMEL' => $this->architekt->toCamelCase($name),
+            'APPLICATIONS_DOMAINS_BY_ENVIRONMENT' => $this->domainsByEnvironment()
         ];
     }
 
@@ -128,36 +268,30 @@ class Project
     {
         $template = $this->template();
 
-        $this
-            ->fileCreate(
-                $this->directory() . DIRECTORY_SEPARATOR . 'bootstrap.php',
-                $template->assign('APPLICATIONS_DOMAINS_BY_ENVIRONMENT', $this->domainsByEnvironment()),
-                'bootstrap.php.tpl'
-            )
-            ->fileCreate(
-                $this->directory() . DIRECTORY_SEPARATOR . 'constants.php',
-                $template,
-                'constants.php.tpl'
-            )
-            ->fileCreate(
-                $this->directoryClasses() . DIRECTORY_SEPARATOR . '_autoloader.php',
-                $template,
-                '_autoloader.php.tpl'
-            )
-            ->fileCreate(
-                $this->directoryClassesUsers() . DIRECTORY_SEPARATOR . 'User.php',
-                $template,
-                'User.php.tpl'
-            );
-
         foreach ($this->environments() as $environment) {
+            $databaseInfos = null;
+            if ($databaseCode = $this->database()) {
+                $databaseInfos = $this->architekt->database($environment, $databaseCode);
+            }
+
+
             $this->fileCreate(
                 $this->directoryEnvironment() . DIRECTORY_SEPARATOR . sprintf('config.%s.php', $environment),
-                $template->assign('ENVIRONMENT', $environment)->assign('APPLICATIONS_URLS_PRIMARY', $this->primaryUrls($environment)),
+                $template
+                    ->assign('ENVIRONMENT', $environment)
+                    ->assign('APPLICATIONS_URLS_PRIMARY', $this->primaryUrls($environment))
+                    ->assign('DATABASE', $databaseInfos)
+                ,
                 'config.environment.php.tpl'
             );
         }
 
+    }
+
+
+    public function database(): ?string
+    {
+        return $this->architekt->json->project($this->code)['database'] ?? null;
     }
 
     public function environments(): array
@@ -193,7 +327,7 @@ class Project
             foreach ($application->environments() as $environment) {
                 $domainsApplication = $application->domains($environment);
                 foreach ($domainsApplication as $domainApplication) {
-                    if(!array_key_exists($environment,$domains)){
+                    if (!array_key_exists($environment, $domains)) {
                         $domains[$environment] = [];
                     }
                     $domains[$environment][] = $domainApplication;
@@ -219,6 +353,21 @@ class Project
         return $applications;
     }
 
+    /**
+     * @return Application[]
+     */
+    public function applicationsWithAdministration(string $administrationCode): array
+    {
+        $applications = [];
+        foreach ($this->applications as $application) {
+            if ($application->administration === $administrationCode) {
+                $applications[] = $application;
+            }
+        }
+
+        return $applications;
+    }
+
     public function directory(): string
     {
         return $this->architekt->directoryInstall() . DIRECTORY_SEPARATOR . $this->code;
@@ -231,7 +380,7 @@ class Project
 
     private function nameClasses(): string
     {
-        return  'classes';
+        return 'classes';
     }
 
     public function directoryClassesUsers(): string
@@ -242,6 +391,11 @@ class Project
     public function directoryClassesControllers(): string
     {
         return $this->directoryClasses() . DIRECTORY_SEPARATOR . 'Controllers';
+    }
+
+    public function directoryClassesEvents(): string
+    {
+        return $this->directoryClasses() . DIRECTORY_SEPARATOR . 'Events';
     }
 
     public function directoryEnvironment(): string

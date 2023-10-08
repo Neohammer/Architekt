@@ -1,0 +1,17 @@
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Administrateurs</a></li>
+        <li class="breadcrumb-item"><a href="/Administrator/list" real="1">Liste</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Créer</li>
+    </ol>
+</nav>
+
+<h5 class="text-muted fw-normal mb-4">Créer un administrateur</h5>
+
+{if $CREATE_ALLOW}<form method="post" action="{$smarty.server.REQUEST_URI}">{/if}
+    {include file='./createByAdministrationForm.html'}
+<div>
+    <button role="submit" class="btn btn-primary me-2 mb-2 mb-md-0 text-white btn-icon-text">
+        <i class="btn-icon-prepend" data-feather="plus"></i> Créer</button>
+</div>
+{if $CREATE_ALLOW}</form>{/if}

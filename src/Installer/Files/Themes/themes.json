@@ -1,9 +1,11 @@
 {
   "NobleUI-light" : {
+    "js": "template",
     "images": "images",
     "css":"style"
   },
   "NobleUI-dark" : {
+    "js": "template",
     "images": "images",
     "css":"style"
   }

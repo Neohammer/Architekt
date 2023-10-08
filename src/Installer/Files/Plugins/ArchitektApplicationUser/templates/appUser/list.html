@@ -1,0 +1,44 @@
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{$CONTROLLER->__uri('list')}" real="1">{$APPLICATION_USER_NAMES_FC}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Liste</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">{$APPLICATION_USER_NAMES_FC}</h4>
+                <table class="list table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th style="width:1%">#</th>
+                            <th>ID</th>
+                            <th>Profil</th>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Confirmé</th>
+                            <th>Actif</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {foreach from=$APPLICATION_USERS item=$applicationUser}
+                        <tr{if !$applicationUser->user()->_get('active')} class="table-danger"{elseif !$applicationUser->user()->_get('confirmed')} class="table-warning"{/if}>
+                            <td data-sort="">
+                                {include file='./list_options.html'}
+                            </td>
+                            <td>{$applicationUser->_primary()}</td>
+                            <td>{$applicationUser->profile()->label()}</td>
+                            <td>{$applicationUser->user()->_primary()}</td>
+                            <td>{$applicationUser->user()->_get('email')}</td>
+                            <td>{$applicationUser->user()->_get('confirmed')}</td>
+                            <td>{$applicationUser->user()->_get('active')}</td>
+                        </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

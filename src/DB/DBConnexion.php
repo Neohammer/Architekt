@@ -200,4 +200,10 @@ class DBConnexion implements DBConnexionInterface
     {
         return $this->abstraction->transactionRollBack();
     }
+
+    public function close(string $name = 'main'): bool
+    {
+        unset(self::$connexions[$name]);
+        return $this->abstraction->close();
+    }
 }

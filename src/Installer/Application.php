@@ -2,69 +2,223 @@
 
 namespace Architekt\Installer;
 
-use Architekt\DB\Database;
-use Users\User;
+use Architekt\DB\DBConnexion;
+use Architekt\DB\DBDatatable;
+use Architekt\DB\DBDatatableColumn;
+use Architekt\Utility\Settings;
 
 class Application
 {
-    private Architekt $architekt;
-
-    private Project $project;
-
-    public string $code;
-
-    public bool $isCdn;
-
-    public ?string $cdnUsed;
 
     use DirectoryTrait;
 
+    public bool $isCdn;
+    public bool $isAdmin;
+
+    public ?string $cdnUsed;
+    public ?string $administration;
+
     private array $directories;
+
     private array $webVendors;
+
     private array $themes;
+
     protected bool $fileReplace;
+
     protected bool $directoryReplace;
 
-    public function __construct(Architekt $architekt, Project $project, string $code)
+    protected ?\Architekt\Application $applicationEntity;
+
+    protected ?\Architekt\Plugin $pluginRow;
+
+    /** @var ?\Architekt\Plugin[] $plugins */
+    protected ?array $plugins;
+
+    /** @var ?\Architekt\Controller[] $controllers */
+    protected ?array $controllers;
+
+    /**
+     * @return DBDatatable[]
+     */
+    public static function datatablesRequired(): array
     {
-        $this->architekt = $architekt;
-        $this->project = $project;
-        $this->code = $code;
+        $datatables = [];
+
+        $datatables[] = (new DBDatatable('application'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('project_id', 5))
+            ->addColumn(DBDatatableColumn::buildString('name', 100))
+            ->addColumn(DBDatatableColumn::buildString('name_system', 50))
+            ->addColumn(DBDatatableColumn::buildString('settings', 1000)->setDefault(null));
+
+        return $datatables;
+
+    }
+
+    public function __construct(
+        private Architekt $architekt,
+        private Project   $project,
+        public string     $code
+    )
+    {
+        $this->applicationEntity = null;
+
+
         $this->fileReplace = false;
         $this->directoryReplace = false;
+
+
         $this->directories = [];
         $this->isCdn = false;
+        $this->isAdmin = false;
+        $this->administration = null;
+        $this->cdnUsed = null;
         $this->webVendors = [];
         $this->themes = [];
-        $this->cdnUsed = null;
+        $this->pluginRow = null;
+        $this->controllers = null;
+        $this->plugins = [];
 
         $this->build();
     }
-
 
     public static function init(Architekt $architekt, Project $project, string $code): static
     {
         return new self($architekt, $project, $code);
     }
 
-    public function install(): void
+    public function install(string $environment): void
     {
+        $this->datatablesCreate();
+
+        $this->initEntity();
+
+        Command::info(sprintf('%s:%s - Install %s', $this->project->code, $this->code, $environment));
         $this->directoriesCreate();
         $this->fileReplace = true;
         $this->filesCreate();
 
-        $this->installPlugins();
+        Command::info(sprintf('%s:%s - Install plugins', $this->project->code, $this->code));
+
+        foreach ($this->plugins as $plugin) {
+            $plugin->install();
+        }
     }
 
-    public function sql(): static
+    private function datatablesCreate(): void
     {
+        $connexion = DBConnexion::get();
 
+        foreach (self::datatablesRequired() as $datatable) {
+            if ($connexion->datatableExists($datatable)) {
+                Command::warning(sprintf('%s - Datatable %s already exists', $this->displayName(), $datatable->name()));
+                continue;
+            }
+            $connexion->datatableCreate($datatable);
+            Command::info(sprintf('%s - Datatable %s created', $this->displayName(), $datatable->name()));
 
-        return $this;
+        }
     }
+
+    public function entity(): \Architekt\Application
+    {
+        if (!$this->applicationEntity) {
+            $this->initEntity();
+        }
+
+        return $this->applicationEntity;
+    }
+
+    public function initEntity(): void
+    {
+        $this->applicationEntity = \Architekt\Application::byNameSystem($this->code);
+        if ($this->applicationEntity) {
+            Command::warning(sprintf('%s:%s application %s already exists in datatable', $this->project->code, $this->code, $this->code));
+        } else {
+            $this->applicationEntity = (new \Architekt\Application())
+                ->_set([
+                    $this->project->projectRow,
+                    'name' => $this->architekt->json->applicationName($this->project->code, $this->code) ?? $this->code,
+                    'name_system' => $this->code
+                ]);
+
+            $this->applicationEntity->_save();
+            Command::info(sprintf('%s:%s application n°%d created', $this->project->code, $this->code, $this->applicationEntity->_primary()));
+        }
+    }
+
+    public function buildSettings(): void
+    {
+        $settings = Settings::byApplication($this->entity());
+        $settings->setValue('general', 'type', 'website');
+
+        if ($this->isAdmin) {
+            $settings->setValue('general', 'type', 'administration');
+
+            $applications = $this->project->applicationsWithAdministration($this->code);
+            foreach ($applications as $application) {
+                $settings->addValue('administration', 'applications', $application->entity()->_primary());;
+            }
+        } elseif ($this->administration) {
+            $settings->setValue('general', 'administration', \Architekt\Application::byNameSystem($this->administration)->_primary());
+        } else {
+            $settings->setValue('general', 'administration', false);
+        }
+
+        if ($this->isCdn) {
+            $settings->setValue('general', 'type', 'cdn');
+            $applications = $this->project->applicationsWithCdn($this->code);
+            foreach ($applications as $application) {
+                $settings->addValue('cdn', 'applications', $application->entity()->_primary());;
+            }
+        } elseif ($this->cdnUsed) {
+            $settings->setValue('general', 'cdn', \Architekt\Application::byNameSystem($this->cdnUsed)->_primary());
+        } else {
+            $settings->setValue('general', 'cdn', false);
+        }
+
+        foreach ($this->environments() as $environment) {
+            $settings->setValue('urls', $environment, $this->primaryUrl($environment));
+        }
+
+        if ($this->hasCustomUser()) {
+            $settings->setValue('general', 'appUser', $this->user());
+        }
+
+        if($this->isAdmin){
+            $settings->setValue('account' , 'create' , true);
+            $settings->setValue('account' , 'create_confirm' , false);
+            $settings->setValue('account' , 'create_login' , true);
+        }
+        elseif(!$this->isCdn){
+            $settings->setValue('account' , 'create' , false);
+            $settings->setValue('account' , 'create_confirm' , true);
+            $settings->setValue('account' , 'create_login' , false);
+        }
+
+        $this->entity()->_save();
+
+        /** @var Plugin $plugin */
+        foreach($this->plugins as $plugin){
+            $plugin->buildSettings();
+        }
+    }
+
+    public function hasCustomUser(): bool
+    {
+        return $this->user() ?? 'User' !== 'User';
+    }
+
 
     private function build(): void
     {
+        Command::info(sprintf('%s build', $this->displayName()));
+
+
+        $this->isAdmin = $this->type() === 'administration';
+        $this->administration = $this->isAdmin ? null : $this->administration();
+
         $this->directories = [
             'application' => $this->directory(),
             'web' => $this->directoryWeb(),
@@ -79,6 +233,13 @@ class Application
                 'views' => $this->directoryViews(),
             ];
 
+            $this->plugins['Architekt'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'Architekt');
+             //$this->plugins['ArchitektNotifier'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektNotifier');
+            if ($this->hasCustomUser()) {
+                $this->plugins['ArchitektApplicationUser'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektApplicationUser');
+            }
+            //$this->plugins['ArchitektProfiles'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektProfiles');
+
             if (!$this->cdnUsed) {
                 $this->webVendors = $this->webVendors();
                 if ($theme = $this->theme()) {
@@ -86,6 +247,8 @@ class Application
                 }
             }
         } else {
+            $this->plugins['ArchitektCdn'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektCdn');
+
             $applications = $this->project->applicationsWithCdn($this->code);
             if ($applications) {
                 foreach ($applications as $application) {
@@ -115,36 +278,33 @@ class Application
 
     }
 
+    private function displayName(): string
+    {
+        return sprintf(
+            '%s:%s -',
+            $this->project->code,
+            $this->code
+        );
+    }
+
     private function filesCreate(): void
     {
         $template = $this->template();
 
         $applications = [];
         if ($this->isCdn) {
-            foreach ($this->project->environments() as $environment) {
-                if ($cors = $this->generateCdnCors($environment)) {
-                    $this->fileCreate(
-                        sprintf(
-                            $this->directoryWeb() . DIRECTORY_SEPARATOR . '.htaccess%s',
-                            ($environment === 'local' ? '' : '.' . $environment)
-                        ),
-                        $template->assign('CORS_VALUES', $cors),
-                        '.htaccess-cdn.tpl'
-                    );
-                }
-            }
-
             $applications = $this->project->applicationsWithCdn($this->code);
-        } elseif(!$this->cdnUsed) {
+        } elseif (!$this->cdnUsed) {
             $applications = [$this];
         }
 
         if ($applications) {
-            $files = ['javascripts' => [], 'stylesheets' => []];
+            $files = ['javascripts' => [], 'stylesheets' => [], 'others' => []];
             foreach ($applications as $application) {
                 $applicationFiles = $application->webVendorsFiles();
                 $files['javascripts'] += $applicationFiles['javascripts'];
                 $files['stylesheets'] += $applicationFiles['stylesheets'];
+                $files['others'] += $applicationFiles['others'];
             }
             if ($files['javascripts']) {
                 $files['javascripts'] = array_unique($files['javascripts']);
@@ -164,23 +324,32 @@ class Application
                     );
                 }
             }
+            if ($files['others']) {
+                $files['others'] = array_unique($files['others']);
+                foreach ($files['others'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file,
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file
+                    );
+                }
+            }
         }
 
         if ($this->themes) {
             foreach ($this->themes as $theme) {
                 $directoryThemeFrom = $this->architekt->directoryFilesThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
-                $directoryThemeTo = $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme. DIRECTORY_SEPARATOR;
+                $directoryThemeTo = $this->directoryWebThemes() . DIRECTORY_SEPARATOR . $theme . DIRECTORY_SEPARATOR;
 
                 foreach ($this->architekt->themesJson->javascripts($theme) as $js) {
                     $this->fileCopy(
-                        $directoryThemeFrom. $js . '.js',
+                        $directoryThemeFrom . $js . '.js',
                         $directoryThemeTo . $js . '.js'
                     );
                 }
                 foreach ($this->architekt->themesJson->styleSheets($theme) as $css) {
                     $this->fileCopy(
                         $directoryThemeFrom . $css . '.css',
-                        $directoryThemeTo  . $css . '.css'
+                        $directoryThemeTo . $css . '.css'
                     );
                 }
 
@@ -193,170 +362,69 @@ class Application
             }
         }
 
-        if ($this->isCdn) {
-            return;
-        }
-
-        $this
-            ->fileCreate(
-                $this->project->directoryClassesControllers() . DIRECTORY_SEPARATOR . sprintf('%sController.php', $this->architekt->toCamelCase($this->code)),
-                $template,
-                'ParentApplicationController.php.tpl'
-            );
-
-        $applicationUser = $this->user() ?? 'User';
-
-        if ($applicationUser !== 'User') {
-            $applicationUserClass = $this->architekt->toCamelCase($applicationUser);
-            $this
-                ->fileCreate(
-                    $this->project->directoryClassesUsers() . DIRECTORY_SEPARATOR . $applicationUserClass . '.php',
-                    $template,
-                    'ApplicationUser.php.tpl'
-                )
-                ->fileCreate(
-                    $this->directoryControllers() . DIRECTORY_SEPARATOR . $applicationUserClass . 'Controller.php',
-                    $template,
-                    'ApplicationUserController.php.tpl'
-                );
-
-        }
     }
 
-    private function directoryRead(string $directory, string $directoryAdd = ''): void
+    public function templateVars(): array
     {
-        $opendir = opendir($directory);
-
-        while ($file = readdir($opendir)) {
-            if (in_array($file, ['.', '..'])) continue;
-
-            $filePath = $directory . DIRECTORY_SEPARATOR . $file;
-            if (is_dir($filePath)) {
-                $this->directoryCreate(
-                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . $file
-                );
-                $this->directoryRead($directory . DIRECTORY_SEPARATOR . $file, $directoryAdd . DIRECTORY_SEPARATOR . $file);
-
-                continue;
-            }
-
-            if (substr($file, -4, 4) === '.tpl') {
-                $this->fileCreate(
-                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . substr($file, 0, -4),
-                    $this->template(),
-                    $filePath
-                );
-            } else {
-                $this->fileCopy(
-                    $filePath,
-                    $this->directory() . $directoryAdd . DIRECTORY_SEPARATOR . $file
-                );
-            }
-        }
-    }
-
-    private function template(): Template
-    {
-        $template = (new Template())
-            ->setCompileDir($this->architekt->directoryTemporary())
-            ->setTemplateDir($this->architekt->directoryTemplatesApplication())
-            ->assign($this->project->templateVars())
-            ->assign([
-                'APPLICATION_CODE' => $this->code,
-                'APPLICATION_NAME' => $name = ($this->architekt->json->applicationName($this->project->code, $this->code) ?? $this->code),
-                'APPLICATION_NAME_CAMEL' => $this->architekt->toCamelCase($name),
-                'APPLICATION_CAMEL' => $this->architekt->toCamelCase($this->code),
-                'APPLICATION_UPPER' => strtoupper($this->code),
-                'APPLICATION_CDN' => (bool)$this->cdnUsed,
-                'APPLICATION_MEDIAS' => $this->cdnUsed ? false : '/medias/',
-                'APPLICATION_IS_CDN' => $this->isCdn,
-                'APPLICATION_CDN_CODE_UPPER' => strtoupper($this->cdnUsed ?? ''),
-                'APPLICATION_USER' => false,
-                'APPLICATION_THEME' => false,
-                'WEBVENDORS_FILES' => $this->webVendorsFiles(),
-                'THEME_FILES' => $this->themeFiles(),
-            ]);
+        $vars = [
+            'APPLICATION' => $this->entity(),
+            'APPLICATION_CODE' => $this->code,
+            'APPLICATION_NAME' => $name = ($this->architekt->json->applicationName($this->project->code, $this->code) ?? $this->code),
+            'APPLICATION_NAME_CAMEL' => $this->architekt->toCamelCase($name),
+            'APPLICATION_CAMEL' => $this->architekt->toCamelCase($this->code),
+            'APPLICATION_UPPER' => strtoupper($this->code),
+            'APPLICATION_CDN' => (bool)$this->cdnUsed,
+            'APPLICATION_MEDIAS' => $this->cdnUsed ? false : '/medias/',
+            'APPLICATION_IS_CDN' => $this->isCdn,
+            'APPLICATION_CDN_CODE_UPPER' => strtoupper($this->cdnUsed ?? ''),
+            'APPLICATION_USER' => false,
+            'APPLICATION_THEME' => false,
+            'WEBVENDORS_FILES' => $this->webVendorsFiles(),
+            'THEME_FILES' => $this->themeFiles(),
+        ];
 
         if ($theme = $this->theme()) {
-            $template->assign([
+            $vars = array_merge($vars, [
                 'APPLICATION_THEME' => $theme,
                 'APPLICATION_THEME_IMAGES' => $this->architekt->themesJson->directoryImages($theme) ?? 'images',
             ]);
         }
+
         $applicationUser = $this->user() ?? 'User';
         if ($applicationUser !== 'User') {
             $applicationUserLower = strtolower($applicationUser);
             $applicationUserClass = $this->architekt->toCamelCase($applicationUser);
 
-            $template->assign([
+            $vars = array_merge($vars, [
                 'APPLICATION_USER' => true,
                 'APPLICATION_USER_CAMEL' => $applicationUserClass,
                 'APPLICATION_USER_LOW' => $applicationUserLower
             ]);
         }
 
-        return $template;
+        return $vars;
     }
 
-
-    public function installPlugins(): void
+    public function templateVarsFromApplicationUser(): array
     {
-        if ($this->isCdn) {
-            return;
+        if (!$this->hasCustomUser()) {
+            return [];
         }
 
-        $this->installPlugin('Architekt');
+        return [
+            'APPLICATION_USER' => true,
+            'APPLICATION_USER_CAMEL' => $this->architekt->toCamelCase($this->user()),
+            'APPLICATION_USER_LOW' => strtolower($this->user())
+        ];
     }
 
-    public function installPlugin(string $name): void
+    private function template(): Template
     {
-        $baseDirectory = $this->architekt->directoryPlugins() . DIRECTORY_SEPARATOR . $name . DIRECTORY_SEPARATOR;
-
-        if (is_dir($applicationDirectory = $baseDirectory . 'application')) {
-            $this->directoryRead($applicationDirectory);
-        }
-
-        if (is_dir($projectDirectory = $baseDirectory . 'project')) {
-            $this->project->directoryRead($projectDirectory);
-        }
-
-
-        if(file_exists($sql  = $baseDirectory . 'requests.sql')){
-            if($databaseCode = $this->database()){
-                $database = $this->architekt->database('local',$databaseCode);
-            }
-            if($database){
-
-                Database::configure(
-                    $this->code,
-                    $database['engine'],
-                    $database['host'],
-                    $database['user'],
-                    $database['password'],
-                    //$database['name']
-                );
-
-                Database::get($this->code)->databaseCreate($database['name']);
-
-                $user = new User();
-
-                if( Database::engine($this->code)->motor()->databaseCreate($user, $database['name']) )
-                {
-                    Database::configure(
-                        $this->code,
-                        $database['engine'],
-                        $database['host'],
-                        $database['user'],
-                        $database['password'],
-                        $database['name']
-                    );
-                }
-
-                var_dump($query);
-
-            }
-        }
-
+        return (new Template())
+            ->setCompileDir($this->architekt->directoryTemporary())
+            ->setTemplateDir($this->architekt->directoryTemplatesApplication())
+            ->assign($this->project->templateVars())
+            ->assign($this->templateVars());
     }
 
     public function webVendors(): ?array
@@ -376,6 +444,16 @@ class Application
         return $this->architekt->json->applicationTheme($this->project->code, $this->code) ?? null;
     }
 
+    public function type(): ?string
+    {
+        return $this->architekt->json->applicationType($this->project->code, $this->code) ?? null;
+    }
+
+    public function administration(): ?string
+    {
+        return $this->architekt->json->applicationAdministration($this->project->code, $this->code) ?? null;
+    }
+
     public function user(): ?string
     {
         return $this->architekt->json->applicationUser($this->project->code, $this->code) ?? null;
@@ -384,7 +462,7 @@ class Application
     public function webVendorsFiles(): ?array
     {
         $webVendors = $this->webVendors();
-        $javascripts = $styleSheets = [];
+        $javascripts = $styleSheets = $others = [];
 
         if ($webVendors) {
             foreach ($webVendors as $webVendor) {
@@ -404,13 +482,22 @@ class Application
                         $css,
                     );
                 }
+
+                foreach ($this->architekt->webVendorsJson->otherFiles($webVendor) as $file) {
+                    $others[] = sprintf(
+                        '%s/%s',
+                        $webVendor,
+                        $file,
+                    );
+                }
             }
         }
 
         return [
             'directory' => 'vendors/',
             'javascripts' => $javascripts,
-            'stylesheets' => $styleSheets
+            'stylesheets' => $styleSheets,
+            'others' => $others
         ];
     }
 
@@ -471,27 +558,23 @@ class Application
         return $urls[0];
     }
 
-    private function database(): ?string
-    {
-        return $this->architekt->json->application($this->project->code,$this->code)['database'] ?? null;
-    }
 
-    private function directory(): string
+    public function directory(): string
     {
         return $this->project->directory() . DIRECTORY_SEPARATOR . '_' . $this->code;
     }
 
-    private function directoryControllers(): string
+    public function directoryControllers(): string
     {
         return $this->directory() . DIRECTORY_SEPARATOR . 'controllers';
     }
 
-    private function directoryViews(): string
+    public function directoryViews(): string
     {
         return $this->directory() . DIRECTORY_SEPARATOR . 'views';
     }
 
-    private function directoryWeb(): string
+    public function directoryWeb(): string
     {
         return $this->directory() . DIRECTORY_SEPARATOR . 'web';
     }
@@ -509,18 +592,5 @@ class Application
     private function nameThemes(): string
     {
         return 'themes';
-    }
-
-
-    private function generateCdnCors(string $environment): array
-    {
-        $cors = [];
-        foreach ($this->project->applicationsWithCdn($this->code) as $application) {
-            foreach ($application->urls($environment) as $url) {
-                $cors[] = preg_quote($url);
-            }
-        }
-
-        return $cors;
     }
 }

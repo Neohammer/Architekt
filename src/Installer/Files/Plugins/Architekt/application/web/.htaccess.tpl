@@ -1,6 +1,0 @@
-{literal}
-RewriteEngine on
-RewriteRule ^(themes|vendors)($|/) - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^(.*)$   /index.php?uri=$1 [L,QSA]
-{/literal}

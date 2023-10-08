@@ -36,23 +36,31 @@ class DBDatatable implements DBDatatableInterface
         return $this->columns;
     }
 
-    public function toJson(): string
+    public function toArray(): array
     {
-        return json_encode([
+        return [
             'name' => $this->name,
             'columns' => array_map(function ($column) {
                 return $column->toArray();
             }, $this->columns)
-        ]);
+        ];
+    }
+
+    public function toJson(): string
+    {
+        return json_encode($this->toArray());
     }
 
     public static function fromJson(string $json): static
     {
-        $datas = json_decode($json, true);
+        return self::fromArray(json_decode($json, true));
+    }
 
-        $datatable = new DBDatatable($datas['name']);
+    public static function fromArray(array $array): static
+    {
+        $datatable = new DBDatatable($array['name']);
 
-        foreach ($datas['columns'] as $column) {
+        foreach ($array['columns'] as $column) {
             $datatable->addColumn(DBDatatableColumn::fromArray($column));
         }
 

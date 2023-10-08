@@ -144,21 +144,17 @@ class Template extends Smarty
         $this
             ->addTemplateDir($this->controller->baseViewPath())
             ->addTemplateDir($this->controller->viewPath())
-            ->setCompileDir(PATH_CACHE . 'Smarty/compile/')
-            ->setCacheDir(PATH_CACHE . 'Smarty/cache/')
+            ->setCompileDir(PATH_CACHE . '/Smarty/compile/')
+            ->setCacheDir(PATH_CACHE . '/Smarty/cache/')
             ->assign($this->getMediasVars())
+            ->assign($this->controller->__templateVars())
             ->assign([
                 'QUERY' => Request::getFilters(),
                 'TITLE' => $this->htmlTitle,
                 'USER' => $this->controller->__user(),
                 'SETTINGS' => $this->controller->__appSettings()
-            ]);
-
-        if(!$this->controller->isJson && !$this->controller->isModal) {
-            $this->assign($this->controller->__templateVars());
-        }
-
-        $this->registerObject('Formatter', new Formatter());
+            ])
+            ->registerObject('Formatter', new Formatter());
 
 
     }

@@ -17,6 +17,12 @@ class SettingDependenciesClassAttributeCollection
         $this->attributes[] = $accessAttribute;
     }
 
+    /** @return SettingDependencyClassAttribute[] */
+    public function get(): array
+    {
+        return $this->attributes;
+    }
+
     /**
      * @return static
      */

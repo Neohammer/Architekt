@@ -1,0 +1,132 @@
+{assign var='profilePrimary' value=$profile->_primary()}
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Profils</a></li>
+        <li class="breadcrumb-item"><a href="/Profile/list">Liste</a></li>
+        <li class="breadcrumb-item active">Visualiser</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-header">
+                <h1 class=" h1">{$profile->labelOption()}</h1>
+            </div>
+            <div class="card-body">
+                Application : {$profile->application()->label()}<br />
+                Type : {if $profile->_get('user')}Utilisateur{else}Utilisateur Application{/if}<br />
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<form action="{$smarty.SERVER.REQUEST_URI}">
+    <div class="col grid-margin">
+        {foreach from=$configuration item=controllerConfiguration}
+        {assign var='controller' value=$controllerConfiguration.controller}
+        {assign var='accesses' value=$controllerConfiguration.accesses}
+        {assign var='settings' value=$controllerConfiguration.settings}
+        {assign var='settingsCurrent' value=$controllerConfiguration.settingsCurrent}
+        <div class="card mb-2">
+            <div class="card-header">
+                <h4> {$controller->label()} ({$controller->_get('name_system')})</h4>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-lg-2">
+                    <div class="col grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i data-feather="lock" class="icon-lg mb-2"></i> Autorisations</h5>
+                            </div>
+                            <div class="card-body">
+                                {if !$accesses}
+                                    <div class="alert alert-warning">
+                                        <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                                        Aucune autorisation définie
+                                    </div>
+                                {else}
+
+                                    <ul class="list-group">
+                                        {foreach from=$controllerConfiguration.methods key=methodName item=method}
+                                            {assign var="hasAccess" value=false}
+                                            {foreach from=$method.accesses item=accessInfo}
+                                                {if $accessInfo->code === 'none' || $profile->allowController($controller, $accessInfo->code)}{assign var="hasAccess" value=true}{/if}
+                                            {/foreach}
+                                            <li class="list-group-item {if !$hasAccess} text-muted{/if}">
+                                                {if !$hasAccess}
+
+                                                    <i data-feather="x-circle" class="text-danger icon-lg"></i>
+                                                {else}
+                                                    <i data-feather="check-circle" class="text-success icon-lg"></i>
+                                                {/if}
+                                                {$method.description}
+                                            </li>
+
+                                        {/foreach}
+                                    </ul>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-header"><h5><i data-feather="settings" class="icon-lg mb-2"></i> Configuration Générale</h5></div>
+                            <div class="card-body">
+                                <div class="row row-cols-1">
+                                    {if !$settings}
+                                        <div class="alert alert-warning">
+                                            <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                                            Aucune configuration personnalisable
+                                        </div>
+                                    {else}
+                                        {foreach from=$settings item=setting}
+                                             <div class="mb-3">
+                                                {$setting->description} :
+                                                 <strong>
+                                                     {if $setting->isCheckbox()}
+                                                        {if $settingsCurrent->get($setting->code, $setting->subCode)}
+                                                            <i data-feather="check-circle" class="text-success icon-lg"></i>
+                                                         {else}
+                                                            <i data-feather="x-circle" class="text-danger icon-lg"></i>
+                                                         {/if}
+                                                     {else}
+                                                        {$settingsCurrent->get($setting->code, $setting->subCode)}
+                                                    {/if}
+                                                 </strong>
+                                             </div>
+                                        {/foreach}
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+    {if $ALLOW_WRITE}
+    <nav class="navbar fixed-bottom">
+        <div class="container-fluid">
+            <div class="row" style="width:100%">
+                <div class="col text-end">
+                    <a href="{$CONTROLLER->__uri('addModal')}" eventType="modal" class="btn btn-primary ">
+                        <i data-feather="plus" class="icon-sm me-2"></i> Ajouter
+                    </a>
+                    <a href="{$CONTROLLER->__uri("edit/$profilePrimary")}" class="btn btn-primary ">
+                        <i data-feather="edit" class="icon-sm me-2"></i> Modifier
+                    </a>
+                    {if !$profile->_get('default')}
+                    <a href="{$CONTROLLER->__uri("defaultModal/$profilePrimary")}" eventType="modal" class="btn btn-primary ">
+                        <i data-feather="edit" class="icon-sm me-2"></i> Utiliser par défaut
+                    </a>
+                    {/if}
+                </div>
+            </div>
+        </div>
+    </nav>
+    {/if}
+</form>

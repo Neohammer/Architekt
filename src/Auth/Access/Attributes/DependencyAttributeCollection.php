@@ -18,6 +18,14 @@ class DependencyAttributeCollection
     }
 
     /**
+     * @return DependencyAttribute[]
+     */
+    public function get(): array
+    {
+        return $this->attributes;
+    }
+
+    /**
      * @return static
      */
     static public function parse(array $classAttributes): static

@@ -1,0 +1,10 @@
+<form>
+    <div class="mb-3">
+        <label class="form-label">Profile</label>
+        <select class="form-select mb-3" name="profile_id" id="profile_id-input">
+            {foreach from=$PROFILES item=profile}
+            <option value="{$profile->_primary()}">{$profile->labelOption()}</option>
+            {/foreach}
+        </select>
+    </div>
+</form>

@@ -2,10 +2,12 @@
 
 namespace Architekt\Installer;
 
-use Architekt\DB\Database;
+use Architekt\DB\DBDatatable;
+use Architekt\DB\DBDatatableColumn;
 use Architekt\Installer\Json\ArchitektJson;
-use Architekt\Installer\Json\WebVendorsJson;
 use Architekt\Installer\Json\ThemesJson;
+use Architekt\Installer\Json\WebVendorsJson;
+
 
 class Architekt
 {
@@ -35,7 +37,12 @@ class Architekt
         $this->json = ArchitektJson::init($this->installPath);
         $this->webVendorsJson = WebVendorsJson::init($this->directoryFilesWebVendors());
         $this->themesJson = ThemesJson::init($this->directoryFilesThemes());
+        /*
 
+                if(!function_exists('_architecktAutoloader')){
+                    require($this->directoryPlugins().DIRECTORY_SEPARATOR.'Architekt'.DIRECTORY_SEPARATOR.'project'.DIRECTORY_SEPARATOR)
+        }
+                */
         $this->build();
     }
 
@@ -44,29 +51,33 @@ class Architekt
         return new self($installPath);
     }
 
-    public function sql(): static
+    public function toJson(): static
     {
-
-        foreach($this->projects as $project){
-            $project->sql();
-        }
+        Project::datatablesRequiredToJson(
+            $this->directoryTemplatesProject()
+        );
 
         return $this;
     }
 
     public function install(): void
     {
+        $environment = 'local';
+        Command::info(sprintf('%s - install %s', 'architekt', $environment));
+
         $this->directoriesCreate();
         $this->fileReplace = true;
         $this->filesCreate();
 
         foreach ($this->projects as $project) {
-            $project->install();
+            $project->install($environment);
         }
     }
 
     private function build(): void
     {
+        Command::info(sprintf('%s - build', 'architekt'));
+
         $this->directories = [
             'cache' => $this->directoryCache(),
             'filer' => $this->directoryFiler(),
@@ -88,11 +99,11 @@ class Architekt
     {
         $databases = $this->databases();
 
-        if(!array_key_exists($name,$databases)){
+        if (!array_key_exists($name, $databases)) {
             return null;
         }
 
-        if(!array_key_exists($environment,$databases[$name])){
+        if (!array_key_exists($environment, $databases[$name])) {
             return null;
         }
 
@@ -110,6 +121,130 @@ class Architekt
              $application
          );
  */
+    }
+
+    public function installController(string $controllerCode, string $projectCode, string $applicationCode, string $pluginName)
+    {
+        /** @var Application $application */
+        $application = ($project = $this->projects[$projectCode])->applications[$applicationCode] ?? null;
+
+        if (!$application) {
+            Command::error(sprintf('Application introuvable %s > %s', $projectCode, $applicationCode));
+            exit();
+        }
+
+        $project->databaseConnect();
+
+        $plugin = Plugin::init($this, $project, $application, $pluginName);
+        $plugin->initEntity();
+        $plugin->fileReplace = true;
+        $plugin->installController($controllerCode);
+
+        $plugin
+            ->fileCreate(
+                $application->directoryControllers() . DIRECTORY_SEPARATOR . $controllerCode . 'Controller.php',
+                $plugin->template()
+                    ->assign('CONTROLLER_CREATE_NAME', $controllerCode)
+                    ->assign('CONTROLLER_CREATE_NAMESPACE', '')
+                    ->assign('CONTROLLER_CREATE_CLASS', $controllerCode),
+                './../templates/controllerBase.tpl'
+            )
+            ->directoryCreate(
+                $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode
+            );
+    }
+
+    public function installSubController(string $controllerCode, string $controllerSubCode, string $projectCode, string $applicationCode, string $pluginName)
+    {
+        /** @var Application $application */
+        $application = ($project = $this->projects[$projectCode])->applications[$applicationCode] ?? null;
+
+        if (!$application) {
+            Command::error(sprintf('Application introuvable %s > %s', $projectCode, $applicationCode));
+            exit();
+        }
+
+        $project->databaseConnect();
+
+        $plugin = Plugin::init($this, $project, $application, $pluginName);
+        $plugin->initEntity();
+        $plugin->fileReplace = true;
+        $plugin->installController($controllerCode.'/'.$controllerSubCode);
+
+        $plugin
+            ->directoryCreate(
+                $controllerDir = $application->directoryControllers() . DIRECTORY_SEPARATOR . $controllerCode
+            )
+            ->fileCreate(
+                $controllerDir . DIRECTORY_SEPARATOR . $controllerSubCode . 'Controller.php',
+                $plugin->template()
+                    ->assign('CONTROLLER_CREATE_NAME', $controllerCode.'/'.$controllerSubCode)
+                    ->assign('CONTROLLER_CREATE_NAMESPACE', '\\'.$controllerCode)
+                    ->assign('CONTROLLER_CREATE_CLASS', $controllerSubCode)
+                ,
+                './../templates/controllerBase.tpl'
+            )
+            ->directoryCreate(
+                $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode
+            )
+            ->directoryCreate(
+                $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode.DIRECTORY_SEPARATOR.$controllerSubCode
+            );
+    }
+
+    private function generateDatatablesRequired(): void
+    {
+
+        $datatableApplication = (new DBDatatable('application'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildString('name', 100))
+            ->addColumn(DBDatatableColumn::buildString('name_system', 50))
+            ->toArray();
+
+        $datatablePlugin = (new DBDatatable('plugin'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('application_id', 5))
+            ->addColumn(DBDatatableColumn::buildString('name', 100))
+            ->toArray();
+
+        $datatableController = (new DBDatatable('controller'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('plugin_id', 5))
+            ->addColumn(DBDatatableColumn::buildString('name', 100))
+            ->addColumn(DBDatatableColumn::buildString('name_system', 50))
+            ->toArray();
+
+
+        $datatableProfile = (new DBDatatable('profile'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('plugin_id', 3))
+            ->addColumn(DBDatatableColumn::buildString('name', 60))
+            ->addColumn(DBDatatableColumn::buildString('settings', 10000, true))
+            ->addColumn(DBDatatableColumn::buildBoolean('default')->setDefault(0))
+            ->toArray();
+
+
+        $datatableUser = (new DBDatatable('user'))
+            ->addColumn(DBDatatableColumn::buildAutoincrement())
+            ->addColumn(DBDatatableColumn::buildInt('profile_id', 3))
+            ->addColumn(DBDatatableColumn::buildString('email', 254))
+            ->addColumn(DBDatatableColumn::buildString('password', 32))
+            ->addColumn(DBDatatableColumn::buildString('hash', 32))
+            ->addColumn(DBDatatableColumn::buildBoolean('confirmed')->setDefault(0))
+            ->addColumn(DBDatatableColumn::buildBoolean('active')->setDefault(0))
+            ->toArray();
+
+        $jsons = [
+            'datatables' => [
+                'project' => $datatableApplication,
+                'plugin' => $datatablePlugin,
+                'controller' => $datatableController,
+                'profile' => $datatableProfile,
+                'user' => $datatableUser,
+            ]
+        ];
+
+        file_put_contents($this->directoryFiles() . DIRECTORY_SEPARATOR . 'installer_requests.json', json_encode($jsons));
     }
 
     public function templateVars(): array
@@ -137,7 +272,7 @@ class Architekt
 
     public function directoryCache(): string
     {
-        return $this->directoryInstall() . DIRECTORY_SEPARATOR . $this->nameCache() ;
+        return $this->directoryInstall() . DIRECTORY_SEPARATOR . $this->nameCache();
     }
 
     public function directoryFiler(): string

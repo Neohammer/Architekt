@@ -1,0 +1,23 @@
+<div class="dropdown">
+    <a type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <i class="icon-lg pb-3px" data-feather="settings"></i>
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton2">
+        <a class="dropdown-item d-flex align-items-center" href="{$CONTROLLER_BASE_URI}view/{$applicationUser->_primary()}">
+            <i data-feather="zoom-in" class="icon-sm me-2"></i>
+            <span class="">Voir</span>
+        </a>
+        {if $ALLOW_WRITE}
+            {if !$applicationUser->user()->_get('confirmed')}
+                <a class="dropdown-item d-flex align-items-center" href="{$CONTROLLER_BASE_URI}accountConfirmationSendModal/{$applicationUser->_primary()}" eventType="modal"><i data-feather="mail" class="icon-sm me-2"></i> <span class="">Mail de confirmation</span></a>
+            {/if}
+            {if $applicationUser->user()->_get('active')}
+                <a class="dropdown-item d-flex align-items-center" href="{$CONTROLLER_BASE_URI}unactiveModal/{$applicationUser->_primary()}" eventType="modal"><i data-feather="user-x" class="icon-sm me-2"></i> <span class="">Désactiver</span></a>
+                <a class="dropdown-item d-flex align-items-center" href="{$CONTROLLER_BASE_URI}passwordRecoverSendModal/{$applicationUser->_primary()}" eventType="modal"><i data-feather="mail" class="icon-sm me-2"></i> <span class="">Mail mot de passe</span></a>
+            {else}
+                <a class="dropdown-item d-flex align-items-center" href="{$CONTROLLER_BASE_URI}activeModal/{$applicationUser->_primary()}" eventType="modal"><i data-feather="user-check" class="icon-sm me-2"></i> <span class="">Activer</span></a>
+            {/if}
+        {/if}
+      </div>
+</div>

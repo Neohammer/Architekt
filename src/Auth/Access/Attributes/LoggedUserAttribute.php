@@ -19,10 +19,10 @@ class LoggedUserAttribute
     {
         $logged = null;
 
-        if(isset($methodAttributes['Logged'])){
+        if(isset($methodAttributes['UserLogged'])){
             $logged = true;
         }
-        if(isset($methodAttributes['Unlogged'])){
+        if(isset($methodAttributes['UserUnlogged'])){
             $logged = false;
         }
 

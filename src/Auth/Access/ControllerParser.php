@@ -3,22 +3,31 @@
 namespace Architekt\Auth\Access;
 
 use Architekt\Application;
+use Architekt\DB\Exceptions\MissingConfigurationException;
 use Architekt\Http\Controller;
-use Architekt\Plugin;
 
 class ControllerParser
 {
-    public static function attributes(Plugin $plugin): ClassAttributesParser
+    public static function attributes(\Architekt\Controller $controller): ClassAttributesParser
     {
-        require_once(Application::controllerFile($plugin->_get('name_system'), $plugin->_get('app')));
+        if (!$controller->_isLoaded()) {
+            throw new MissingConfigurationException('Controller\'s Plugin does not exists');
+        }
 
-        /** @var Controller $controller */
-        $controller = eval(sprintf(
-            'return new %s\%sController();',
-            Application::controllerNamespace($plugin->_get('app')),
-            $plugin->_get('name_system')
-        ));
+        $class = sprintf(
+            '%s\%sController',
+            Application::controllerNamespace($controller),
+            str_replace('/', '\\', ucfirst($controller->_get('name_system')))
+        );
 
-        return new ClassAttributesParser($controller);
+        $file = PATH_PROJECT . DIRECTORY_SEPARATOR . '_' . $controller->application()->_get('name_system') . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . $controller->_get('name_system') . 'Controller.php';
+
+        if (!class_exists($class , false)) {
+            require_once($file);
+        }
+        /** @var Controller $controllerObject */
+        $controllerObject = new $class();
+
+        return new ClassAttributesParser($controllerObject);
     }
 }

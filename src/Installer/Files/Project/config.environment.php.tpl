@@ -1,8 +1,8 @@
 <?php
 
-use Architekt\DB\Database;
+use Architekt\DB\DBConnexion;
 
-const APPLICATION_MAIN_DATABASE = 'exile_v1';
+const APPLICATION_MAIN_DATABASE = '{$DATABASE.name}';
 const TABLE_PREFIX = '';
 
 {foreach from=$APPLICATIONS_URLS_PRIMARY key=applicationKeyUpper item=url}
@@ -13,12 +13,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 0);
 error_reporting(E_ALL);
 
-
-Database::configure(
+DBConnexion::add(
     'main',
-    Database::MYSQLI,
-    'localhost',
-    'root',
-    '',
+    '{$DATABASE.engine}',
+    '{$DATABASE.host}',
+    '{$DATABASE.user}',
+    '{$DATABASE.password}',
     APPLICATION_MAIN_DATABASE
 );

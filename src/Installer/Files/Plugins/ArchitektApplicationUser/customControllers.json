@@ -1,0 +1,29 @@
+{
+  "appUser/Redirect": {
+    "name": "Redirection %s manager",
+    "settings": {}
+  },
+  "appUser/Index": {
+    "name": "%s manager",
+    "settings": {
+      "administration": {
+        "account": {
+          "create": true,
+          "multi": true
+        }
+      },
+      "default": {
+        "account": {
+          "create": false
+        }
+      }
+    }
+  },
+  "appUser/Profile": {
+    "name": "%s's profile manager",
+    "type": "administration",
+    "settings": {
+      "default": {}
+    }
+  }
+}

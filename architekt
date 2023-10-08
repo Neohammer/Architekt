@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Architekt\Installer\Installer;
+use Architekt\Installer\Command;
 
 for ($i = 1; $i <= 2; $i++) {
     $dir = dirname(__DIR__, $i);
@@ -16,10 +16,27 @@ require ARCHITEKT_COMPOSER_AUTOLOADER;
 if (array_key_exists(1, $_SERVER['argv'])) {
     switch ($_SERVER['argv'][1]) {
         case "install":
-            \Architekt\Installer\Command::install(ARCHITEKT_COMPOSER_INSTALL_DIR);
+            Command::install(ARCHITEKT_COMPOSER_INSTALL_DIR);
             break;
-        case "update":
-            Installer::update(ARCHITEKT_COMPOSER_INSTALL_DIR);
+        case "toJson":
+            Command::toJson(ARCHITEKT_COMPOSER_INSTALL_DIR);
+            break;
+        case "addController":
+            Command::addController(
+                ARCHITEKT_COMPOSER_INSTALL_DIR,
+                $_SERVER['argv'][2],
+                $_SERVER['argv'][3],
+                $_SERVER['argv'][4],
+            );
+            break;
+        case "addSubcontroller":
+            Command::addSubController(
+                ARCHITEKT_COMPOSER_INSTALL_DIR,
+                $_SERVER['argv'][2],
+                $_SERVER['argv'][3],
+                $_SERVER['argv'][4],
+                $_SERVER['argv'][5],
+            );
             break;
         default:
             die('unknown command');

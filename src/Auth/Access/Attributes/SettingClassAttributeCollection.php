@@ -17,9 +17,7 @@ class SettingClassAttributeCollection
         $this->attributes[] = $accessAttribute;
     }
 
-    /**
-     * @return SettingClassAttribute[]
-     */
+    /** @return SettingClassAttribute[] */
     public function get(): array
     {
         return $this->attributes;
@@ -33,7 +31,12 @@ class SettingClassAttributeCollection
         $that = new self();
         if (isset($classAttributes['Setting'])) {
             foreach ($classAttributes['Setting'] as $settings) {
-                $that->add(new SettingClassAttribute(...$settings));
+                $that->add(new SettingClassAttribute(false, ...$settings));
+            }
+        }
+        if (isset($classAttributes['SettingProfile'])) {
+            foreach ($classAttributes['SettingProfile'] as $settings) {
+                $that->add(new SettingClassAttribute(true, ...$settings));
             }
         }
 

@@ -4,8 +4,12 @@ namespace Architekt\Auth\Access;
 
 use Architekt\Auth\Access\Attributes\AccessAttributeCollection;
 use Architekt\Auth\Access\Attributes\AccessClassAttributeCollection;
+use Architekt\Auth\Access\Attributes\AccessUserAttributeCollection;
 use Architekt\Auth\Access\Attributes\DependencyClassAttributeCollection;
+use Architekt\Auth\Access\Attributes\LoggedAttribute;
 use Architekt\Auth\Access\Attributes\LoggedClassAttribute;
+use Architekt\Auth\Access\Attributes\LoggedUserAttribute;
+use Architekt\Auth\Access\Attributes\LoggedUserClassAttribute;
 use Architekt\Auth\Access\Attributes\SettingClassAttributeCollection;
 use Architekt\Auth\Access\Attributes\SettingDependenciesClassAttributeCollection;
 
@@ -45,6 +49,11 @@ class ClassAttributesParser
         return $return;
     }
 
+    public function methods(): array
+    {
+        return array_keys($this->methodAttributes);
+    }
+
     public function method(string $method): MethodAttributesParser
     {
         return new MethodAttributesParser($this , $method);
@@ -75,10 +84,17 @@ class ClassAttributesParser
         return LoggedClassAttribute::parse($this->classAttributes);
     }
 
+    public function loggedUser(): LoggedUserClassAttribute
+    {
+        return LoggedUserClassAttribute::parse($this->classAttributes);
+    }
+
     private function buildAttributes(): array
     {
         return Attributes::fromReflector($this->reflectionClass, $this->reflectionClass->getNamespaceName()) ?? [];
     }
+
+
 
     /**
      * @throws \ReflectionException

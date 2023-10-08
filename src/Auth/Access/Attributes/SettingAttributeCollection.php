@@ -17,6 +17,12 @@ class SettingAttributeCollection
         $this->attributes[] = $accessAttribute;
     }
 
+    /** @return SettingAttribute[] */
+    public function get(): array
+    {
+        return $this->attributes;
+    }
+
     /**
      * @return static
      */

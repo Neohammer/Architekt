@@ -7,6 +7,13 @@ use Architekt\DB\Exceptions\MissingConfigurationException;
 use Architekt\DB\Interfaces\DBEntityInterface;
 use Architekt\DB\Translators\DBEntityRecordSearchTranslator;
 
+if (!defined('APPLICATION_MAIN_DATABASE')) {
+    define('APPLICATION_MAIN_DATABASE', 'architekt');
+}
+if (!defined('TABLE_PREFIX')) {
+    define('TABLE_PREFIX', '');
+}
+
 class DBEntity implements DBEntityInterface
 {
     protected static ?string $_database = APPLICATION_MAIN_DATABASE;

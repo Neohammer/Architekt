@@ -51,6 +51,19 @@ class WebVendorsJson
         return $cssFiles;
     }
 
+    public function otherFiles(string $name): array
+    {
+        $otherFiles = $this->webVendor($name)['other'] ?? null;
+        if (!$otherFiles) {
+            return [];
+        }
+        if (!is_array($otherFiles)) {
+            return [$otherFiles];
+        }
+
+        return $otherFiles;
+    }
+
 
     public function addPrerequisites(array $webVendors): array
     {

@@ -1,0 +1,16 @@
+<form>
+    <div class="mb-3">
+        <label for="name-input" class="form-label">Nom</label>
+        <input type="text" id="name-input" class="form-control" name="name" placeholder="Nom du profil">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Type</label>
+        <select class="form-select mb-3" name="user" id="user-input">
+            <option value="0">Application</option>
+            <option value="1">User</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Application : <strong>{$APPLICATION_CONCERNED->label()}</strong></label>
+    </div>
+</form>

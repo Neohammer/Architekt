@@ -4,15 +4,11 @@ namespace Architekt\Auth\Access\Attributes;
 
 class SettingDependencyClassAttribute
 {
-    public string $plugin;
-    public string $code;
-
     public function __construct(
-        string $plugin,
-        string $code
+        public string $plugin,
+        public string $code
     )
     {
-        $this->plugin = $plugin;
-        $this->code = $code;
+
     }
 }

@@ -3,6 +3,7 @@
 namespace Architekt\Auth\Access;
 
 use Architekt\Auth\Access\Attributes\AccessAttributeCollection;
+use Architekt\Auth\Access\Attributes\AccessUserAttributeCollection;
 use Architekt\Auth\Access\Attributes\DependencyAttributeCollection;
 use Architekt\Auth\Access\Attributes\DescriptionAttribute;
 use Architekt\Auth\Access\Attributes\LoggedAttribute;
@@ -32,6 +33,11 @@ class MethodAttributesParser
     public function accesses(): AccessAttributeCollection
     {
         return AccessAttributeCollection::parse($this->classAttributesParser->methodAttributes($this->method));
+    }
+
+    public function accessesUser(): AccessUserAttributeCollection
+    {
+        return AccessUserAttributeCollection::parse($this->classAttributesParser->methodAttributes($this->method));
     }
 
     public function dependencies(): DependencyAttributeCollection

@@ -1,13 +1,17 @@
 {
   "architekt": {
-    "js" : "motor",
+    "js" : ["motor","modal"],
     "require": [
       "jquery",
-      "sweetalert2"
+      "sweetalert2",
+      "popper",
+      "bootstrap",
+      "perfect-scrollbar"
     ]
   },
   "datatables.net": {
     "js" : "jquery.dataTables",
+    "other" : "datatables.fr.json",
     "require" : [
       "jquery"
     ]
@@ -28,5 +32,14 @@
   "sweetalert2" : {
     "js" : "sweetalert2.min",
     "css": "sweetalert2.min"
+  },
+  "perfect-scrollbar" : {
+    "js" : "perfectScrollbar.min"
+  },
+  "bootstrap" : {
+    "js" : "bootstrap.min"
+  },
+  "popper" : {
+    "js" : "popper.min"
   }
 }

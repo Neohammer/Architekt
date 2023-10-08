@@ -1,0 +1,10 @@
+<a href="javascript:;" class="dropdown-item d-flex align-items-center py-2">
+    <div class="wd-30 ht-30 d-flex align-items-center justify-content-center bg-primary rounded-circle me-3">
+        <i class="icon-sm text-white" data-feather="user-plus"></i>
+    </div>
+    <div class="flex-grow-1 me-2">
+        <p><b>Compte créé !</b></p>
+        <p>{$notification->player()->user()->label()}</p>
+        <p class="tx-12 text-muted">{Formatter->date date=$notification->_get('datetime')} à {Formatter->hour hour=$notification->_get('datetime')}</p>
+    </div>
+</a>

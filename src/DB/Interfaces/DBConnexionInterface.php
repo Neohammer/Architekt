@@ -2,61 +2,29 @@
 
 namespace Architekt\DB\Interfaces;
 
-use Architekt\DB\Abstraction\Query;
-use Architekt\DB\DBDatabase;
-use Architekt\DB\DBDatatable;
-use Architekt\DB\DBRecordRow;
-use Architekt\DB\DBRecordSearchFetcher;
-
-interface DBConnexionInterface
+interface DBConnexionInterface extends DBRequesterInterface
 {
-    public function query(Query $query): bool;
+    public function __construct(string $name = 'main');
 
+    static public function add(
+        string  $name,
+        string  $language,
+        string  $hostname,
+        string  $user,
+        string  $password,
+        ?string $databaseName = null,
+        ?int    $port = null,
+        ?string $charset = 'UTF8'
+    ): void;
 
-    public function databaseCreate(DBDatabase $database): bool;
+    public static function get(string $name = 'main'): static;
 
-    public function databaseDelete(DBDatabase $database): bool;
+    public function language(): string;
 
-    public function databaseExists(DBDatabase $database): bool;
+    public function configuration(): array;
 
-    public function databaseSearch(): DBDatabaseSearchInterface;
+    public function parameters(): array;
 
-    public function databaseSearchApply(): bool;
-
-
-    public function datatableCreate(DBDatatable $datatable): bool;
-
-    public function datatableDelete(DBDatatable $datatable): bool;
-
-    public function datatableEmpty(DBDatatable $datatable): bool;
-
-    public function datatableExists(DBDatatable $datatable): bool;
-
-    public function datatableSearch(): DBDatatableSearchInterface;
-
-    public function datatableSearchApply(): bool;
-
-
-    public function recordDelete(DBRecordRow $recordRow): bool;
-
-    public function recordInsert(DBRecordRow $recordRow): bool;
-
-    public function recordInsertLast(): ?int;
-
-    public function recordSearch(): DBRecordSearchInterface;
-
-    public function recordSearchNext(DBRecordSearchFetcher $recordSearchFetcher): bool|DBRecordRowInterface;
-
-    public function recordSearchFetcher(DBRecordSearchInterface $recordSearch): bool|DBRecordSearchFetcher;
-
-    public function recordSearchCount(DBRecordSearchFetcher $recordSearchFetcher): ?int;
-
-    public function recordUpdate(DBRecordRow $recordRow): bool;
-
-    public function transactionStart(): bool;
-
-    public function transactionCommit(): bool;
-
-    public function transactionRollBack(): bool;
+    public function close(string $name = 'main'): bool;
 
 }

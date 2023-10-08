@@ -2,6 +2,9 @@
   "Architekt" : {
     "type": "website"
   },
+  "ArchitektApplicationUser" : {
+    "type": "website"
+  },
   "ArchitektCdn" : {
     "type": "cdn"
   }

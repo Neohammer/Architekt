@@ -63,7 +63,7 @@ class PDO implements DBAbstractionInterface
                 $parameters['user'],
                 $parameters['password']
             );
-
+            $this->PDOObject->setAttribute(\PDO::ATTR_AUTOCOMMIT,1);
             $this->PDOObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         }
 
@@ -252,5 +252,10 @@ class PDO implements DBAbstractionInterface
     public function transactionRollBack(): bool
     {
         return $this->pdo()->rollBack();
+    }
+
+    public function close(): bool
+    {
+        return true;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Architekt\Library;
 
+use Architekt\DB\DBEntity;
 use Architekt\DB\Entity;
 use Architekt\DB\DBEntityCache;
 use Gmao\User;
@@ -12,7 +13,7 @@ use Gmao\PreventivePlanRangeOperation;
 use Gmao\Subset;
 use Gmao\WorkOrder;
 
-class File extends Entity
+class File extends DBEntity
 {
     use DBEntityCache;
 

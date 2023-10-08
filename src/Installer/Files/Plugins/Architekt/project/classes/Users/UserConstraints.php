@@ -2,12 +2,15 @@
 
 namespace Users;
 
+use Architekt\Application;
+use Architekt\Auth\Profile;
+use Architekt\Auth\Token;
 use Architekt\Form\BaseConstraints;
 use Architekt\Form\Validation;
 use Architekt\Response\FormResponse;
 use Architekt\Response\InlineResponse;
 use Architekt\Utility\Settings;
-use Plugins\Plugin;
+use Events\UserEvent;
 
 class UserConstraints extends BaseConstraints
 {
@@ -21,10 +24,11 @@ class UserConstraints extends BaseConstraints
         return substr(\Architekt\Auth\User::generateHash(), 0, 20);
     }
 
-    protected static function forceLogin(User $user): void
+    protected static function forceLogin(User $user, bool $cookies = false): void
     {
         $user->sessionRegister();
-        UserNotification::pushLogin($user);
+        UserEvent::onLogin($user);
+        LoginAttempt::clear();
     }
 
     protected static function loginSuccessMessage(User $user): string
@@ -55,10 +59,10 @@ class UserConstraints extends BaseConstraints
                     'active' => 1,
                     'confirmed' => 1
                 ])
-                ->_set(Profile::default(Plugin::fromCache(User::PLUGIN)))
+                ->_set(Profile::default(Application::get(), true))
                 ->_save();
 
-            UserNotification::pushCreateApply($user);
+            UserEvent::onCreate($user);
 
             if (Settings::byApp()->is('account', 'create_login')) {
                 self::forceLogin($user);
@@ -119,12 +123,13 @@ class UserConstraints extends BaseConstraints
 
         $token->_delete();
 
-        UserNotification::pushCreatedWithToken($user);
+        UserEvent::onCreateConfirmation($user);
+
         $response->success('Compte confirmé');
 
         if (Settings::byApp()->is('account', 'create_login')) {
             self::forceLogin($user);
-            $response->success(sprintf('Compte confirmé. %s',self::loginSuccessMessage($user)));
+            $response->success(sprintf('Compte confirmé. %s', self::loginSuccessMessage($user)));
         }
 
         return $response;
@@ -185,13 +190,13 @@ class UserConstraints extends BaseConstraints
                 ->_save();
             $token->_delete();
 
-            PasswordNotification::pushChosen($user);
+            UserEvent::onPasswordChange($user);
 
             if (Settings::byApp()->is('account', 'create_login')) {
-                $user->sessionRegister();
-                UserNotification::pushLogin($user);
+                self::forceLogin($user);
             }
-
+        } else {
+            UserEvent::onPasswordChangeFail($user);
         }
 
         return $validation->response(
@@ -241,7 +246,7 @@ class UserConstraints extends BaseConstraints
 
         if ($validation->isSuccess()) {
             $user->_save();
-            UserNotification::pushCreateWithToken($user);
+            UserEvent::onCreateTryWithConfirmation($user);
         }
 
         return $validation->response(
@@ -289,23 +294,18 @@ class UserConstraints extends BaseConstraints
         }
 
         if ($validation->isSuccess()) {
-            $user->_search()->filter('email', $email)->limit(1);
+            $user->_search()->and($user, 'email', $email)->limit(1);
 
             if (!$user->_next()) {
                 $validation->addError('email', $failMessage = 'Couple pseudo/mot de passe inconnu');
             } elseif ($user->_get('password') !== User::encryptPassword($password)) {
                 $validation->addError('email', $failMessage = 'Les informations ne correspondent pas');
-            } elseif ($user->_get('confirmed') !== '1') {
+            } elseif ((int)$user->_get('confirmed') !== 1) {
                 $validation->addError('email', $failMessage = 'Vous devez confirmer votre compte avant de pouvoir vous connecter');
-            } elseif ($user->_get('active') !== '1') {
+            } elseif ((int)$user->_get('active') !== 1) {
                 $validation->addError('email', $failMessage = 'Votre compte est désactivé');
             } else {
-                $user->sessionRegister((bool)$useCookies);
-
-                $successMessage = sprintf('Bienvenue %s', $user->label());
-
-                UserNotification::pushLogin($user);
-                LoginAttempt::clear();
+                self::forceLogin($user, (bool)$useCookies);
             }
         }
 
@@ -332,11 +332,12 @@ class UserConstraints extends BaseConstraints
         }
 
         if ($validation->isSuccess()) {
-            $user->_search()->filter('email', $email);
+            $user->_search()->and($user, 'email', $email);
 
             if ($user->_next()) {
                 $exists = true;
-                UserNotification::pushPasswordRecover($user);
+                UserEvent::onPasswordTryRecover($user);
+
             }
         }
 
@@ -390,11 +391,11 @@ class UserConstraints extends BaseConstraints
         if ($validation->isSuccess()) {
             $user->_set('password', User::encryptPassword($password))->_save();
             $token->_delete();
-            UserNotification::pushPasswordRecovered($user);
+            UserEvent::onPasswordRecover($user);
 
             if (Settings::byApp()->is('account', 'create_login')) {
                 self::forceLogin($user);
-                $messageSuccess = sprintf('Votre mot de passe a été modifié. %s',self::loginSuccessMessage($user));
+                $messageSuccess = sprintf('Votre mot de passe a été modifié. %s', self::loginSuccessMessage($user));
             }
         }
 
@@ -404,5 +405,4 @@ class UserConstraints extends BaseConstraints
             ['user' => $user]
         );
     }
-
 }

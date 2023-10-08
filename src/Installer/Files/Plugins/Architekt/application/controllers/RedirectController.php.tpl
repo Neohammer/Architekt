@@ -2,16 +2,16 @@
 
 namespace Website\{$APPLICATION_CAMEL};
 
+use Architekt\Controller;
+use Architekt\Plugin;
 use Architekt\Http\Request;
 use Controllers\{$APPLICATION_CAMEL}Controller;
-use Architekt\Plugin;
 
+#[Setting('urls', 'homepage', 'Default User Not Logged url', 'text', '/User/login')]
 class RedirectController extends {$APPLICATION_CAMEL}Controller
 {
-    public function __plugin(): Plugin
-    {
-        return Plugin::fromCache(8);
-    }
+
+{include file='./../../../templates/controllerHeader.tpl' name='Redirect' uri='Redirect'}
 
     public function __templateVars(): array
     {
@@ -28,6 +28,18 @@ class RedirectController extends {$APPLICATION_CAMEL}Controller
 
     public function index(): void
     {
-        Request::redirect('/Home');
+        if (!$this->__user()) {
+            Request::redirect('/');
+        }
+
+        if ($this->__applicationUser()) {
+            Request::redirect('/{$APPLICATION_USER_CAMEL}/Redirect');
+        }
+
+        if ($this->__user()->profile()->allow('User/Index', 'multiple')) {
+            Request::redirect('/{$APPLICATION_USER_CAMEL}/choose');
+        }
+
+        Request::redirect('/{$APPLICATION_USER_CAMEL}/autocreate');
     }
 }

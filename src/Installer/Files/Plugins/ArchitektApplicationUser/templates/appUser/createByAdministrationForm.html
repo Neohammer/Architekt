@@ -1,0 +1,24 @@
+<div class="mb-3">
+    <label for="email-input" class="form-label">Email</label>
+    <input type="email" id="email-input" class="form-control" name="email" placeholder="Email">
+</div>
+<div class="mb-3">
+    <label class="form-label">Profile</label>
+    <select class="form-select mb-3" name="profile_id" id="profile_id-input">
+        {foreach from=$PROFILES item=profile}
+        <option value="{$profile->_primary()}">{$profile->labelOption()}</option>
+        {/foreach}
+    </select>
+</div>
+<div class="form-check form-switch mb-2">
+    <input onchange='createByAdministratorForm_onAdministratorUserCreate(this)' type="checkbox" class="form-check-input" checked name="create_if_missing" value="1" id="create_if_missing-input">
+    <label class="form-check-label" for="create_if_missing-input">Créer si utilisateur inexistant</label>
+</div>
+<div class="mb-3" id="password-container">
+    <label for="password-input" class="form-label">Mot de passe (si nouveau compte)</label>
+    <input type="password" id="password-input" class="form-control" name="password" autocomplete="current-password" placeholder="Mot de passe">
+</div>
+<div class="form-check form-switch mb-2" id="password_send-container">
+    <input type="checkbox" class="form-check-input" name="password_send" value="1" id="password_send-input">
+    <label class="form-check-label" for="password_send-input">Envoyer un mail pour créer un mot de passe</label>
+</div>

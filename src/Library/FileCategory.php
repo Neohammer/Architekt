@@ -2,10 +2,11 @@
 
 namespace Architekt\Library;
 
+use Architekt\DB\DBEntity;
 use Architekt\DB\Entity;
 use Architekt\DB\DBEntityCache;
 
-class FileCategory extends Entity
+class FileCategory extends DBEntity
 {
     use DBEntityCache;
 

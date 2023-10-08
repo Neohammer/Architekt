@@ -1,0 +1,191 @@
+{assign var='profilePrimary' value=$profile->_primary()}
+<nav class="page-breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Profils</a></li>
+        <li class="breadcrumb-item"><a href="/Profile/list">Liste</a></li>
+        <li class="breadcrumb-item active">Voir {$profile->labelOption()}</li>
+    </ol>
+</nav>
+
+
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-header">
+                <h1 class=" h1">{$profile->labelOption()}</h1>
+            </div>
+            <div class="card-body">
+                Application : {$profile->application()->label()}<br />
+                Type : {if $profile->_get('user')}Utilisateur{else}Utilisateur Application{/if}<br />
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+<form action="{$smarty.SERVER.REQUEST_URI}">
+    <div class="col grid-margin">
+        {foreach from=$configuration item=controllerConfiguration}
+        {assign var='controller' value=$controllerConfiguration.controller}
+        {assign var='accesses' value=$controllerConfiguration.accesses}
+        {assign var='settings' value=$controllerConfiguration.settings}
+        {assign var='settingsCurrent' value=$controllerConfiguration.settingsCurrent}
+        <div class="card mb-2">
+            <div class="card-header">
+                <h4> {$controller->label()} ({$controller->_get('name_system')})</h4>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1">
+                    <div class="col grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i data-feather="lock" class="icon-lg mb-2"></i> Autorisations</h5>
+                            </div>
+                            <div class="card-body">
+                                {if !$accesses}
+                                <div class="alert alert-warning">
+                                    <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                                    Aucune autorisation définie
+                                </div>
+                                {else}
+                                <div class="row row-cols-1 {if count($accesses)>1}row-cols-lg-3{/if}">
+                                    {foreach from=$accesses item=accessInfo}
+                                    <div class="card mb-3">
+                                        <div class="card-header">
+                                            {if $accessInfo->code === 'none'}
+                                            <p class="mb-2"><span class="text-muted"><strong>{$accessInfo->name}</strong> : {$accessInfo->description}</span></p>
+                                            {else}
+                                                <div class="form-check form-switch mb-2">
+                                                    <input type="hidden" name="access[{$controller->_primary()}][{$accessInfo->code}]" value="0">
+                                                    <input type="checkbox" class="form-check-input" name="access[{$controller->_primary()}][{$accessInfo->code}]" value="1" id="access_{$controller->_primary()}_{$accessInfo->code}"
+                                                           {if $profile->allowController($controller, $accessInfo->code)} checked{/if}>
+                                                    <label class="form-check-label h6" for="access_{$controller->_primary()}_{$accessInfo->code}">{$accessInfo->name}</label>
+                                                </div>
+                                                <p class="mb-2"><span class="text-muted">{$accessInfo->description}</span></p>
+                                            {/if}
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="col mb-3">
+                                                {if !array_key_exists($accessInfo->code,$controllerConfiguration.methodsByAccesses)}
+                                                <div class="alert alert-warning">
+                                                    <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                                                    Aucune action concernée
+                                                </div>
+                                                {else}
+                                                <ul class="list-group">
+                                                    {foreach from=$controllerConfiguration.methodsByAccesses[$accessInfo->code] item=methodName}
+                                                        {assign var=method value=$controllerConfiguration.methods[$methodName]}
+                                                        <li class="list-group-item">
+                                                            {if $method.logged}
+                                                                <i data-feather="lock" class="text-danger icon-lg mb-2"></i>
+                                                            {else}
+                                                                <i data-feather="unlock" class="text-success icon-lg mb-2"></i>
+                                                            {/if}
+                                                            {if $method.settingDependencies}
+                                                                <i data-feather="info" class="text-warning icon-lg mb-2"></i>
+                                                            {/if}
+                                                            {$method.description}
+                                                        </li>
+                                                    {/foreach}
+                                                </ul>
+                                                {/if}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {/foreach}
+                                </div>
+                                {/if}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col grid-margin stretch-card">
+                        <div class="card">
+                            <div class="card-header"><h5><i data-feather="settings" class="icon-lg mb-2"></i> Configuration Générale</h5></div>
+                            <div class="card-body">
+                                <div class="row row-cols-1 row-cols-lg-2">
+                                    {if !$settings}
+                                        <div class="alert alert-warning">
+                                            <i data-feather="alert-circle" class="icon-lg text-danger"></i>
+                                            Aucune configuration personnalisable
+                                        </div>
+                                    {else}
+                                        {foreach from=$settings item=setting}
+                                            {if !$setting->profileCanChange()}
+                                             <div class="mb-3">
+                                                {$setting->description} :
+                                                 <strong>
+                                                     {if $setting->isCheckbox()}
+                                                        {if $settingsCurrent->get($setting->code, $setting->subCode)}Actif{else}Inactif{/if}
+                                                     {else}
+                                                        {$settingsCurrent->get($setting->code, $setting->subCode)}
+                                                    {/if}
+                                                 </strong>
+                                             </div>
+                                            {else}
+                                                <input type="hidden" name="settings[{$controller->_primary()}][{$setting->code}][{$setting->subCode}][default]" value="{$setting->default}" />
+                                                {assign var="profileValue" value=$profile->settings()->get($controller,$setting->code,$setting->subCode)}
+                                                {if $setting->isCustomText()}
+                                                <div class="mb-3">
+                                                    <label for="settings_{$controller->_primary()}_{$setting->code}_{$setting->subCode}-input" class="form-label">{$setting->description}</label>
+                                                    <input type="text" id="settings_{$controller->_primary()}_{$setting->code}_{$setting->subCode}-input" class="form-control" name="settings[{$controller->_primary()}][{$setting->code}][{$setting->subCode}][value]" placeholder="{$setting->default}">
+                                                </div>
+                                                {else}
+                                                <div class="mb-3">
+
+                                                    <label class="form-label" for="settings_{$controller->_primary()}_{$setting->code}_{$setting->subCode}-input">{$setting->description}</label>
+                                                    <select class="form-select mb-3"
+                                                            name="settings[{$controller->_primary()}][{$setting->code}][{$setting->subCode}][value]"
+                                                            id="settings_{$controller->_primary()}_{$setting->code}_{$setting->subCode}-input"
+                                                    >
+                                                        {if $setting->isCheckbox()}
+                                                            <option value="0" {if $profileValue == "0"} selected{/if}>Désactivé{if !$setting->default} (défaut){/if}</option>
+                                                            <option value="1" {if $profileValue == "1"} selected{/if}>Activé{if $setting->default} (défaut){/if}</option>
+                                                        {else}
+                                                            {foreach from=$setting->values key=key item=value}
+                                                                <option value="{$key}" {if $profileValue == $value} selected{/if}>{$value}{if $setting->default === $key} (défaut){/if}</option>
+                                                            {/foreach}
+                                                        {/if}
+                                                    </select>
+                                                </div>
+                                                {/if}
+                                            {/if}
+                                        {/foreach}
+                                    {/if}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/foreach}
+    </div>
+    <nav class="navbar fixed-bottom">
+        <div class="container-fluid">
+            <div class="row" style="width:100%">
+                <div class="col text-start">
+
+                    <a href="{$CONTROLLER->__uri("view/$profilePrimary")}" class="btn btn-primary" confirm="Les informations modifiées seront perdues. Continuez ?">
+                        <i data-feather="eye" class="icon-sm me-2"></i> Voir
+                    </a>
+                    <a href="{$CONTROLLER->__uri('addModal')}" eventType="modal" class="btn btn-primary"  confirm="Les informations modifiées seront perdues. Continuez ?">
+                        <i data-feather="plus" class="icon-sm me-2"></i> Ajouter
+                    </a>
+                    {if !$profile->_get('default')}
+                    <a href="{$CONTROLLER->__uri("defaultModal/$profilePrimary")}" eventType="modal" class="btn btn-primary"  confirm="Les informations modifiées seront perdues. Continuez ?">
+                        <i data-feather="edit" class="icon-sm me-2"></i> Utiliser par défaut
+                    </a>
+                    {/if}
+                </div>
+
+                <div class="col text-end">
+                    <button class="btn btn-primary ">
+                        <i data-feather="save"></i> Sauvegarder
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+</form>
+

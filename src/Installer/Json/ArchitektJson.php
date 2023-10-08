@@ -2,8 +2,6 @@
 
 namespace Architekt\Installer\Json;
 
-use stdClass;
-
 class ArchitektJson
 {
     private string $path;
@@ -11,7 +9,8 @@ class ArchitektJson
 
     private function __construct(
         string $path
-    ){
+    )
+    {
         $this->path = $path;
         $this->content = $this->read();
     }
@@ -19,8 +18,8 @@ class ArchitektJson
 
     public static function init(string $path): static
     {
-        if(!file_exists($file = $path.DIRECTORY_SEPARATOR.'architekt.json')){
-            file_put_contents($file , '{}');
+        if (!file_exists($file = $path . DIRECTORY_SEPARATOR . 'architekt.json')) {
+            file_put_contents($file, '{}');
         }
 
         return new self($path);
@@ -53,7 +52,7 @@ class ArchitektJson
 
     public function applications(string $project): ?array
     {
-        if(!$this->project($project)){
+        if (!$this->project($project)) {
             return [];
         }
 
@@ -67,12 +66,12 @@ class ArchitektJson
 
     public function isCdnApplication(string $project, string $application): bool
     {
-        return ($this->application($project, $application)['cdn'] ?? false) === true;
+        return ($this->application($project, $application)['type'] ?? false) === 'cdn';
     }
 
     public function cdnApplication(string $project, string $application): ?string
     {
-        return is_string($this->application($project, $application)['cdn'] ?? false) ? $this->application($project, $application)['cdn'] : null;
+        return $this->application($project, $application)['cdn'] ?? null;
     }
 
     public function applicationEnvironments(string $project, string $application): ?array
@@ -88,10 +87,10 @@ class ArchitektJson
     public function applicationUrls(string $project, string $application, string $environment): array
     {
         $urls = $this->application($project, $application)['environments'][$environment] ?? null;
-        if(!$urls){
+        if (!$urls) {
             return [];
         }
-        if(!is_array($urls)){
+        if (!is_array($urls)) {
             return [$urls];
         }
 
@@ -101,6 +100,17 @@ class ArchitektJson
     public function applicationTheme(string $project, string $application): ?string
     {
         return $this->application($project, $application)['theme'] ?? null;
+    }
+
+
+    public function applicationType(string $project, string $application): ?string
+    {
+        return $this->application($project, $application)['type'] ?? null;
+    }
+
+    public function applicationAdministration(string $project, string $application): ?string
+    {
+        return $this->application($project, $application)['administration'] ?? null;
     }
 
     public function applicationUser(string $project, string $application): ?string
@@ -123,7 +133,7 @@ class ArchitektJson
 
     public function read(): array
     {
-        if(!file_exists($file = $this->path.DIRECTORY_SEPARATOR.'architekt.json')){
+        if (!file_exists($file = $this->path . DIRECTORY_SEPARATOR . 'architekt.json')) {
             return [];
         }
 
