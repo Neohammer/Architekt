@@ -8,6 +8,10 @@ use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
 use Users\ApplicationUserInterface;
 
+if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
+    define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
+}
+
 class {$APPLICATION_USER_CAMEL} extends DBEntity implements ApplicationUserInterface
 {
     use DBEntityCache;
@@ -15,6 +19,7 @@ class {$APPLICATION_USER_CAMEL} extends DBEntity implements ApplicationUserInter
 
     const SESSION_NAME = '{$APPLICATION_USER_LOW}';
 
+    protected static ?string $_table_prefix = ARCHITEKT_DATATABLE_PREFIX;
     protected static ?string $_table = '{$APPLICATION_USER_LOW}';
 
     public function label(): string

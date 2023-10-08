@@ -4,10 +4,15 @@ namespace Users;
 
 use Architekt\DB\DBEntityCache;
 
+if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
+    define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
+}
+
 class User extends \Architekt\Auth\User
 {
     use DBEntityCache;
 
+    protected static ?string $_table_prefix = ARCHITEKT_DATATABLE_PREFIX;
     protected static ?string $_table = 'user';
 
     protected static string $_labelField = 'email';
