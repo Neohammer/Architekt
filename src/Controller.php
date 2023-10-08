@@ -7,11 +7,16 @@ use Architekt\Auth\Access\ControllerParser;
 use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
 
+if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
+    define('ARCHITEKT_DATATABLE_PREFIX', '');
+}
+
 class Controller extends DBEntity
 {
 
     use DBEntityCache;
 
+    protected static ?string $_table_prefix = ARCHITEKT_DATATABLE_PREFIX;
     protected static ?string $_table = 'controller';
 
     public function application(): Application

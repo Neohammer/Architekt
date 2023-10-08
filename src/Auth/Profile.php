@@ -9,10 +9,15 @@ use Architekt\DB\DBEntityCache;
 use Architekt\Utility\ProfileSettings;
 use Architekt\Utility\Settings;
 
+if(!defined('ARCHITEKT_DATATBLE_PREFIX')){
+    define('ARCHITEKT_DATATBLE_PREFIX' , '');
+}
+
 class Profile extends DBEntity
 {
     use DBEntityCache;
 
+    protected static ?string $_table_prefix = ARCHITEKT_DATATBLE_PREFIX;
     protected static ?string $_table = 'profile';
 
     public function labelOption(): string

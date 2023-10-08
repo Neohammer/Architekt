@@ -2,14 +2,20 @@
 
 namespace Architekt\Auth;
 
+
 use Architekt\Controller;
 use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
+
+if (!defined('ARCHITEKT_DATATBLE_PREFIX')) {
+    define('ARCHITEKT_DATATBLE_PREFIX', '');
+}
 
 class Access extends DBEntity
 {
     use DBEntityCache;
 
+    protected static ?string $_table_prefix = ARCHITEKT_DATATBLE_PREFIX;
     protected static ?string $_table = 'access';
 
     public function profile(): Profile
@@ -20,7 +26,7 @@ class Access extends DBEntity
     public static function add(
         Profile    $profile,
         Controller $controller,
-        string $code
+        string     $code
     ): void
     {
         (new Access())
@@ -48,7 +54,7 @@ class Access extends DBEntity
     public static function has(
         Profile    $profile,
         Controller $controller,
-        ?string     $access = null
+        ?string    $access = null
     ): bool
     {
         ($that = new static)->_search()
@@ -56,7 +62,7 @@ class Access extends DBEntity
             ->and($that, $controller)
             ->limit();
 
-        if($access){
+        if ($access) {
             $that->_search()
                 ->and($that, 'access', $access);
         }
