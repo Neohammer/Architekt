@@ -7,15 +7,15 @@ use Architekt\Controller;
 use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
 
-if (!defined('ARCHITEKT_DATATBLE_PREFIX')) {
-    define('ARCHITEKT_DATATBLE_PREFIX', '');
+if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
+    define('ARCHITEKT_DATATABLE_PREFIX', '');
 }
 
 class Access extends DBEntity
 {
     use DBEntityCache;
 
-    protected static ?string $_table_prefix = ARCHITEKT_DATATBLE_PREFIX;
+    protected static ?string $_table_prefix = ARCHITEKT_DATATABLE_PREFIX;
     protected static ?string $_table = 'access';
 
     public function profile(): Profile
