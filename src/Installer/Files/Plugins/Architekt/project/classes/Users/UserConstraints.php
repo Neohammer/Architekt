@@ -64,7 +64,7 @@ class UserConstraints extends BaseConstraints
 
             UserEvent::onCreate($user);
 
-            if (Settings::byApp()->is('account', 'create_login')) {
+            if (Settings::byApplication()->is('account', 'create_login')) {
                 self::forceLogin($user);
                 $successMessage = self::loginSuccessMessage($user);
             } else {
