@@ -139,7 +139,11 @@ class Plugin
             require($datatablesInstaller);
 
             if ($datatablesToInstall) {
+                $prefix = $this->project->databaseInfos('local')['prefix'] ?? '';
                 foreach ($datatablesToInstall as $datatable) {
+                    if ($prefix) {
+                        $datatable->prefix($prefix);
+                    }
                     DBConnexion::get()->datatableCreate($datatable);
                 }
             }
@@ -172,7 +176,7 @@ class Plugin
         }
 
         if ($controllersToInstall) {
-            echo implode(', ',array_keys($controllersToInstall))."\n";
+            echo implode(', ', array_keys($controllersToInstall)) . "\n";
             foreach ($controllersToInstall as $controllerCode => $controller) {
                 $this->installController($controllerCode, $controller);
             }
@@ -251,8 +255,13 @@ class Plugin
     private function datatablesCreate(): void
     {
         $connexion = DBConnexion::get();
+        $databaseInfos = $this->project->databaseInfos('local');
 
         foreach (self::datatablesRequired() as $datatable) {
+            $prefix = $databaseInfos['prefix'] ?? '';
+            if ($prefix) {
+                $datatable->prefix($prefix);
+            }
             if ($connexion->datatableExists($datatable)) {
                 Command::warning(sprintf('%s - Datatable %s already exists', $this->displayName(), $datatable->name()));
                 continue;

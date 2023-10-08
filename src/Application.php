@@ -9,7 +9,7 @@ use Architekt\Utility\ApplicationSettings;
 use Architekt\Utility\Settings;
 
 if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
-    define('ARCHITEKT_DATATABLE_PREFIX', '');
+    define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
 }
 
 class Application extends DBEntity

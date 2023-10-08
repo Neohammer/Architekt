@@ -5,7 +5,7 @@ namespace Architekt;
 use Architekt\DB\DBEntity;
 
 if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
-    define('ARCHITEKT_DATATABLE_PREFIX', '');
+    define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
 }
 
 class Project extends DBEntity

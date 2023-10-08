@@ -10,7 +10,7 @@ use Architekt\Utility\ProfileSettings;
 use Architekt\Utility\Settings;
 
 if(!defined('ARCHITEKT_DATATABLE_PREFIX')){
-    define('ARCHITEKT_DATATABLE_PREFIX' , '');
+    define('ARCHITEKT_DATATABLE_PREFIX' , 'at_');
 }
 
 class Profile extends DBEntity

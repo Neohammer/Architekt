@@ -138,17 +138,20 @@ class Project
         return $this->database();
     }
 
+    public function databaseInfos(string $environment): ?array
+    {
+        if ($databaseCode = $this->database()) {
+            return $this->architekt->database($environment, $databaseCode);
+        }
+
+        return null;
+    }
+
     private function databaseCreate(string $environment): ?array
     {
-        $databaseInfos = null;
-        if ($databaseCode = $this->database()) {
-            $databaseInfos = $this->architekt->database($environment, $databaseCode);
-            if (!$databaseInfos) {
-                Command::info(sprintf('%s - Database %s not found, please check json file', $this->code, $databaseCode));
-                return null;
-            }
-        }
-        else{
+        $databaseInfos = $this->databaseInfos($environment);
+        if (!$databaseInfos) {
+            Command::info(sprintf('%s - Database infos not found, please check json file', $this->code));
             return null;
         }
 
@@ -174,6 +177,10 @@ class Project
 
         Command::error(sprintf('%s - Fail to create database %s', $this->code, $databaseInfos['name']));
 
+        if ($prefix = $databaseInfos['prefix'] ?? '') {
+            !defined('ARCHITEKT_DATATABLE_PREFIX') && define('ARCHITEKT_DATATABLE_PREFIX' , $prefix);
+        }
+
         return null;
     }
 
@@ -182,8 +189,14 @@ class Project
     {
 
         $connexion = DBConnexion::get();
+        $databaseInfos = $this->databaseInfos($environment);
 
         foreach(self::datatablesRequired() as $datatable){
+
+            $prefix = $databaseInfos['prefix'] ?? '';
+            if($prefix){
+                $datatable->prefix($prefix);
+            }
             if($connexion->datatableExists($datatable)){
                 Command::warning(sprintf('%s - Datatable %s already exists', $this->code, $datatable->name()));
                 continue;
@@ -251,7 +264,8 @@ class Project
             'PROJECT_CAMEL' => $this->architekt->toCamelCase($this->code),
             'PROJECT_NAME' => $name = ($this->architekt->json->project($this->code)['name'] ?? 'NoName'),
             'PROJECT_NAME_CAMEL' => $this->architekt->toCamelCase($name),
-            'APPLICATIONS_DOMAINS_BY_ENVIRONMENT' => $this->domainsByEnvironment()
+            'APPLICATIONS_DOMAINS_BY_ENVIRONMENT' => $this->domainsByEnvironment(),
+            'DATATABLE_PREFIX' => $this->databaseInfos('local')['prefix'] ?? null,
         ];
     }
 

@@ -8,7 +8,7 @@ use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
 
 if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
-    define('ARCHITEKT_DATATABLE_PREFIX', '');
+    define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
 }
 
 class Plugin extends DBEntity

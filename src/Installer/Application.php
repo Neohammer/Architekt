@@ -90,7 +90,7 @@ class Application
 
     public function install(string $environment): void
     {
-        $this->datatablesCreate();
+        $this->datatablesCreate($environment);
 
         $this->initEntity();
 
@@ -106,11 +106,21 @@ class Application
         }
     }
 
-    private function datatablesCreate(): void
+    private function datatablesCreate(string $environment): void
     {
         $connexion = DBConnexion::get();
+        $databaseInfos = $this->project->databaseInfos($environment);
+
+        if(!$databaseInfos){
+            return ;
+        }
 
         foreach (self::datatablesRequired() as $datatable) {
+            $prefix = $databaseInfos['prefix'] ?? '';
+            if($prefix){
+                $datatable->prefix($prefix);
+            }
+
             if ($connexion->datatableExists($datatable)) {
                 Command::warning(sprintf('%s - Datatable %s already exists', $this->displayName(), $datatable->name()));
                 continue;

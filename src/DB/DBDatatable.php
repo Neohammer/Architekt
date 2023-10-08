@@ -21,6 +21,13 @@ class DBDatatable implements DBDatatableInterface
         return $this->name;
     }
 
+    public function prefix(string $prefix): static
+    {
+        $this->name = $prefix.$this->name;
+
+        return $this;
+    }
+
     public function addColumn(DBDatatableColumn $column): static
     {
         $this->columns[] = $column;

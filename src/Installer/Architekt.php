@@ -106,6 +106,7 @@ class Architekt
         if (!array_key_exists($environment, $databases[$name])) {
             return null;
         }
+        $databases[$name][$environment]['prefix'] ??= 'at_';
 
         return $databases[$name][$environment];
     }
@@ -190,61 +191,6 @@ class Architekt
             ->directoryCreate(
                 $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode.DIRECTORY_SEPARATOR.$controllerSubCode
             );
-    }
-
-    private function generateDatatablesRequired(): void
-    {
-
-        $datatableApplication = (new DBDatatable('application'))
-            ->addColumn(DBDatatableColumn::buildAutoincrement())
-            ->addColumn(DBDatatableColumn::buildString('name', 100))
-            ->addColumn(DBDatatableColumn::buildString('name_system', 50))
-            ->toArray();
-
-        $datatablePlugin = (new DBDatatable('plugin'))
-            ->addColumn(DBDatatableColumn::buildAutoincrement())
-            ->addColumn(DBDatatableColumn::buildInt('application_id', 5))
-            ->addColumn(DBDatatableColumn::buildString('name', 100))
-            ->toArray();
-
-        $datatableController = (new DBDatatable('controller'))
-            ->addColumn(DBDatatableColumn::buildAutoincrement())
-            ->addColumn(DBDatatableColumn::buildInt('plugin_id', 5))
-            ->addColumn(DBDatatableColumn::buildString('name', 100))
-            ->addColumn(DBDatatableColumn::buildString('name_system', 50))
-            ->toArray();
-
-
-        $datatableProfile = (new DBDatatable('profile'))
-            ->addColumn(DBDatatableColumn::buildAutoincrement())
-            ->addColumn(DBDatatableColumn::buildInt('plugin_id', 3))
-            ->addColumn(DBDatatableColumn::buildString('name', 60))
-            ->addColumn(DBDatatableColumn::buildString('settings', 10000, true))
-            ->addColumn(DBDatatableColumn::buildBoolean('default')->setDefault(0))
-            ->toArray();
-
-
-        $datatableUser = (new DBDatatable('user'))
-            ->addColumn(DBDatatableColumn::buildAutoincrement())
-            ->addColumn(DBDatatableColumn::buildInt('profile_id', 3))
-            ->addColumn(DBDatatableColumn::buildString('email', 254))
-            ->addColumn(DBDatatableColumn::buildString('password', 32))
-            ->addColumn(DBDatatableColumn::buildString('hash', 32))
-            ->addColumn(DBDatatableColumn::buildBoolean('confirmed')->setDefault(0))
-            ->addColumn(DBDatatableColumn::buildBoolean('active')->setDefault(0))
-            ->toArray();
-
-        $jsons = [
-            'datatables' => [
-                'project' => $datatableApplication,
-                'plugin' => $datatablePlugin,
-                'controller' => $datatableController,
-                'profile' => $datatableProfile,
-                'user' => $datatableUser,
-            ]
-        ];
-
-        file_put_contents($this->directoryFiles() . DIRECTORY_SEPARATOR . 'installer_requests.json', json_encode($jsons));
     }
 
     public function templateVars(): array
