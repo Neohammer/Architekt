@@ -62,4 +62,13 @@ class Command
             $pluginName,
         );
     }
+
+    public static function updateWebVendors(
+        string $path,
+        string $projectCode,
+        string $applicationCode
+    )
+    {
+        Architekt::init($path)->updateWebVendors($projectCode, $applicationCode);
+    }
 }

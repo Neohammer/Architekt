@@ -95,12 +95,12 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
                     $select[] = sprintf(
                         '%s.%s%s',
                         self::quote($item->datatable()),
-                        self::quote($item->name()),
+                        $item->name() === '*' ? '*' : self::quote($item->name()),
                         $item->alias() ? sprintf(' AS "%s"', $item->alias()) : ''
                     );
                 }
             } else {
-                $select = self::quote($this->select);
+                $select = $this->select === '*' ? '*' : self::quote($this->select);
             }
         } else {
             $select = ['*'];

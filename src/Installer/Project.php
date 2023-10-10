@@ -210,7 +210,7 @@ class Project
 
     public function build(): void
     {
-        Command::info(sprintf('%s - build', $this->code));
+       // Command::info(sprintf('%s - build', $this->code));
         $this->directories = [
             'project' => $this->directory(),
             'classes' => $this->directoryClasses(),

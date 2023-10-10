@@ -111,13 +111,13 @@ class Application
         $connexion = DBConnexion::get();
         $databaseInfos = $this->project->databaseInfos($environment);
 
-        if(!$databaseInfos){
-            return ;
+        if (!$databaseInfos) {
+            return;
         }
 
         foreach (self::datatablesRequired() as $datatable) {
             $prefix = $databaseInfos['prefix'] ?? '';
-            if($prefix){
+            if ($prefix) {
                 $datatable->prefix($prefix);
             }
 
@@ -196,21 +196,20 @@ class Application
             $settings->setValue('general', 'appUser', $this->user());
         }
 
-        if($this->isAdmin){
-            $settings->setValue('account' , 'create' , true);
-            $settings->setValue('account' , 'create_confirm' , false);
-            $settings->setValue('account' , 'create_login' , true);
-        }
-        elseif(!$this->isCdn){
-            $settings->setValue('account' , 'create' , false);
-            $settings->setValue('account' , 'create_confirm' , true);
-            $settings->setValue('account' , 'create_login' , false);
+        if ($this->isAdmin) {
+            $settings->setValue('account', 'create', true);
+            $settings->setValue('account', 'create_confirm', false);
+            $settings->setValue('account', 'create_login', true);
+        } elseif (!$this->isCdn) {
+            $settings->setValue('account', 'create', false);
+            $settings->setValue('account', 'create_confirm', true);
+            $settings->setValue('account', 'create_login', false);
         }
 
         $this->entity()->_save();
 
         /** @var Plugin $plugin */
-        foreach($this->plugins as $plugin){
+        foreach ($this->plugins as $plugin) {
             $plugin->buildSettings();
         }
     }
@@ -223,7 +222,7 @@ class Application
 
     private function build(): void
     {
-        Command::info(sprintf('%s build', $this->displayName()));
+        //Command::info(sprintf('%s build', $this->displayName()));
 
 
         $this->isAdmin = $this->type() === 'administration';
@@ -244,14 +243,14 @@ class Application
             ];
 
             $this->plugins['Architekt'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'Architekt');
-             //$this->plugins['ArchitektNotifier'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektNotifier');
+            //$this->plugins['ArchitektNotifier'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektNotifier');
             if ($this->hasCustomUser()) {
                 $this->plugins['ArchitektApplicationUser'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektApplicationUser');
             }
             //$this->plugins['ArchitektProfiles'] = \Architekt\Installer\Plugin::init($this->architekt, $this->project, $this, 'ArchitektProfiles');
 
             if (!$this->cdnUsed) {
-                $this->webVendors = $this->webVendors();
+                $this->webVendors = $this->webVendorsArray();
                 if ($theme = $this->theme()) {
                     $this->themes[] = $theme;
                 }
@@ -262,7 +261,7 @@ class Application
             $applications = $this->project->applicationsWithCdn($this->code);
             if ($applications) {
                 foreach ($applications as $application) {
-                    $this->webVendors += ($application->webVendors() ?? []);
+                    $this->webVendors += ($application->webVendorsArray() ?? []);
                     if ($theme = $application->theme()) {
                         $this->themes[] = $theme;
                     }
@@ -288,7 +287,7 @@ class Application
 
     }
 
-    private function displayName(): string
+    public function displayName(): string
     {
         return sprintf(
             '%s:%s -',
@@ -308,42 +307,7 @@ class Application
             $applications = [$this];
         }
 
-        if ($applications) {
-            $files = ['javascripts' => [], 'stylesheets' => [], 'others' => []];
-            foreach ($applications as $application) {
-                $applicationFiles = $application->webVendorsFiles();
-                $files['javascripts'] += $applicationFiles['javascripts'];
-                $files['stylesheets'] += $applicationFiles['stylesheets'];
-                $files['others'] += $applicationFiles['others'];
-            }
-            if ($files['javascripts']) {
-                $files['javascripts'] = array_unique($files['javascripts']);
-                foreach ($files['javascripts'] as $file) {
-                    $this->fileCopy(
-                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.js',
-                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.js'
-                    );
-                }
-            }
-            if ($files['stylesheets']) {
-                $files['stylesheets'] = array_unique($files['stylesheets']);
-                foreach ($files['stylesheets'] as $file) {
-                    $this->fileCopy(
-                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.css',
-                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.css'
-                    );
-                }
-            }
-            if ($files['others']) {
-                $files['others'] = array_unique($files['others']);
-                foreach ($files['others'] as $file) {
-                    $this->fileCopy(
-                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file,
-                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file
-                    );
-                }
-            }
-        }
+        $this->webVendorsFilesCreate($applications);
 
         if ($this->themes) {
             foreach ($this->themes as $theme) {
@@ -437,7 +401,7 @@ class Application
             ->assign($this->templateVars());
     }
 
-    public function webVendors(): ?array
+    public function webVendorsArray(): ?array
     {
         $webVendors = $this->architekt->json->applicationWebVendors($this->project->code, $this->code) ?? [];
 
@@ -471,7 +435,7 @@ class Application
 
     public function webVendorsFiles(): ?array
     {
-        $webVendors = $this->webVendors();
+        $webVendors = $this->webVendorsArray();
         $javascripts = $styleSheets = $others = [];
 
         if ($webVendors) {
@@ -509,6 +473,28 @@ class Application
             'stylesheets' => $styleSheets,
             'others' => $others
         ];
+    }
+
+    public function updateWebVendors(): void
+    {
+        if (!$this->isCdn && $this->cdnUsed) {
+
+            $this->project->applications[$this->cdnUsed]->updateWebVendors();
+
+            return;
+        }
+
+        if (!$this->isCdn) {
+            $webVendorsCollection = $this->webVendors([$this]);
+        } else {
+            $webVendorsCollection = $this->webVendors($this->project->applicationsWithCdn($this->code));
+        }
+
+        $webVendorsCollection->update();
+
+        Command::info(sprintf("%s webVendors Updated", $this->displayName()));
+        exit();
+
     }
 
     public function themeFiles(): array
@@ -602,5 +588,79 @@ class Application
     private function nameThemes(): string
     {
         return 'themes';
+    }
+
+    /**
+     * @param array $applications
+     * @return void
+     */
+    public function webVendorsFilesCreate(array $applications): void
+    {
+        if ($applications) {
+            $files = ['javascripts' => [], 'stylesheets' => [], 'others' => []];
+            foreach ($applications as $application) {
+                $applicationFiles = $application->webVendorsFiles();
+                $files['javascripts'] += $applicationFiles['javascripts'];
+                $files['stylesheets'] += $applicationFiles['stylesheets'];
+                $files['others'] += $applicationFiles['others'];
+            }
+            if ($files['javascripts']) {
+                $files['javascripts'] = array_unique($files['javascripts']);
+                foreach ($files['javascripts'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.js',
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.js'
+                    );
+                }
+            }
+            if ($files['stylesheets']) {
+                $files['stylesheets'] = array_unique($files['stylesheets']);
+                foreach ($files['stylesheets'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file . '.css',
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file . '.css'
+                    );
+                }
+            }
+            if ($files['others']) {
+                $files['others'] = array_unique($files['others']);
+                foreach ($files['others'] as $file) {
+                    $this->fileCopy(
+                        $this->architekt->directoryFilesWebVendors() . DIRECTORY_SEPARATOR . $file,
+                        $this->directoryWebVendors() . DIRECTORY_SEPARATOR . $file
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * @param Application[] $applications
+     */
+    public function webVendors(array $applications): WebVendorCollection
+    {
+        $files = ['javascripts' => [], 'stylesheets' => [], 'others' => []];
+        $webVendorCollection = new WebVendorCollection(
+            $this->architekt,
+            $this->project,
+            $this,
+            $this->architekt->directoryFilesWebVendors(),
+            $this->directoryWebVendors()
+        );
+
+
+        if ($applications) {
+            foreach ($applications as $application) {
+
+                $webVendorCollection->add(
+                    $this->architekt->json->applicationWebVendors(
+                        $this->project->code,
+                        $application->code
+                    )
+                );
+            }
+        }
+
+        return $webVendorCollection;
     }
 }

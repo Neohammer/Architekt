@@ -4,7 +4,7 @@ namespace Architekt\Installer;
 
 trait DirectoryTrait
 {
-    private bool $directoryTraitDebug = true;
+    private bool $directoryTraitDebug = false;
 
     private function directoriesCreate(): self
     {

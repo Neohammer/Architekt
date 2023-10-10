@@ -81,6 +81,12 @@ class WebVendorsJson
         return array_unique(array_merge($requiredWebVendors,$webVendors));
     }
 
+    /** @return string[] */
+    public function prerequisites(string $webVendor): array
+    {
+        return $this->webVendor($webVendor)['require'] ?? [];
+    }
+
 
     public static function init(string $path): static
     {

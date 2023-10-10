@@ -46,11 +46,18 @@ class MySQLRecordUpdate extends MySQLTools implements DBQueryBuilderInterface
         foreach ($this->DBDatatableRow->values() as $field => $value) {
             if ($value !== null) {
                 $this->params[self::prepareFormat($field)] = $value;
+                $this->fields[] = sprintf(
+                    '%s=%s',
+                    self::quote($field),
+                    self::prepareFormat($field)
+                );
+
+                continue;
             }
+
             $this->fields[] = sprintf(
-                '%s=%s',
-                self::quote($field),
-                self::prepareFormat($field)
+                '%s=NULL',
+                self::quote($field)
             );
         }
     }

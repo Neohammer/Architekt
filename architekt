@@ -21,6 +21,23 @@ if (array_key_exists(1, $_SERVER['argv'])) {
         case "toJson":
             Command::toJson(ARCHITEKT_COMPOSER_INSTALL_DIR);
             break;
+        case "WebVendors":
+
+            switch($_SERVER['argv'][2]){
+                case "update":
+                    Command::updateWebVendors(
+                        ARCHITEKT_COMPOSER_INSTALL_DIR,
+                        $_SERVER['argv'][3],
+                        $_SERVER['argv'][4],
+                    );
+                    break;
+                default:
+
+                    die('unknown webVendors subcommand');
+                    break;
+            }
+
+            break;
         case "addController":
             Command::addController(
                 ARCHITEKT_COMPOSER_INSTALL_DIR,

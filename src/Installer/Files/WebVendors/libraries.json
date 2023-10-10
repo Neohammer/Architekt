@@ -1,6 +1,9 @@
 {
   "architekt": {
-    "js" : ["motor","modal"],
+    "js": [
+      "motor",
+      "modal"
+    ],
     "require": [
       "jquery",
       "sweetalert2",
@@ -10,36 +13,43 @@
     ]
   },
   "datatables.net": {
-    "js" : "jquery.dataTables",
-    "other" : "datatables.fr.json",
-    "require" : [
+    "js": "jquery.dataTables",
+    "other": "datatables.fr.json",
+    "require": [
       "jquery"
     ]
   },
   "datatables.net-bs5": {
-    "js" : "dataTables.bootstrap5",
+    "js": "dataTables.bootstrap5",
     "css": "dataTables.bootstrap5",
-    "require" : [
+    "require": [
       "datatables.net"
     ]
   },
   "feather-icons": {
-    "js" : "feather.min"
+    "js": "feather.min"
   },
   "jquery": {
-    "js" : "jquery.min"
+    "js": "jquery.min"
   },
-  "sweetalert2" : {
-    "js" : "sweetalert2.min",
+  "jquery-tags-input": {
+    "js": "jquery.tagsinput.min",
+    "css": "jquery.tagsinput.min",
+    "require": [
+      "jquery"
+    ]
+  },
+  "sweetalert2": {
+    "js": "sweetalert2.min",
     "css": "sweetalert2.min"
   },
-  "perfect-scrollbar" : {
-    "js" : "perfectScrollbar.min"
+  "perfect-scrollbar": {
+    "js": "perfectScrollbar.min"
   },
-  "bootstrap" : {
-    "js" : "bootstrap.min"
+  "bootstrap": {
+    "js": "bootstrap.min"
   },
-  "popper" : {
-    "js" : "popper.min"
+  "popper": {
+    "js": "popper.min"
   }
 }

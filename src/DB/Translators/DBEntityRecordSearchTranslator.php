@@ -40,34 +40,47 @@ class DBEntityRecordSearchTranslator
         return $this;
     }
 
-    public function leftDatatable(DBEntityInterface $entity1, DBEntityInterface $entity2): static
+    public function leftDatatable(DBEntityInterface $entity1, DBEntityInterface $entity2, mixed $filters = null): static
     {
+        $recordRows[] = (new DBRecordRow($entity1->_table()))->and(
+            $entity1->_primaryKey(), new DBRecordColumn($entity2->_table(), $entity1->_strangerKey()));
+
+        if ($filters) {
+            if (!is_array(current($filters))) {
+                $filters = [$filters];
+            }
+            foreach ($filters as $filter) {
+                $method = $filter[0];
+                $target = $filter[1];
+                unset($filter[0], $filter[1]);
+
+                $extractedFilter = $this->extractFilter($target, array_values($filter));
+
+                $table = $extractedFilter[0];
+                unset($extractedFilter[0]);
+                $extractedFilter = array_values($extractedFilter);
+
+                $recordRows[] = (new DBRecordRow($table))->$method(...$extractedFilter);
+            }
+        }
+
         $this->search->datatable(
             new DBDatatable($entity2->_table()),
-            (new DBRecordRow($entity1->_table()))->and(
-                $entity1->_primaryKey() , new DBRecordColumn($entity2->_table(), $entity1->_strangerKey()))
+            $recordRows
         );
 
         return $this;
     }
 
-    public function filter(DBEntityInterface $entity, string $method, array $args): static
+    private function extractFilter(DBEntityInterface $entity, array $args): array
     {
         if (sizeof($args) === 0) {
             if ($entity->_isLoaded()) {
                 if ($this->entity->_isSameClass($entity)) {
-                    $this->search->filter(
-                        (new DBRecordRow($entity->_table()))
-                            ->$method($entity->_primaryKey(), $entity->_primary())
-                    );
-                } else {
-                    $this->search->filter(
-                        (new DBRecordRow($entity->_table()))
-                            ->$method($entity->_strangerKey(), $entity->_primary())
-                    );
+                    return [$entity->_table(), $entity->_primaryKey(), $entity->_primary()];
                 }
 
-                return $this;
+                return [$entity->_table(), $entity->_strangerKey(), $entity->_primary()];
             }
 
             throw new MissingConfigurationException('RecordSearch with 1 param not supported (only for loaded entity)');
@@ -75,55 +88,65 @@ class DBEntityRecordSearchTranslator
 
         if (sizeof($args) === 1) {
             if (is_array($args[0])) {
+                $return = [];
                 foreach ($args[0] as $key => $value) {
-                    $this->search->filter(
-                        (new DBRecordRow($entity->_table()))
-                            ->$method($key, $value)
-                    );
+                    $return[] = [$entity->_table(), $key, $value];
                 }
 
-                return $this;
+                return $return;
             } else {
-                if($args[0] instanceof DBEntity){
-
-                    $this->search->filter(
-                        (new DBRecordRow($entity->_table()))->$method($args[0]->_strangerKey(), $args[0]->_primary())
-                    );
-
-                    return $this;
+                if ($args[0] instanceof DBEntity) {
+                    return [$entity->_table(), $args[0]->_strangerKey(), $args[0]->_primary()];
                 }
 
-                $this->search->filter(
-                    (new DBRecordRow($entity->_table()))->$method($entity->_primaryKey(), $args[0])
-                );
-
-                return $this;
+                return [$entity->_table(), $entity->_primaryKey(), $args[0]];
             }
         }
 
         if (sizeof($args) === 2) {
 
             if ($args[0] instanceof DBEntityInterface) {
+
+                if ($args[1] instanceof DBEntityInterface) {
+                    return [$args[0]->_table(), $args[0]->_primaryKey(), $args[1]->_strangerKey()];
+                }
+
                 throw new MissingConfigurationException('RecordSearch with 2nd param to entity not supported when only 3 params given');
-            } else {
-                $this->search->filter(
-                    (new DBRecordRow($entity->_table()))
-                        ->$method($args[0], $args[1])
-                );
             }
 
-            return $this;
+            return [$entity->_table(), $args[0], $args[1]];
         }
 
         var_dump(func_get_args());
         throw new MissingConfigurationException(sprintf('RecordSearch with %s argument(s) not supported', sizeof($args)));
+    }
+
+    public function filter(DBEntityInterface $entity, string $method, array $args): static
+    {
+        $filters = $this->extractFilter($entity, $args);
+        if (is_array($filters[0])) {
+            foreach ($filters as $subFilter) {
+                $table = $subFilter[0];
+                unset($subFilter[0]);
+                $this->search->filter(
+                    (new DBRecordRow($table))
+                        ->$method(...array_values($subFilter))
+                );
+            }
+        }
+        $table = $filters[0];
+        unset($filters[0]);
+        $this->search->filter(
+            (new DBRecordRow($table))
+                ->$method(...array_values($filters))
+        );
 
         return $this;
     }
 
-    public function select(DBRecordColumn $DBRecordColumn): static
+    public function select(DBEntity $entity, ?string $field = '*'): static
     {
-        $this->search->select($DBRecordColumn);
+        $this->search->select(new DBRecordColumn($entity->_table(), $field));
 
         return $this;
     }

@@ -76,7 +76,7 @@ class Architekt
 
     private function build(): void
     {
-        Command::info(sprintf('%s - build', 'architekt'));
+        //Command::info(sprintf('%s - build', 'architekt'));
 
         $this->directories = [
             'cache' => $this->directoryCache(),
@@ -265,5 +265,20 @@ class Architekt
     public function toCamelCase(string $string): string
     {
         return ucfirst($string);
+    }
+
+    public function updateWebVendors(string $projectCode, string $applicationCode)
+    {
+        if(!($project = $this->projects[$projectCode] ?? null)){
+            Command::error(sprintf('Unknown project %s',$projectCode));
+            exit();
+        }
+        if(!($application = $project->applications[$applicationCode] ?? null)){
+            Command::error(sprintf('Unknown application %s on project %s',$applicationCode, $projectCode ));
+            exit();
+        }
+
+        $application->updateWebVendors();
+
     }
 }

@@ -28,8 +28,12 @@ class BaseConstraints
     }
 
 
-    public static function isEmptyString(string $value): bool
+    public static function isEmptyString(?string $value): bool
     {
+        if($value === null){
+            return true;
+        }
+
         return strlen(trim($value)) === 0;
     }
 
