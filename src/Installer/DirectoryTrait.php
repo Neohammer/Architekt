@@ -108,7 +108,7 @@ trait DirectoryTrait
                     $template->fetch($fileTemplate)
                 );
             } catch (\Error|\Exception $e) {
-                print_r(array_keys($this->controllers));
+                //print_r(array_keys($this->controllers));
                 Command::error(sprintf('%s - %s FAIL', $this->code ?? 'architekt', $file));
                 Command::error(sprintf('%s - %s FAIL', $this->code ?? 'architekt',$fileTemplate));
                 Command::error($e->getMessage());

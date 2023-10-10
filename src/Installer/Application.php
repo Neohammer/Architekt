@@ -101,6 +101,7 @@ class Application
 
         Command::info(sprintf('%s:%s - Install plugins', $this->project->code, $this->code));
 
+        /** @var Plugin $plugin */
         foreach ($this->plugins as $plugin) {
             $plugin->install();
         }
@@ -475,11 +476,17 @@ class Application
         ];
     }
 
-    public function updateWebVendors(): void
+    public function updateWebVendors(string $environment): void
     {
         if (!$this->isCdn && $this->cdnUsed) {
+            $this->project->applications[$this->cdnUsed]->updateWebVendors($environment);
 
-            $this->project->applications[$this->cdnUsed]->updateWebVendors();
+            $this->initEntity();
+
+            /** @var Plugin $plugin */
+            foreach($this->plugins as $plugin){
+                $plugin->updateWebVendors($environment);
+            }
 
             return;
         }
@@ -493,8 +500,6 @@ class Application
         $webVendorsCollection->update();
 
         Command::info(sprintf("%s webVendors Updated", $this->displayName()));
-        exit();
-
     }
 
     public function themeFiles(): array

@@ -2,8 +2,6 @@
 
 namespace Architekt\Installer;
 
-use Architekt\DB\DBDatatable;
-use Architekt\DB\DBDatatableColumn;
 use Architekt\Installer\Json\ArchitektJson;
 use Architekt\Installer\Json\ThemesJson;
 use Architekt\Installer\Json\WebVendorsJson;
@@ -170,7 +168,7 @@ class Architekt
         $plugin = Plugin::init($this, $project, $application, $pluginName);
         $plugin->initEntity();
         $plugin->fileReplace = true;
-        $plugin->installController($controllerCode.'/'.$controllerSubCode);
+        $plugin->installController($controllerCode . '/' . $controllerSubCode);
 
         $plugin
             ->directoryCreate(
@@ -179,8 +177,8 @@ class Architekt
             ->fileCreate(
                 $controllerDir . DIRECTORY_SEPARATOR . $controllerSubCode . 'Controller.php',
                 $plugin->template()
-                    ->assign('CONTROLLER_CREATE_NAME', $controllerCode.'/'.$controllerSubCode)
-                    ->assign('CONTROLLER_CREATE_NAMESPACE', '\\'.$controllerCode)
+                    ->assign('CONTROLLER_CREATE_NAME', $controllerCode . '/' . $controllerSubCode)
+                    ->assign('CONTROLLER_CREATE_NAMESPACE', '\\' . $controllerCode)
                     ->assign('CONTROLLER_CREATE_CLASS', $controllerSubCode)
                 ,
                 './../templates/controllerBase.tpl'
@@ -189,7 +187,7 @@ class Architekt
                 $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode
             )
             ->directoryCreate(
-                $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode.DIRECTORY_SEPARATOR.$controllerSubCode
+                $application->directoryViews() . DIRECTORY_SEPARATOR . $controllerCode . DIRECTORY_SEPARATOR . $controllerSubCode
             );
     }
 
@@ -267,18 +265,20 @@ class Architekt
         return ucfirst($string);
     }
 
-    public function updateWebVendors(string $projectCode, string $applicationCode)
+    public function updateWebVendors(string $projectCode, string $applicationCode, string $environment = 'local')
     {
-        if(!($project = $this->projects[$projectCode] ?? null)){
-            Command::error(sprintf('Unknown project %s',$projectCode));
+        if (!($project = $this->projects[$projectCode] ?? null)) {
+            Command::error(sprintf('Unknown project %s', $projectCode));
             exit();
         }
-        if(!($application = $project->applications[$applicationCode] ?? null)){
-            Command::error(sprintf('Unknown application %s on project %s',$applicationCode, $projectCode ));
+        if (!($application = $project->applications[$applicationCode] ?? null)) {
+            Command::error(sprintf('Unknown application %s on project %s', $applicationCode, $projectCode));
             exit();
         }
 
-        $application->updateWebVendors();
+        $project->databaseConnect($environment);
+
+        $application->updateWebVendors($environment);
 
     }
 }

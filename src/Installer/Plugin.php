@@ -211,6 +211,17 @@ class Plugin
         }
     }
 
+    public function updateWebVendors(string $environment)
+    {
+        $file = $this->architekt->directoryPlugins() . DIRECTORY_SEPARATOR . $this->code . DIRECTORY_SEPARATOR . 'onWebVendorsUpdate.php';
+
+        Command::info($file);
+        if (file_exists($file)) {
+            $this->initEntity();
+            require($file);
+        }
+    }
+
     public function buildSettings(): void
     {
         $baseDirectory = $this->directoryFiles();
