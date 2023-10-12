@@ -7,6 +7,7 @@ class DBRecordRowFilter
     public const TYPE_AND = 'AND';
     public const TYPE_OR = 'OR';
 
+    public const EGALITY_CONTAINS = 'contains';
     public const EGALITY_EQUAL = 'equal';
     public const EGALITY_GREATER = 'greater';
     public const EGALITY_GREATER_OR_EQUAL = 'greaterOrEqual';
@@ -128,6 +129,35 @@ class DBRecordRowFilter
             self::TYPE_AND,
             false,
             self::EGALITY_EQUAL
+        );
+    }
+
+
+    public static function buildAndContains(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_AND,
+            true,
+            self::EGALITY_CONTAINS
+        );
+    }
+
+    public static function buildAndNotContains(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_AND,
+            false,
+            self::EGALITY_CONTAINS
         );
     }
 

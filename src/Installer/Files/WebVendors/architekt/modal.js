@@ -14,7 +14,7 @@ var ArchitektModal = {
             cancelButtonColor: this.convertColorClass(response.cancel.class),
         }
 
-        let width = this.convertWidth(response.width)
+        let width = this.convertWidth(response.content.width)
         if (width) {
             config.width = width;
         }

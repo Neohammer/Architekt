@@ -49,7 +49,14 @@ trait MySQLRecordFilterTrait
                         $filterText .= ' NOT';
                     }
                     $filterText .= ' NULL';
-                } else {
+                }
+                elseif( $filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS){
+                    if (!$filter->affirmative()) {
+                        $filterText .= ' NOT';
+                    }
+                    $filterText .= sprintf(' LIKE "%%%s%%"',$filter->value());
+                }
+                else{
                     if ($filter->egalityType() === DBRecordRowFilter::EGALITY_EQUAL) {
                         if (!$filter->affirmative()) {
                             $filterText .= "!";
@@ -87,8 +94,8 @@ trait MySQLRecordFilterTrait
                         $this->params[self::prepareFormat($filter->key())] = $filter->value();
                     }
                 }
-                $this->filters[] = $filterText;
             }
+            $this->filters[] = $filterText;
         }
     }
 

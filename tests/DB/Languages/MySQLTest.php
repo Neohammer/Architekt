@@ -288,8 +288,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)->recordUpdate(
                 (new DBRecordRow('testDatatable'))
-                ->set('testField', 'testFieldValue')
-                ->and('testFilter', 'testFilterValue')
+                    ->set('testField', 'testFieldValue')
+                    ->and('testFilter', 'testFilterValue')
             )
         );
 
@@ -304,9 +304,9 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)->recordUpdate(
                 (new DBRecordRow('testDatatable'))
-                ->set('testField', 'testFieldValue')
-                ->set('testField2', 'testFieldValue2')
-                ->and('testFilter', 'testFilterValue')
+                    ->set('testField', 'testFieldValue')
+                    ->set('testField2', 'testFieldValue2')
+                    ->and('testFilter', 'testFilterValue')
             )
         );
 
@@ -325,7 +325,7 @@ class MySQLTest extends TestCase
                 ->datatable(
                     new DBDatatable('testTable2'),
                     (new DBRecordRow('testTable'))
-                        ->and('field1' , new DBRecordColumn('testTable2', 'field2'))
+                        ->and('field1', new DBRecordColumn('testTable2', 'field2'))
                 )
                 ->query()
         );
@@ -351,7 +351,7 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
                 ->query()
         );
 
@@ -365,8 +365,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
-                ->filter((new DBRecordRow('testTable2'))->and('field2','value2'))
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
+                ->filter((new DBRecordRow('testTable2'))->and('field2', 'value2'))
                 ->query()
         );
 
@@ -380,11 +380,35 @@ class MySQLTest extends TestCase
                     (new DBRecordRow('testTable'))
                         ->and(
                             'field',
-                            new DBRecordColumn('testTable2','field2')
+                            new DBRecordColumn('testTable2', 'field2')
                         )
                 )
                 ->query()
         );
+
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` LIKE "%search%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andContains('field', 'search'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` NOT LIKE "%search%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andNotContains('field', 'search'))
+                ->query()
+        );
+
     }
 
     public function test_recordSearchSelect(): void
@@ -396,8 +420,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->select(new DBRecordColumn('testTable','field1'))
-                ->select(new DBRecordColumn('testTable','field2'))
+                ->select(new DBRecordColumn('testTable', 'field1'))
+                ->select(new DBRecordColumn('testTable', 'field2'))
                 ->query()
         );
 
@@ -407,8 +431,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->select(new DBRecordColumn('testTable','field1'))
-                ->select(new DBRecordColumn('testTable2','field2'))
+                ->select(new DBRecordColumn('testTable', 'field1'))
+                ->select(new DBRecordColumn('testTable2', 'field2'))
                 ->query()
         );
 
@@ -418,8 +442,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->select(new DBRecordColumn('testTable','field1', 'AliasField'))
-                ->select(new DBRecordColumn('testTable2','field1', 'AliasField2'))
+                ->select(new DBRecordColumn('testTable', 'field1', 'AliasField'))
+                ->select(new DBRecordColumn('testTable2', 'field1', 'AliasField2'))
                 ->query()
         );
 
@@ -434,7 +458,7 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
                 ->limit()
                 ->query()
         );
@@ -446,8 +470,8 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
-                ->limit(10,3)
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
+                ->limit(10, 3)
                 ->query()
         );
     }
@@ -461,9 +485,9 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
                 ->limit()
-                ->orderAsc(new DBRecordColumn('testTable','fieldOrder'))
+                ->orderAsc(new DBRecordColumn('testTable', 'fieldOrder'))
                 ->query()
         );
 
@@ -474,9 +498,9 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->filter((new DBRecordRow('testTable'))->and('field','value'))
+                ->filter((new DBRecordRow('testTable'))->and('field', 'value'))
                 ->limit()
-                ->orderAsc(new DBRecordColumn('testTable2','fieldOrder'))
+                ->orderAsc(new DBRecordColumn('testTable2', 'fieldOrder'))
                 ->query()
         );
 

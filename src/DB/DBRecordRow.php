@@ -95,6 +95,20 @@ class DBRecordRow implements DBRecordRowInterface
         return $this;
     }
 
+    public function andContains(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndContains($name, $value);
+
+        return $this;
+    }
+
+    public function andNotContains(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndNotContains($name, $value);
+
+        return $this;
+    }
+
     /**
      * @return DBRecordRowFilter[]
      */
