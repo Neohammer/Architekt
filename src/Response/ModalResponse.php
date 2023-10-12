@@ -8,8 +8,6 @@ use Architekt\Utility\Settings;
 class ModalResponse extends BaseResponse
 {
 
-    private string $title;
-    private string $html;
     private bool $isForm;
     private ?string $action;
 
@@ -22,12 +20,11 @@ class ModalResponse extends BaseResponse
     private string $cancelButtonClass;
 
     public function __construct(
-        string $title,
-        string $html,
+        private string $title,
+        private string $html,
+        private string $size = 'small'
     )
     {
-        $this->title = $title;
-        $this->html = $html;
         $this->isForm = false;
         $this->action = null;
         $this->confirmButtonDisplay = true;
@@ -98,7 +95,7 @@ class ModalResponse extends BaseResponse
         return [
             'system' => Settings::byApplication()->get('modal','system'),
             'content' => [
-                'width' => 'xl',
+                'width' => $this->size,
                 'title' => $this->title,
                 'html' => $this->html,
             ],
