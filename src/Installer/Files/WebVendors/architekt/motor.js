@@ -206,6 +206,7 @@ var LinkManager = {
             url: url,
             success: function (response) {
                 ResponseManager.parse(response);
+                FormManager.enable();
                 PageManager.onContentChange('action');
 
             },
@@ -220,6 +221,7 @@ var LinkManager = {
                 } else {
                     MessageManager.display('danger', 'Un problème est survenu - action (' + jqXHR.status + ')');
                 }
+                FormManager.enable();
             },
             dataType: 'json'
         });
@@ -553,6 +555,15 @@ var FormManager = {
 
     enable: function (form) {
         $('body').css('cursor', 'auto');
+
+        if(typeof form === "undefined"){
+            $('button[role=submit]').each(function () {
+                $(this).html($(this).attr('oldContent'));
+            }).prop('disabled', false);
+
+            return ;
+        }
+
         if ($(form).parents('#modal').length) {
             $('#modal').find('a.confirm').each(function () {
                 $(this).html($(this).attr('oldContent'));

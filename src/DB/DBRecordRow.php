@@ -109,6 +109,13 @@ class DBRecordRow implements DBRecordRowInterface
         return $this;
     }
 
+    public function orContains(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrContains($name, $value);
+
+        return $this;
+    }
+
     /**
      * @return DBRecordRowFilter[]
      */

@@ -409,6 +409,18 @@ class MySQLTest extends TestCase
                 ->query()
         );
 
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` LIKE "%search%" OR `field2` LIKE "%search2%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andContains('field', 'search'))
+                ->filter((new DBRecordRow('testTable'))->orContains('field2', 'search2'))
+                ->query()
+        );
     }
 
     public function test_recordSearchSelect(): void

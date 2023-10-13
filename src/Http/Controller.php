@@ -73,10 +73,10 @@ abstract class Controller
 
         $profile = $this->__user()->profile();
 
-        $userController = \Architekt\Controller::byApplicationAndNameSystem($this->__application(),'User/Index');
+        $userController = \Architekt\Controller::byApplicationAndNameSystem($this->__application(), 'User/Index');
 
         foreach ($accesses as $accessToCheck) {
-            if($accessToCheck->code === 'none'){
+            if ($accessToCheck->code === 'none') {
                 return true;
             }
             if ($profile->allowController($userController, $accessToCheck->code)) {
@@ -104,7 +104,12 @@ abstract class Controller
         return $entity;
     }
 
-    static public function init(): void
+    private static function __isValidMethod(string $method): bool
+    {
+        return preg_match('|^[A-Za-z\-_]+$|', $method);
+    }
+
+    public static function init(): void
     {
         $configurator = Application::$configurator;
         $pathControllers = $configurator->get('path') . DIRECTORY_SEPARATOR . 'controllers';
@@ -117,18 +122,30 @@ abstract class Controller
 
         $callables = [];
 
-        $dirExists = is_dir($pathControllers . DIRECTORY_SEPARATOR.$askParams[0]);
-        $dirIndexExists = is_dir($pathControllers . DIRECTORY_SEPARATOR.'Index');
+        $dirExists = is_dir($pathControllers . DIRECTORY_SEPARATOR . $askParams[0]);
+        $dirIndexExists = is_dir($pathControllers . DIRECTORY_SEPARATOR . 'Index');
 
 
         if ($dirExists) {
+            if(!isset($askParams[2]) || self::__isValidMethod($askParams[2])) {
+                $callables[] = [
+                    'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                    'method' => $askParams[2] ?? 'index',
+                    'params' => array_slice($askParams, array_key_exists(2, $askParams) ? 3 : 2),
+                ];
+            }
+            if(self::__isValidMethod($askParams[1])) {
+                $callables[] = [
+                    'class' => ucfirst($askParams[0]) . '\\Index',
+                    'method' => $askParams[1],
+                    'params' => array_slice($askParams, 2),
+                ];
+            }
+        }
+
+        if(self::__isValidMethod($askParams[1])) {
             $callables[] = [
-                'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
-                'method' => $askParams[2] ?? 'index',
-                'params' => array_slice($askParams, array_key_exists(2,$askParams)?3:2),
-            ];
-            $callables[] = [
-                'class' => ucfirst($askParams[0]) . '\\Index',
+                'class' => ucfirst($askParams[0]),
                 'method' => $askParams[1],
                 'params' => array_slice($askParams, 2),
             ];
@@ -136,35 +153,41 @@ abstract class Controller
 
         $callables[] = [
             'class' => ucfirst($askParams[0]),
-            'method' => $askParams[1],
-            'params' => array_slice($askParams, 2),
-        ];
-
-        if($dirIndexExists){
-            $callables[] = [
-                'class' => 'Index\\'.$askParams[0],
-                'method' => $askParams[1],
-                'params' => array_slice($askParams, 1),
-            ];
-
-            $callables[] = [
-                'class' => 'Index\\Index',
-                'method' => $askParams[0],
-                'params' => array_slice($askParams, 3),
-            ];
-        }
-
-        $callables[] = [
-            'class' => 'Index',
-            'method' => $askParams[0],
+            'method' => 'index',
             'params' => array_slice($askParams, 1),
         ];
 
+        if ($dirIndexExists) {
 
+            if(self::__isValidMethod($askParams[1])) {
+                $callables[] = [
+                    'class' => 'Index\\' . $askParams[0],
+                    'method' => $askParams[1],
+                    'params' => array_slice($askParams, 1),
+                ];
+            }
+
+
+            if(self::__isValidMethod($askParams[0])) {
+                $callables[] = [
+                    'class' => 'Index\\Index',
+                    'method' => $askParams[0],
+                    'params' => array_slice($askParams, 3),
+                ];
+            }
+        }
+
+        if(self::__isValidMethod($askParams[0])) {
+            $callables[] = [
+                'class' => 'Index',
+                'method' => $askParams[0],
+                'params' => array_slice($askParams, 1),
+            ];
+        }
 
         $controller = null;
-        foreach($callables as $callable){
-            try{
+        foreach ($callables as $callable) {
+            try {
 
                 $controllerClass = sprintf(
                     'Website\\%s\\%sController',
@@ -182,17 +205,16 @@ abstract class Controller
                 }
 
 
-                $controllerName = str_replace('\\','/', $callable['class']);
+                $controllerName = str_replace('\\', '/', $callable['class']);
                 $askParams = $callable['params'];
 
                 break;
-            }
-            catch (\Error){
-               continue;
+            } catch (\Error $e) {
+                continue;
             }
         }
 
-        if(!$controller){
+        if (!$controller) {
             Request::to404();
         }
 

@@ -132,7 +132,6 @@ class DBRecordRowFilter
         );
     }
 
-
     public static function buildAndContains(
         string $key,
         mixed  $value
@@ -142,6 +141,20 @@ class DBRecordRowFilter
             $key,
             $value,
             self::TYPE_AND,
+            true,
+            self::EGALITY_CONTAINS
+        );
+    }
+
+    public static function buildOrContains(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
             true,
             self::EGALITY_CONTAINS
         );

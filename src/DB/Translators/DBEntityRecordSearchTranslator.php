@@ -230,4 +230,9 @@ class DBEntityRecordSearchTranslator
     {
         return $this->filter($entity, 'andNotContains', $args);
     }
+
+    public function orContains(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orContains', $args);
+    }
 }
