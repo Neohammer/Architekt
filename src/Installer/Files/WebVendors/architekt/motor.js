@@ -294,7 +294,7 @@ var MenuManager = {
         uri = document.location.href.replace(URL_APP,'');
         uriSplit = uri.split('#');
         uri = uriSplit[0];
-        $('.nav a[href]')
+        $('ul.autoactivate .nav a[href]')
             .removeClass('active')
             .each(function(){
                 if($(this).attr('href') === uri){
@@ -352,7 +352,7 @@ var MenuManager = {
 var ListManager = {
 
     onContentChange: function () {
-        $('.list').each(function () {
+        $('table.list').each(function () {
             let datatable = $(this).DataTable({
                 order: [],
                 language: {

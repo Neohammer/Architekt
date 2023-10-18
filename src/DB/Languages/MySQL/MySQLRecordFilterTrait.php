@@ -12,7 +12,6 @@ trait MySQLRecordFilterTrait
 {
     private function buildFilters(array|DBRecordRow $DBRecordRows, bool $useDatatable = false): void
     {
-
         if (!is_array($DBRecordRows)) {
             $DBRecordRows = [$DBRecordRows];
         }
@@ -42,7 +41,6 @@ trait MySQLRecordFilterTrait
                 } else {
                     $filterText .= self::quote($filter->key());
                 }
-
                 if ($filter->value() === null) {
                     $filterText .= ' IS';
                     if (!$filter->affirmative()) {
@@ -94,8 +92,8 @@ trait MySQLRecordFilterTrait
                         $this->params[self::prepareFormat($filter->key())] = $filter->value();
                     }
                 }
+                $this->filters[] = $filterText;
             }
-            $this->filters[] = $filterText;
         }
     }
 

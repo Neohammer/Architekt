@@ -104,20 +104,6 @@ class DBRecordRowFilter
         );
     }
 
-    public static function buildOr(
-        string $key,
-        mixed  $value
-    ): static
-    {
-        return new self(
-            $key,
-            $value,
-            self::TYPE_OR,
-            true,
-            self::EGALITY_EQUAL
-        );
-    }
-
     public static function buildAndNot(
         string $key,
         mixed  $value
@@ -146,6 +132,105 @@ class DBRecordRowFilter
         );
     }
 
+    public static function buildAndNotContains(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_AND,
+            false,
+            self::EGALITY_CONTAINS
+        );
+    }
+
+
+    public static function buildOr(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            true,
+            self::EGALITY_EQUAL
+        );
+    }
+
+    public static function buildOrGreater(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            true,
+            self::EGALITY_GREATER
+        );
+    }
+
+    public static function buildOrGreaterOrEqual(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            true,
+            self::EGALITY_GREATER_OR_EQUAL
+        );
+    }
+
+    public static function buildOrLower(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            false,
+            self::EGALITY_GREATER
+        );
+    }
+
+    public static function buildOrLowerOrEqual(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            false,
+            self::EGALITY_GREATER_OR_EQUAL
+        );
+    }
+
+    public static function buildOrNot(
+        string $key,
+        mixed  $value
+    ): static
+    {
+        return new self(
+            $key,
+            $value,
+            self::TYPE_OR,
+            false,
+            self::EGALITY_EQUAL
+        );
+    }
+
     public static function buildOrContains(
         string $key,
         mixed  $value
@@ -160,7 +245,7 @@ class DBRecordRowFilter
         );
     }
 
-    public static function buildAndNotContains(
+    public static function buildOrNotContains(
         string $key,
         mixed  $value
     ): static
@@ -168,7 +253,7 @@ class DBRecordRowFilter
         return new self(
             $key,
             $value,
-            self::TYPE_AND,
+            self::TYPE_OR,
             false,
             self::EGALITY_CONTAINS
         );

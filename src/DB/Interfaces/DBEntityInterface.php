@@ -14,7 +14,7 @@ interface DBEntityInterface
 
     public function _isSameClass(mixed $entity): bool;
 
-    public function _get(?string $key = null): mixed;
+    public function _get(?string $key = null, ?bool $originalDatas = false): mixed;
 
     public function _isLoaded(): bool;
 

@@ -3,14 +3,14 @@
 namespace Architekt\Library;
 
 use Architekt\DB\DBEntity;
-use Architekt\DB\Entity;
 use Architekt\DB\DBEntityCache;
-use Gmao\User;
+use Architekt\DB\Entity;
 use Gmao\Equipment;
 use Gmao\Operation;
 use Gmao\PreventivePlanRange;
 use Gmao\PreventivePlanRangeOperation;
 use Gmao\Subset;
+use Gmao\User;
 use Gmao\WorkOrder;
 
 if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
@@ -23,7 +23,7 @@ class File extends DBEntity
 
     private const DIRECTORY_DEPTH = 2;
     private const DIRECTORY_LETTERS = 1;
-    
+
     private static bool $transactionStarted = false;
     private static array $transactionFiles;
 
@@ -60,7 +60,7 @@ class File extends DBEntity
     public static function upload(UploadFile $uploadFile, ?File $file = null): ?self
     {
         $fileHash = md5_file($uploadFile->temporaryName());
-        $fileUniq = md5(uniqid().time());
+        $fileUniq = md5(uniqid() . time());
 
         $fileRelativePath = static::getRelativePath($fileUniq);
         $filename = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
@@ -95,16 +95,16 @@ class File extends DBEntity
     public static function import(string $filePath, ?File $file = null, $deleteFile = false): ?self
     {
         $fileHash = md5_file($filePath);
-        $fileUniq = md5(uniqid().time());
+        $fileUniq = md5(uniqid() . time());
 
         $fileRelativePath = static::getRelativePath($fileUniq);
-        $filename = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
+        $filename = self::getBasePath() . DIRECTORY_SEPARATOR . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
 
-        $move = copy($filePath,$filename);
+        $move = copy($filePath, $filename);
         if (false === $move) {
             return null;
         }
-        \Architekt\Logger::info($filePath.' > '.$filename);
+        \Architekt\Logger::info($filePath . ' > ' . $filename);
 
         if (self::$transactionStarted) {
             self::$transactionFiles[] = $filename;
@@ -125,7 +125,7 @@ class File extends DBEntity
 
         ]);
 
-        if($deleteFile){
+        if ($deleteFile) {
             unlink($filePath);
         }
 
@@ -179,23 +179,6 @@ class File extends DBEntity
         return User::fromCache($this->_get('author_id'));
     }
 
-    public function external(): ?Entity
-    {
-        switch ($this->_get('external_type')) {
-            case self::TYPE_OPERATION:
-                return Operation::fromCache($this->_get('external_id'));
-                break;
-            case self::TYPE_WORK_ORDER:
-                return WorkOrder::fromCache($this->_get('external_id'));
-                break;
-            case 'equipment':
-                $equipment = Equipment::fromCache($this->_get('external_id'));
-
-                return $equipment->_isLoaded() ? $equipment : (new Equipment())->_set('registration_number', 'N/A');
-        }
-
-        return null;
-    }
 
     public function isImage(): bool
     {
@@ -224,10 +207,7 @@ class File extends DBEntity
 
     public function read(): string
     {
-        return readfile(
-            self::getBasePath()
-            . DIRECTORY_SEPARATOR
-            . self::_get('uniqid'));
+        return readfile($this->filePath());
     }
 
     public function _delete(): bool
@@ -248,6 +228,9 @@ class File extends DBEntity
 
     private static function getRelativePath(string $hash): string
     {
+        if (!is_dir(self::getBasePath())) {
+            mkdir(self::getBasePath(), 07777);
+        }
         $path = '';
         for ($i = 0; $i < self::DIRECTORY_DEPTH; $i++) {
             $path .= DIRECTORY_SEPARATOR
@@ -256,8 +239,9 @@ class File extends DBEntity
                     (self::DIRECTORY_LETTERS * $i),
                     self::DIRECTORY_LETTERS + (self::DIRECTORY_LETTERS * $i)
                 );
-            if (!is_dir(self::getBasePath())) {
-                mkdir(self::getBasePath(), 07777);
+
+            if (!is_dir(self::getBasePath() . DIRECTORY_SEPARATOR . $path)) {
+                mkdir(self::getBasePath() . DIRECTORY_SEPARATOR . $path, 07777);
             }
         }
         return $path;
@@ -265,6 +249,11 @@ class File extends DBEntity
 
     private static function getBasePath(): string
     {
-        return PATH_FILER . 'Library';
+        return PATH_FILER . DIRECTORY_SEPARATOR. 'Library';
+    }
+
+    public function filePath(): string
+    {
+        return self::getBasePath(). DIRECTORY_SEPARATOR . static::getRelativePath($this->_get('uniqid')). DIRECTORY_SEPARATOR. $this->_get('uniqid');
     }
 }

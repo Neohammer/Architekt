@@ -222,6 +222,28 @@ class MySQLTest extends TestCase
 
         self::assertEquals(
             new Query(
+                'DELETE FROM `testDatatable` WHERE `testField`<:testField',
+                [':testField' => 50]
+            ),
+            (new MySQL)->recordDelete(
+                (new DBRecordRow('testDatatable'))
+                    ->andLower('testField', 50)
+            )
+        );
+
+        self::assertEquals(
+            new Query(
+                'DELETE FROM `testDatatable` WHERE `testField`>=:testField',
+                [':testField' => 50]
+            ),
+            (new MySQL)->recordDelete(
+                (new DBRecordRow('testDatatable'))
+                    ->andGreaterOrEqual('testField', 50)
+            )
+        );
+
+        self::assertEquals(
+            new Query(
                 'DELETE FROM `testDatatable` WHERE `testField`<=:testField',
                 [':testField' => 50]
             ),
@@ -332,7 +354,7 @@ class MySQLTest extends TestCase
     }
 
 
-    public function test_recordSearchFilter(): void
+    public function test_recordSearchFilterAnd(): void
     {
         self::assertEquals(
             new Query(
@@ -386,6 +408,57 @@ class MySQLTest extends TestCase
                 ->query()
         );
 
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field`>:field',
+                [
+                    ':field' => 'value'
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andGreater('field', 'value'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field`<:field',
+                [
+                    ':field' => 'value'
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andLower('field', 'value'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field`>=:field',
+                [
+                    ':field' => 'value'
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andGreaterOrEqual('field', 'value'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field`<=:field',
+                [
+                    ':field' => 'value'
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andLowerOrEqual('field', 'value'))
+                ->query()
+        );
 
         self::assertEquals(
             new Query(
@@ -418,6 +491,87 @@ class MySQLTest extends TestCase
             (new MySQL)
                 ->recordSearch()
                 ->filter((new DBRecordRow('testTable'))->andContains('field', 'search'))
+                ->filter((new DBRecordRow('testTable'))->orContains('field2', 'search2'))
+                ->query()
+        );
+    }
+
+    public function test_recordSearchFilterOr(): void
+    {
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field`=:field',
+                [':field' => 'value']
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->or('field', 'value'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable`, `testTable2` WHERE `testTable`.`field`=:field OR `testTable2`.`field2`=:field2',
+                [
+                    ':field' => 'value',
+                    ':field2' => 'value2',
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->or('field', 'value'))
+                ->filter((new DBRecordRow('testTable2'))->or('field2', 'value2'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable`, `testTable2` WHERE `testTable`.`field`=`testTable2`.`field2`'
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter(
+                    (new DBRecordRow('testTable'))
+                        ->or(
+                            'field',
+                            new DBRecordColumn('testTable2', 'field2')
+                        )
+                )
+                ->query()
+        );
+
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` LIKE "%search%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->orContains('field', 'search'))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` NOT LIKE "%search%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->orNotContains('field', 'search'))
+                ->query()
+        );
+
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` LIKE "%search%" OR `field2` LIKE "%search2%"',
+                []
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->orContains('field', 'search'))
                 ->filter((new DBRecordRow('testTable'))->orContains('field2', 'search2'))
                 ->query()
         );

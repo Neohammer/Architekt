@@ -184,9 +184,10 @@ class DBEntity implements DBEntityInterface
         return $this->_get(static::$_labelField);
     }
 
-    public function _get(?string $key = null): mixed
+    public function _get(?string $key = null, ?bool $originalDatas = false): mixed
     {
         $args = func_get_args();
+
         if (sizeof($args) == 1) {
             return $this->_datas[$key] ?? null;
         }
@@ -278,7 +279,7 @@ class DBEntity implements DBEntityInterface
 
     public function _hasDiff(): bool
     {
-        return false !== $this->_diff();
+        return (bool)$this->_diff();
     }
 
     public function _diff(): bool|array
@@ -300,13 +301,14 @@ class DBEntity implements DBEntityInterface
 
         $record = new DBRecordRow($this->_table());
 
-        foreach ($this->_diff() as $k => $v) {
-            if ($k === $this->_primaryKey()) {
-                continue;
+        if ($diff = $this->_diff()) {
+            foreach ($diff as $k => $v) {
+                if ($k === $this->_primaryKey()) {
+                    continue;
+                }
+                $record->set($k, $v);
             }
-            $record->set($k, $v);
         }
-
 
         if ($insert) {
             if ($this->_loaded = $success = $this->_connexion()->recordInsert($record)) {

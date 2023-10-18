@@ -8,6 +8,9 @@ trait DBEntityCache
 
     public static function fromCache(?int $id): static
     {
+        if(!$id){
+            return new static;
+        }
         if (!array_key_exists($id, self::$cache)) {
             self::$cache[$id] = new static($id);
         }

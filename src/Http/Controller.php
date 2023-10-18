@@ -218,7 +218,7 @@ abstract class Controller
             Request::to404();
         }
 
-        if (count($askParams) !== (new \ReflectionMethod($controller, $methodToCall))->getNumberOfRequiredParameters()) {
+        if (count($askParams) < (new \ReflectionMethod($controller, $methodToCall))->getNumberOfRequiredParameters()) {
             Request::to404();
         }
 

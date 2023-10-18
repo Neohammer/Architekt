@@ -109,9 +109,58 @@ class DBRecordRow implements DBRecordRowInterface
         return $this;
     }
 
+    public function or(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOr($name, $value);
+
+        return $this;
+    }
+
+    public function orGreater(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrGreater($name, $value);
+
+        return $this;
+    }
+
+    public function orGreaterOrEqual(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAOrGreaterOrEqual($name, $value);
+
+        return $this;
+    }
+
+    public function orLower(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrLower($name, $value);
+
+        return $this;
+    }
+
+    public function orLowerOrEqual(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrLowerOrEqual($name, $value);
+
+        return $this;
+    }
+
+    public function orNot(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrNot($name, $value);
+
+        return $this;
+    }
+
     public function orContains(string $name, mixed $value): static
     {
         $this->filters[] = DBRecordRowFilter::buildOrContains($name, $value);
+
+        return $this;
+    }
+
+    public function orNotContains(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildOrNotContains($name, $value);
 
         return $this;
     }

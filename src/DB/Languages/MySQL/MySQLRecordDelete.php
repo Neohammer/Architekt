@@ -8,19 +8,17 @@ use Architekt\DB\Interfaces\DBQueryBuilderInterface;
 
 class MySQLRecordDelete extends MySQLTools implements DBQueryBuilderInterface
 {
-    private DBRecordRow $DBDatatableRow;
     private array $filters;
     private array $params;
 
     use MySQLRecordFilterTrait;
 
-    public function __construct(DBRecordRow $DBDatatableRow)
+    public function __construct(private DBRecordRow $recordRow)
     {
-        $this->DBDatatableRow = $DBDatatableRow;
         $this->filters = [];
         $this->params = [];
 
-        $this->buildFilters($this->DBDatatableRow);
+        $this->buildFilters($this->recordRow);
     }
 
     public function query(): Query
@@ -28,7 +26,7 @@ class MySQLRecordDelete extends MySQLTools implements DBQueryBuilderInterface
         return new Query(
             sprintf(
                 'DELETE FROM %s%s',
-                self::quote($this->DBDatatableRow->datatable()),
+                self::quote($this->recordRow->datatable()),
                 join(' ', $this->filters)
             ),
             $this->params
