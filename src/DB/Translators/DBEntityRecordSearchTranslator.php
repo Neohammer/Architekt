@@ -231,8 +231,43 @@ class DBEntityRecordSearchTranslator
         return $this->filter($entity, 'andNotContains', $args);
     }
 
+    public function or(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'or', $args);
+    }
+
+    public function orGreater(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orGreater', $args);
+    }
+
+    public function orGreaterOrEqual(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orGreaterOrEqual', $args);
+    }
+
+    public function orLower(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orLower', $args);
+    }
+
+    public function orLowerOrEqual(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orLowerOrEqual', $args);
+    }
+
+    public function orNot(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orNot', $args);
+    }
+
     public function orContains(DBEntityInterface $entity, ...$args): static
     {
         return $this->filter($entity, 'orContains', $args);
+    }
+
+    public function orNotContains(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orNotContains', $args);
     }
 }
