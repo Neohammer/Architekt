@@ -19,8 +19,11 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     /** @var DBDatatable[] $datatables */
     private array $datatables;
 
-    /** @var mixed[] $datatablesFilters */
-    private array $datatablesFilters;
+    /** @var mixed[] $datatablesLeftFilters */
+    private array $datatablesLeftFilters;
+
+    /** @var mixed[] $datatablesInnerFilters */
+    private array $datatablesInnerFilters;
 
     /** @var DBRecordRow[] $filterRows */
     private array $filterRows;
@@ -28,6 +31,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     private array $filters;
 
     private array $leftFilters;
+    private array $innerFilters;
 
     private array $params;
 
@@ -40,10 +44,12 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
     {
         $this->select = [];
         $this->datatables = [];
-        $this->datatablesFilters = [];
+        $this->datatablesLeftFilters = [];
+        $this->datatablesInnerFilters = [];
         $this->filterRows = [];
         $this->filters = [];
         $this->leftFilters = [];
+        $this->innerFilters = [];
         $this->params = [];
         $this->limit = [];
         $this->orders = [];
@@ -156,11 +162,16 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
         return sprintf(' ORDER BY %s', implode(', ', $orders));
     }
 
-    public function datatable(DBDatatable $datatable, mixed $filters = null): static
+    public function datatable(DBDatatable $datatable, mixed $filters = null, bool $strict = false): static
     {
         $this->datatables[$datatable->name()] = $datatable;
         if($filters){
-            $this->datatablesFilters[$datatable->name()] = $filters;
+            if($strict){
+                $this->datatablesInnerFilters[$datatable->name()] = $filters;
+            }
+            else{
+                $this->datatablesLeftFilters[$datatable->name()] = $filters;
+            }
         }
 
         return $this;
@@ -227,13 +238,23 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
         $output = [];
 
         foreach($this->datatables as $datatableName=>$datatable){
-            if(array_key_exists($datatableName, $this->datatablesFilters)){
+            if(array_key_exists($datatableName, $this->datatablesLeftFilters)){
                 $this->leftFilters = [];
-                $this->buildLeftFilters($this->datatablesFilters, true);
+                $this->buildLeftFilters($this->datatablesLeftFilters, true);
                 $output[] = sprintf(
                     ' LEFT JOIN %s%s',
                     self::quote($datatable->name()),
                     join('',$this->leftFilters)
+
+                );
+            }
+            elseif(array_key_exists($datatableName, $this->datatablesInnerFilters)){
+                $this->innerFilters = [];
+                $this->buildInnerFilters($this->datatablesInnerFilters, true);
+                $output[] = sprintf(
+                    ' INNER JOIN %s%s',
+                    self::quote($datatable->name()),
+                    join('',$this->innerFilters)
 
                 );
             }

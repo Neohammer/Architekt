@@ -8,7 +8,7 @@ use Architekt\DB\DBRecordRow;
 
 interface DBRecordSearchInterface extends DBQueryBuilderInterface
 {
-    public function datatable(DBDatatable $datatable, mixed $filters = null): static;
+    public function datatable(DBDatatable $datatable, mixed $filters = null, bool $strict = false): static;
 
     /**
      * @return DBDatatable[]

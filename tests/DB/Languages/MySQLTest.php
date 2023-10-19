@@ -335,7 +335,7 @@ class MySQLTest extends TestCase
     }
 
 
-    public function test_recordSearchLeft(): void
+    public function test_recordSearchLeftAndInner(): void
     {
         self::assertEquals(
             new Query(
@@ -351,6 +351,22 @@ class MySQLTest extends TestCase
                 )
                 ->query()
         );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` INNER JOIN `testTable2` ON `testTable`.`field1`=`testTable2`.`field2`'
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->datatable(new DBDatatable('testTable'))
+                ->datatable(
+                    new DBDatatable('testTable2'),
+                    (new DBRecordRow('testTable'))
+                        ->and('field1', new DBRecordColumn('testTable2', 'field2')),
+                    true
+                )
+                ->query()
+        );
     }
 
 
@@ -362,7 +378,7 @@ class MySQLTest extends TestCase
             ),
             (new MySQL)
                 ->recordSearch()
-                ->datatable(new DBDatatable('testTable'))
+                ->datatable(new DBDatatable('testTable'), null, true)
                 ->query()
         );
 

@@ -2,9 +2,11 @@
 
 namespace tests\Architekt\DB\Translators;
 
+use Architekt\DB\Abstraction\Query;
 use Architekt\DB\Translators\DBEntityRecordSearchTranslator;
 use PHPUnit\Framework\TestCase;
 use tests\Architekt\DB\EntitySamples\DBEntitySimple;
+use tests\Architekt\DB\EntitySamples\DBEntityWithOtherTable;
 
 class DBEntityRecordSearchTranslatorTest extends TestCase
 {
@@ -35,4 +37,5 @@ class DBEntityRecordSearchTranslatorTest extends TestCase
 
 
     }
+
 }

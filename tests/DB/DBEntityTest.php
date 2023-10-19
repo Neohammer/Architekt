@@ -343,8 +343,9 @@ final class DBEntityTest extends TestCase
     {
         $entity = DBEntitySimple::_test_createSample();
 
+        $this->assertEquals($entity->_get('active'), 1);
         $entity->_set('active', "1");
-        $this->assertEquals(true, $entity->_hasDiff());
+        $this->assertFalse( $entity->_hasDiff());
 
     }
 
@@ -454,7 +455,7 @@ final class DBEntityTest extends TestCase
 
         $this->assertTrue($entity->isFieldValueUnique('name', 'test4'));
         $this->assertFalse($entity->isFieldValueUnique('name', 'test3'));
-        $this->assertTrue($entity->isFieldValueUnique('name', 'test3', ['active' => 1]));
+        $this->assertTrue($entity->isFieldValueUnique('name', 'test3', [ 'active'=> 1]));
         $this->assertFalse($entity->isFieldValueUnique('active', '1'));
         $this->assertTrue($entity->isFieldValueUnique('active', '2'));
 

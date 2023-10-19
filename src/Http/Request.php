@@ -105,12 +105,17 @@ class Request
         return $default;
     }
 
+    static public function fileAll(): array
+    {
+        if (isset($_FILES)) {
+            return $_FILES;
+        }
+        return [];
+    }
+
     static public function file(string $key, $default = null): ?array
     {
-        if (isset($_FILES) && array_key_exists($key, $_FILES)) {
-            return $_FILES[$key];
-        }
-        return $default;
+        return self::fileAll()[$key] ?? $default;
     }
 
     static public function sessionAll(): ?array

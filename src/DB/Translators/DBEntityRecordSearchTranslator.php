@@ -33,9 +33,9 @@ class DBEntityRecordSearchTranslator
         return $this->search->query();
     }
 
-    public function datatable(DBEntityInterface $entity): static
+    public function datatable(DBEntityInterface $entity, mixed $filters = null): static
     {
-        $this->search->datatable(new DBDatatable($entity->_table()));
+        $this->search->datatable(new DBDatatable($entity->_table()), $filters);
 
         return $this;
     }
@@ -66,7 +66,7 @@ class DBEntityRecordSearchTranslator
 
         $this->search->datatable(
             new DBDatatable($entity2->_table()),
-            $recordRows
+            $recordRows, true
         );
 
         return $this;
@@ -133,9 +133,12 @@ class DBEntityRecordSearchTranslator
                         ->$method(...array_values($subFilter))
                 );
             }
+
+            return $this;
         }
         $table = $filters[0];
         unset($filters[0]);
+
         $this->search->filter(
             (new DBRecordRow($table))
                 ->$method(...array_values($filters))
