@@ -23,7 +23,7 @@ class Template extends Smarty
     {
         $this->medias = [
             'css' => [],
-            'js' => ['top'=>[],'bottom'=>[]],
+            'js' => ['top' => [], 'bottom' => []],
             'js_internal' => [],
         ];
         $this->htmlTitle = '';
@@ -94,14 +94,14 @@ class Template extends Smarty
 
     public function addMediaCss(string $css): self
     {
-        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . '/'. $css;
+        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . '/' . $css . '.css';
 
         return $this;
     }
 
     public function addMediaJs(string $js, string $position = 'bottom'): self
     {
-        $this->medias['js'][$position][] = str_starts_with($js, 'http') ? $js : Application::$configurator->get('medias') . '/'. $js . '.js';
+        $this->medias['js'][$position][] = str_starts_with($js, 'http') ? $js : Application::$configurator->get('medias') . '/' . $js . '.js';
 
         return $this;
     }

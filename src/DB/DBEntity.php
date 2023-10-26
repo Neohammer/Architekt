@@ -197,14 +197,14 @@ class DBEntity implements DBEntityInterface
 
     public function _resultsToArray(): array
     {
-        return $this->_results(true);
+        return $this->_results(toArray: true);
     }
 
-    public function _results(bool $toArray = false): array
+    public function _results(bool $toArray = false, ?string $useField = null): array
     {
         $tab = array();
         while ($this->_next()) {
-            $tab[$this->_primary()] = $toArray ? $this->_get() : clone $this;
+            $tab[$useField ? $this->_get($useField) : $this->_primary()] = $toArray ? $this->_get() : clone $this;
         }
 
         return $tab;

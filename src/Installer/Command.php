@@ -71,4 +71,22 @@ class Command
     {
         Architekt::init($path)->updateWebVendors($projectCode, $applicationCode);
     }
+
+    public static function addCssClass(
+        string $path,
+        string $cssClass,
+        string $bgColor,
+        string $textColor,
+        string $projectCode,
+        string $applicationCode,
+    )
+    {
+        Architekt::init($path)->addCssClass(
+            $cssClass,
+            $bgColor,
+            $textColor,
+            $projectCode,
+            $applicationCode
+        );
+    }
 }

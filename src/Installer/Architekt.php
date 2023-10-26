@@ -225,7 +225,7 @@ class Architekt
     }
 
 
-    private function directoryFiles(): string
+    public function directoryFiles(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'Files';
     }
@@ -279,6 +279,30 @@ class Architekt
         $project->databaseConnect($environment);
 
         $application->updateWebVendors($environment);
+
+    }
+
+    public function addCssClass(
+        string $cssClass,
+        string $bgColor,
+        string $textColor,
+        string $projectCode,
+        string $applicationCode,
+    )
+    {
+        /** @var Application $application */
+        $application = ($project = $this->projects[$projectCode])->applications[$applicationCode] ?? null;
+
+        if (!$application) {
+            Command::error(sprintf('Application introuvable %s > %s', $projectCode, $applicationCode));
+            exit();
+        }
+
+        $application->addCssClass(
+            $cssClass,
+            $bgColor,
+            $textColor
+        );
 
     }
 }

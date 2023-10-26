@@ -240,7 +240,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
         foreach($this->datatables as $datatableName=>$datatable){
             if(array_key_exists($datatableName, $this->datatablesLeftFilters)){
                 $this->leftFilters = [];
-                $this->buildLeftFilters($this->datatablesLeftFilters, true);
+                $this->buildLeftFilters($this->datatablesLeftFilters[$datatableName], true);
                 $output[] = sprintf(
                     ' LEFT JOIN %s%s',
                     self::quote($datatable->name()),
@@ -250,7 +250,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
             }
             elseif(array_key_exists($datatableName, $this->datatablesInnerFilters)){
                 $this->innerFilters = [];
-                $this->buildInnerFilters($this->datatablesInnerFilters, true);
+                $this->buildInnerFilters($this->datatablesInnerFilters[$datatableName], true);
                 $output[] = sprintf(
                     ' INNER JOIN %s%s',
                     self::quote($datatable->name()),

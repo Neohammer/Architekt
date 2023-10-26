@@ -1,0 +1,19 @@
+/** GENERATED {$CLASS_NAME} **/
+.btn-{$CLASS_NAME}{
+    --bs-btn-color: {$COLOR_TXT};
+    --bs-btn-bg: {$COLOR};
+    --bs-btn-border-color: {$COLOR};
+    --bs-btn-hover-color: {$COLOR_TXT};
+    --bs-btn-hover-bg: {$COLOR_D2};
+    --bs-btn-hover-border-color: {$COLOR_D1};
+    --bs-btn-focus-shadow-rgb: 255, 82, 125;
+    --bs-btn-active-color: {$COLOR_TXT};
+    --bs-btn-active-bg: {$COLOR_D1};
+    --bs-btn-active-border-color: {$COLOR_D2};
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: {$COLOR_TXT};
+    --bs-btn-disabled-bg: {$COLOR};
+    --bs-btn-disabled-border-color: {$COLOR};
+}
+
+/** END GENERATED {$CLASS_NAME} **/

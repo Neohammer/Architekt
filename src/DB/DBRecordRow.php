@@ -109,6 +109,20 @@ class DBRecordRow implements DBRecordRowInterface
         return $this;
     }
 
+    public function andBetween(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndBetween($name, $value);
+
+        return $this;
+    }
+
+    public function andNotBetween(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndNotBetween($name, $value);
+
+        return $this;
+    }
+
     public function or(string $name, mixed $value): static
     {
         $this->filters[] = DBRecordRowFilter::buildOr($name, $value);
@@ -125,7 +139,7 @@ class DBRecordRow implements DBRecordRowInterface
 
     public function orGreaterOrEqual(string $name, mixed $value): static
     {
-        $this->filters[] = DBRecordRowFilter::buildAOrGreaterOrEqual($name, $value);
+        $this->filters[] = DBRecordRowFilter::buildOrGreaterOrEqual($name, $value);
 
         return $this;
     }
@@ -161,6 +175,20 @@ class DBRecordRow implements DBRecordRowInterface
     public function orNotContains(string $name, mixed $value): static
     {
         $this->filters[] = DBRecordRowFilter::buildOrNotContains($name, $value);
+
+        return $this;
+    }
+
+    public function orBetween(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndBetween($name, $value);
+
+        return $this;
+    }
+
+    public function orNotBetween(string $name, mixed $value): static
+    {
+        $this->filters[] = DBRecordRowFilter::buildAndNotBetween($name, $value);
 
         return $this;
     }

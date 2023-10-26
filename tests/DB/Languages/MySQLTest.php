@@ -512,6 +512,37 @@ class MySQLTest extends TestCase
         );
     }
 
+    public function test_recordSearchFilterBetween(): void
+    {
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` BETWEEN :field0 AND :field1',
+                [
+                    ':field0' => 20,
+                    ':field1' => 40,
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andBetween('field', [20,40]))
+                ->query()
+        );
+
+        self::assertEquals(
+            new Query(
+                'SELECT * FROM `testTable` WHERE `field` NOT BETWEEN :field0 AND :field1',
+                [
+                    ':field0' => 20,
+                    ':field1' => 40,
+                ]
+            ),
+            (new MySQL)
+                ->recordSearch()
+                ->filter((new DBRecordRow('testTable'))->andNotBetween('field', [20,40]))
+                ->query()
+        );
+    }
     public function test_recordSearchFilterOr(): void
     {
         self::assertEquals(

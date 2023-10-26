@@ -668,4 +668,36 @@ class Application
 
         return $webVendorCollection;
     }
+
+    public function addCssClass(string $cssClass, string $bgColor, string $textColor)
+    {
+        $colors = [
+            'customer' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
+            'quotation' => ['bgColor'=>'FF007F','textColor'=>'FFFFFF'],
+            'repairOrder' => ['bgColor'=>'F4661B','textColor'=>'FFFFFF'],
+            'bill' => ['bgColor'=>'C72C48','textColor'=>'FFFFFF'],
+            'vehicle' => ['bgColor'=>'B3B191','textColor'=>'FFFFFF'],
+        ];
+
+        foreach($colors as $cssClass=>$color) {
+
+            extract($color);
+            $bgColor = '#' . $bgColor;
+            $textColor = '#' . $textColor;
+
+            $template = Color::template($this->architekt);
+            $template->assign([
+                'CLASS_NAME' => $cssClass,
+                'COLOR' => $bgColor,
+                'COLOR_D1' => Color::darken($bgColor, 1.1),
+                'COLOR_D2' => Color::darken($bgColor, 1.2),
+                'COLOR_TXT' => $textColor
+            ]);
+
+            echo $template->fetch('cssClass.css')."\n";
+        }
+
+        die();
+
+    }
 }

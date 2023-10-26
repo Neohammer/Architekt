@@ -33,14 +33,41 @@ class DBEntityRecordSearchTranslator
         return $this->search->query();
     }
 
-    public function datatable(DBEntityInterface $entity, mixed $filters = null): static
+    public function datatable(DBEntityInterface $entity): static
     {
-        $this->search->datatable(new DBDatatable($entity->_table()), $filters);
+        $this->search->datatable(new DBDatatable($entity->_table()));
 
         return $this;
     }
 
-    public function leftDatatable(DBEntityInterface $entity1, DBEntityInterface $entity2, mixed $filters = null): static
+    public function innerDatatable(DBEntityInterface $entity, mixed $filters = null): static
+    {
+        $recordRows = [];
+        if ($filters) {
+            if (!is_array(current($filters))) {
+                $filters = [$filters];
+            }
+            foreach ($filters as $filter) {
+                $method = $filter[0];
+                $target = $filter[1];
+                unset($filter[0], $filter[1]);
+
+                $extractedFilter = $this->extractFilter($target, array_values($filter));
+
+                $table = $extractedFilter[0];
+                unset($extractedFilter[0]);
+                $extractedFilter = array_values($extractedFilter);
+
+                $recordRows[] = (new DBRecordRow($table))->$method(...$extractedFilter);
+            }
+        }
+
+        $this->search->datatable(new DBDatatable($entity->_table()), $recordRows, true);
+
+        return $this;
+    }
+
+    public function leftDatatable(DBEntityInterface $entity1, DBEntityInterface $entity2, ?array $filters = null): static
     {
         $recordRows[] = (new DBRecordRow($entity1->_table()))->and(
             $entity1->_primaryKey(), new DBRecordColumn($entity2->_table(), $entity1->_strangerKey()));
@@ -66,7 +93,7 @@ class DBEntityRecordSearchTranslator
 
         $this->search->datatable(
             new DBDatatable($entity2->_table()),
-            $recordRows, true
+            $recordRows
         );
 
         return $this;
@@ -96,6 +123,10 @@ class DBEntityRecordSearchTranslator
                 return $return;
             } else {
                 if ($args[0] instanceof DBEntity) {
+                    if (!$args[0]->_isLoaded()) {
+                        return [$entity->_table(), $entity->_primaryKey(), new DBRecordColumn($args[0]->_table(), $entity->_strangerKey())];
+
+                    }
                     return [$entity->_table(), $args[0]->_strangerKey(), $args[0]->_primary()];
                 }
 
@@ -234,6 +265,16 @@ class DBEntityRecordSearchTranslator
         return $this->filter($entity, 'andNotContains', $args);
     }
 
+    public function andBetween(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'andBetween', $args);
+    }
+
+    public function andNotBetween(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'andNotBetween', $args);
+    }
+
     public function or(DBEntityInterface $entity, ...$args): static
     {
         return $this->filter($entity, 'or', $args);
@@ -272,5 +313,15 @@ class DBEntityRecordSearchTranslator
     public function orNotContains(DBEntityInterface $entity, ...$args): static
     {
         return $this->filter($entity, 'orNotContains', $args);
+    }
+
+    public function orBetween(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orBetween', $args);
+    }
+
+    public function orNotBetween(DBEntityInterface $entity, ...$args): static
+    {
+        return $this->filter($entity, 'orNotBetween', $args);
     }
 }

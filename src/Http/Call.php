@@ -86,7 +86,9 @@ class Call
 
     static private function getCacheFile(string $url): string
     {
-        return PATH_FILER . 'Import/' . md5($url);
+        $dir = PATH_FILER .DIRECTORY_SEPARATOR. 'Import';
+        if(!is_dir($dir)) mkdir(PATH_FILER .DIRECTORY_SEPARATOR. 'Import',0777);
+        return $dir .DIRECTORY_SEPARATOR . md5($url);
     }
 
     static private function getCacheContent(string $url): string

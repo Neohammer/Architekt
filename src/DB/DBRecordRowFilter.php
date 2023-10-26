@@ -11,6 +11,7 @@ class DBRecordRowFilter
     public const EGALITY_EQUAL = 'equal';
     public const EGALITY_GREATER = 'greater';
     public const EGALITY_GREATER_OR_EQUAL = 'greaterOrEqual';
+    public const EGALITY_BETWEEN = 'between';
 
     private string $key;
     private mixed $value;
@@ -146,6 +147,33 @@ class DBRecordRowFilter
         );
     }
 
+    public static function buildAndBetween(
+        string $key,
+        array  $values
+    ): static
+    {
+        return new self(
+            $key,
+            $values,
+            self::TYPE_AND,
+            true,
+            self::EGALITY_BETWEEN
+        );
+    }
+
+    public static function buildAndNotBetween(
+        string $key,
+        array  $values
+    ): static
+    {
+        return new self(
+            $key,
+            $values,
+            self::TYPE_AND,
+            false,
+            self::EGALITY_BETWEEN
+        );
+    }
 
     public static function buildOr(
         string $key,
@@ -256,6 +284,35 @@ class DBRecordRowFilter
             self::TYPE_OR,
             false,
             self::EGALITY_CONTAINS
+        );
+    }
+
+
+    public static function buildOrBetween(
+        string $key,
+        array  $values
+    ): static
+    {
+        return new self(
+            $key,
+            $values,
+            self::TYPE_OR,
+            true,
+            self::EGALITY_BETWEEN
+        );
+    }
+
+    public static function buildOrNotBetween(
+        string $key,
+        array  $values
+    ): static
+    {
+        return new self(
+            $key,
+            $values,
+            self::TYPE_OR,
+            false,
+            self::EGALITY_BETWEEN
         );
     }
 

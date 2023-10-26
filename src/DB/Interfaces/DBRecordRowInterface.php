@@ -2,8 +2,6 @@
 
 namespace Architekt\DB\Interfaces;
 
-use Architekt\DB\DBDatatable;
-use Architekt\DB\DBDatatableColumn;
 use Architekt\DB\DBRecordRowFilter;
 
 interface DBRecordRowInterface
@@ -38,6 +36,10 @@ interface DBRecordRowInterface
 
     public function andNotContains(string $name, mixed $value): static;
 
+    public function andBetween(string $name, mixed $value): static;
+
+    public function andNotBetween(string $name, mixed $value): static;
+
     public function or(string $name, mixed $value): static;
 
     public function orGreater(string $name, mixed $value): static;
@@ -53,6 +55,10 @@ interface DBRecordRowInterface
     public function orContains(string $name, mixed $value): static;
 
     public function orNotContains(string $name, mixed $value): static;
+
+    public function orBetween(string $name, mixed $value): static;
+
+    public function orNotBetween(string $name, mixed $value): static;
 
     /**
      * @return DBRecordRowFilter[]

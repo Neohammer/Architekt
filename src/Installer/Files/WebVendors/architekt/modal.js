@@ -8,10 +8,13 @@ var ArchitektModal = {
             //icon: 'warning',
             showConfirmButton: response.confirm.display,
             confirmButtonText: response.confirm.text,
-            confirmButtonColor: this.convertColorClass(response.confirm.class),
+            customClass: {
+                confirmButton : 'btn btn-'+response.confirm.class+' me-2',
+                cancelButton : 'btn btn-'+response.cancel.class+' me-2',
+            },
+            buttonsStyling: false,
             showCancelButton: response.cancel.display,
             cancelButtonText: response.cancel.text,
-            cancelButtonColor: this.convertColorClass(response.cancel.class),
         }
 
         let width = this.convertWidth(response.content.width)
@@ -57,7 +60,7 @@ var ArchitektModal = {
             return '75%';
         }
 
-        return false;
+        return tag;
     },
     convertColorClass: function (tag) {
         if (tag === "success") {
@@ -72,4 +75,7 @@ var ArchitektModal = {
 
         return 'grey';
     },
+    close: function(){
+        SweetAlert.close();
+    }
 }

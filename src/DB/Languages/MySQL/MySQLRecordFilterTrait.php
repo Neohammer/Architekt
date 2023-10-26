@@ -27,8 +27,7 @@ trait MySQLRecordFilterTrait
                     } else {
                         throw new MissingOptionsException(sprintf('MysqlRecordDelete does not support Filter with %s type', $filter->type()));
                     }
-                }
-                else{
+                } else {
                     $filterText = ' WHERE ';
                 }
 
@@ -47,14 +46,24 @@ trait MySQLRecordFilterTrait
                         $filterText .= ' NOT';
                     }
                     $filterText .= ' NULL';
-                }
-                elseif( $filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS){
+                } elseif ($filter->egalityType() === DBRecordRowFilter::EGALITY_BETWEEN) {
                     if (!$filter->affirmative()) {
                         $filterText .= ' NOT';
                     }
-                    $filterText .= sprintf(' LIKE "%%%s%%"',$filter->value());
-                }
-                else{
+                    $filterText .= sprintf(
+                        ' BETWEEN %s AND %s',
+                        self::prepareFormat($filter->key().'0'),
+                        self::prepareFormat($filter->key().'1')
+                    );
+
+                    $this->params[self::prepareFormat($filter->key()).'0'] = $filter->value()[0];
+                    $this->params[self::prepareFormat($filter->key()).'1'] = $filter->value()[1];
+                } elseif ($filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS) {
+                    if (!$filter->affirmative()) {
+                        $filterText .= ' NOT';
+                    }
+                    $filterText .= sprintf(' LIKE "%%%s%%"', $filter->value());
+                } else {
                     if ($filter->egalityType() === DBRecordRowFilter::EGALITY_EQUAL) {
                         if (!$filter->affirmative()) {
                             $filterText .= "!";
@@ -114,8 +123,7 @@ trait MySQLRecordFilterTrait
                     } else {
                         throw new MissingOptionsException(sprintf('MysqlRecordDelete does not support Filter with %s type', $filter->type()));
                     }
-                }
-                else{
+                } else {
                     $filterText = ' ON ';
                 }
 
@@ -135,6 +143,11 @@ trait MySQLRecordFilterTrait
                         $filterText .= ' NOT';
                     }
                     $filterText .= ' NULL';
+                } elseif ($filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS) {
+                    if (!$filter->affirmative()) {
+                        $filterText .= ' NOT';
+                    }
+                    $filterText .= sprintf(' LIKE "%%%s%%"', $filter->value());
                 } else {
                     if ($filter->egalityType() === DBRecordRowFilter::EGALITY_EQUAL) {
                         if (!$filter->affirmative()) {
@@ -180,7 +193,6 @@ trait MySQLRecordFilterTrait
 
     private function buildInnerFilters(array|DBRecordRow $DBRecordRows, bool $useDatatable = false): void
     {
-
         if (!is_array($DBRecordRows)) {
             $DBRecordRows = [$DBRecordRows];
         }
@@ -189,14 +201,13 @@ trait MySQLRecordFilterTrait
             foreach ($DBRecordRow->filters() as $filter) {
                 if (sizeof($this->innerFilters) > 0) {
                     if ($filter->type() === DBRecordRowFilter::TYPE_AND) {
-                        $filterText = 'AND ';
+                        $filterText = ' AND ';
                     } elseif ($filter->type() === DBRecordRowFilter::TYPE_OR) {
-                        $filterText = 'OR ';
+                        $filterText = ' OR ';
                     } else {
                         throw new MissingOptionsException(sprintf('MysqlRecordDelete does not support Filter with %s type', $filter->type()));
                     }
-                }
-                else{
+                } else {
                     $filterText = ' ON ';
                 }
 
@@ -216,6 +227,11 @@ trait MySQLRecordFilterTrait
                         $filterText .= ' NOT';
                     }
                     $filterText .= ' NULL';
+                } elseif ($filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS) {
+                    if (!$filter->affirmative()) {
+                        $filterText .= ' NOT';
+                    }
+                    $filterText .= sprintf(' LIKE "%%%s%%"', $filter->value());
                 } else {
                     if ($filter->egalityType() === DBRecordRowFilter::EGALITY_EQUAL) {
                         if (!$filter->affirmative()) {
