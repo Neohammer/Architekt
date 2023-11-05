@@ -291,8 +291,14 @@ class DBEntity implements DBEntityInterface
         return false;
     }
 
-    public function _save(bool $forceInsert = false): bool
+    public function _save(bool $forceInsert = false, ?int $forcePrimary = null): bool
     {
+        if($forceInsert){
+            $this->_datas_loaded = [];
+            $this->_loaded = false;
+        }
+
+
         $insert = $forceInsert || !$this->_isLoaded();
 
         if (!$insert && !$this->_hasToBeSaved()) {
@@ -311,6 +317,9 @@ class DBEntity implements DBEntityInterface
         }
 
         if ($insert) {
+            if($forceInsert && $forcePrimary){
+                $record->set($this->_primaryKey(), $forcePrimary);
+            }
             if ($this->_loaded = $success = $this->_connexion()->recordInsert($record)) {
                 $this->_setPrimary($this->_connexion()->recordInsertLast());
                 $this->_loaded = true;

@@ -781,6 +781,36 @@ final class DBEntityTest extends TestCase
 
     }
 
+    public function test_save_withForceInsertWillInsertNewAsExpected(): void{
+
+        $entitySimple = new DBEntitySimple();
+        $entitySimple
+            ->_set([
+                'name' => 'update',
+                'active' => 2,
+            ])->_save();
+
+        $primary = $entitySimple->_primary();
+
+        $entitySimple->_save(true);
+        self::assertNotEquals($primary , $entitySimple->_primary());
+        self::assertEquals($primary+1 , $entitySimple->_primary());
+    }
+
+    public function test_save_withForceInsertWithForcePrimaryKeyWillInsertNewAsExpected(): void{
+
+        DBEntitySimple::_test_clearTable();
+
+        ($entitySimple = new DBEntitySimple())
+            ->_set([
+                'name' => 'update',
+                'active' => 2,
+            ]);
+
+        $entitySimple->_save(true , 500);
+        self::assertEquals(500 , $entitySimple->_primary());
+    }
+
     public static function provide_isEqualTo_cases(): Iterator
     {
         $entity1 = DBEntitySimple::_test_createSample();

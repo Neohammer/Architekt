@@ -63,12 +63,12 @@ abstract class User extends DBEntity
         }
     }
 
-    public function _save(bool $forceInsert = false): bool
+    public function _save(bool $forceInsert = false, ?int $forcePrimary = null): bool
     {
         if (!$this->_isLoaded() || !$this->_get('hash')) {
             $this->_set('hash', static::generateHash());
         }
 
-        return parent::_save($forceInsert);
+        return parent::_save($forceInsert, $forcePrimary);
     }
 }

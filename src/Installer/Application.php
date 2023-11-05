@@ -673,29 +673,35 @@ class Application
     {
         $colors = [
             'customer' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
-            'quotation' => ['bgColor'=>'FF007F','textColor'=>'FFFFFF'],
+            'quotation' => ['bgColor'=>'7ab4e1','textColor'=>'FFFFFF'],
             'repairOrder' => ['bgColor'=>'F4661B','textColor'=>'FFFFFF'],
-            'bill' => ['bgColor'=>'C72C48','textColor'=>'FFFFFF'],
+            'bill' => ['bgColor'=>'e8ce45','textColor'=>'000000'],
             'vehicle' => ['bgColor'=>'B3B191','textColor'=>'FFFFFF'],
+            'calendar' => ['bgColor'=>'A5DF00','textColor'=>'FFFFFF'],
         ];
-
+        $content = '';
         foreach($colors as $cssClass=>$color) {
 
             extract($color);
             $bgColor = '#' . $bgColor;
+            $BGRgb = sscanf($bgColor, "#%02x%02x%02x");
+
             $textColor = '#' . $textColor;
 
             $template = Color::template($this->architekt);
             $template->assign([
                 'CLASS_NAME' => $cssClass,
                 'COLOR' => $bgColor,
+                'COLOR_RGB' => join(',',$BGRgb),
                 'COLOR_D1' => Color::darken($bgColor, 1.1),
                 'COLOR_D2' => Color::darken($bgColor, 1.2),
                 'COLOR_TXT' => $textColor
             ]);
 
-            echo $template->fetch('cssClass.css')."\n";
+            $content.= $template->fetch('cssClass.css')."\n";
         }
+        file_put_contents('./generate.css' , $content);
+        echo 'ok';
 
         die();
 
