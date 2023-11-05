@@ -101,4 +101,17 @@ class Formatter
             '&euro;'
         );
     }
+
+    public function accountingPrice(array $params, Smarty_Internal_Template $smarty_obj): string
+    {
+        return number_format(floatval($params['price']) ?? 0, '2', ',', ' ');
+    }
+
+    public function percent(array $params, Smarty_Internal_Template $smarty_obj): string
+    {
+        return sprintf('%s%s',
+            number_format(floatval($params['percent']) ?? 0, '0', ',', ''),
+            '%'
+        );
+    }
 }

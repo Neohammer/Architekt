@@ -1,19 +1,74 @@
 /** GENERATED {$CLASS_NAME} **/
-.btn-{$CLASS_NAME}{
-    --bs-btn-color: {$COLOR_TXT};
-    --bs-btn-bg: {$COLOR};
-    --bs-btn-border-color: {$COLOR};
-    --bs-btn-hover-color: {$COLOR_TXT};
-    --bs-btn-hover-bg: {$COLOR_D2};
-    --bs-btn-hover-border-color: {$COLOR_D1};
-    --bs-btn-focus-shadow-rgb: 255, 82, 125;
-    --bs-btn-active-color: {$COLOR_TXT};
-    --bs-btn-active-bg: {$COLOR_D1};
-    --bs-btn-active-border-color: {$COLOR_D2};
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
-    --bs-btn-disabled-color: {$COLOR_TXT};
-    --bs-btn-disabled-bg: {$COLOR};
-    --bs-btn-disabled-border-color: {$COLOR};
+
+:root{
+    --cw-{$CLASS_NAME}-text-color: {$COLOR_TXT};
+    --cw-{$CLASS_NAME}-color:{$COLOR};
+    --cw-{$CLASS_NAME}-color-rgb: {$COLOR_RGB};
+    --cw-{$CLASS_NAME}-color-darken1:{$COLOR_D1};
+    --cw-{$CLASS_NAME}-color-darken2:{$COLOR_D2};
 }
+
+.btn-{$CLASS_NAME}{
+    --bs-btn-color: var(--cw-{$CLASS_NAME}-text-color) !important;
+    --bs-btn-bg: var(--cw-{$CLASS_NAME}-color) !important;
+    --bs-btn-border-color: var(--cw-{$CLASS_NAME}-color) !important;
+    --bs-btn-hover-color: var(--cw-{$CLASS_NAME}-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-{$CLASS_NAME}-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-{$CLASS_NAME}-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-{$CLASS_NAME}-text-color) !important;
+    --bs-btn-active-bg: var(--cw-{$CLASS_NAME}-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-{$CLASS_NAME}-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-{$CLASS_NAME}-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-{$CLASS_NAME}-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-{$CLASS_NAME}-color) !important;
+}
+
+.buttons-{$CLASS_NAME} .btn-actions.active{
+    border: solid 3px var(--cw-{$CLASS_NAME}-color);
+}
+
+.bg-{$CLASS_NAME}{
+    background-color: var(--cw-{$CLASS_NAME}-color) !important;
+    color:var(--cw-{$CLASS_NAME}-text-color) !important;
+}
+
+.card-header.bg-{$CLASS_NAME}{
+    background: linear-gradient(0deg, rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.7) 0%, rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.9) 100%) !important;
+    color:var(--cw-{$CLASS_NAME}-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-{$CLASS_NAME}{
+    border: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.3) !important;
+}
+
+.table-{$CLASS_NAME}:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.2) !important;
+}
+.table-{$CLASS_NAME}:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.7) !important;
+    color:var(--cw-{$CLASS_NAME}-text-color);
+}
+.table-striped.table-{$CLASS_NAME} > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.2) !important;
+}
+
+.table-{$CLASS_NAME} thead th{
+    background: rgb(var(--cw-{$CLASS_NAME}-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.3) 0%, rgba(var(--cw-{$CLASS_NAME}-color-rgb),0.5) 100%) !important;
+    color:var(--cw-{$CLASS_NAME}-text-color) !important;
+    border-color:var(--cw-{$CLASS_NAME}-text-color) !important;
+}
+
+.table-{$CLASS_NAME} thead tr{
+     border-color:transparent;
+ }
+.table-{$CLASS_NAME} tfoot tr{
+    border-color:transparent;
+ }
 
 /** END GENERATED {$CLASS_NAME} **/

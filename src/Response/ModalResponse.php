@@ -2,7 +2,6 @@
 
 namespace Architekt\Response;
 
-use Architekt\Response\BaseResponse;
 use Architekt\Utility\Settings;
 
 class ModalResponse extends BaseResponse
@@ -18,6 +17,7 @@ class ModalResponse extends BaseResponse
     private string $cancelButtonDisplay;
     private string $cancelButtonText;
     private string $cancelButtonClass;
+    private ?string $className;
 
     public function __construct(
         private string $title,
@@ -34,12 +34,26 @@ class ModalResponse extends BaseResponse
         $this->cancelButtonDisplay = true;
         $this->cancelButtonText = "Annuler";
         $this->cancelButtonClass = "danger";
+        $this->className = null;
     }
 
+    public function setClassName(string $className): static
+    {
+        $this->className = $className;
+
+        return $this;
+    }
     public function form(string $action): static
     {
         $this->isForm = true;
         $this->action = $action;
+
+        return $this;
+    }
+
+    public function hideConfirm(): static
+    {
+        $this->confirmButtonDisplay = false;
 
         return $this;
     }
@@ -98,6 +112,7 @@ class ModalResponse extends BaseResponse
                 'width' => $this->size,
                 'title' => $this->title,
                 'html' => $this->html,
+                'className' => $this->className,
             ],
             'action' => [
                 'isForm' => $this->isForm,
