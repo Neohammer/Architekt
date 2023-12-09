@@ -32,6 +32,13 @@
   "jquery": {
     "js": "jquery.min"
   },
+  "jquery-ui": {
+    "js": "jquery-ui.min",
+    "css": "jquery-ui.min",
+    "require": [
+      "jquery"
+    ]
+  },
   "jquery-tags-input": {
     "js": "jquery.tagsinput.min",
     "css": "jquery.tagsinput.min",
