@@ -179,6 +179,14 @@ class File extends DBEntity
         return User::fromCache($this->_get('author_id'));
     }
 
+    public function base64(): string
+    {
+        return sprintf(
+            'data:%s;base64,%s',
+            $this->_get('mime_type'),
+            base64_encode(file_get_contents($this->filePath()))
+        );
+    }
 
     public function isImage(): bool
     {

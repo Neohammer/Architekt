@@ -2,8 +2,10 @@ $(document).ready(function () {
     PageManager.init();
 });
 
+
 var PageManager = {
     mainContentContainer: 'content',
+    modalClose : true,
     init: function () {
         if (typeof START_URL !== "undefined") {
             PageManager.replaceContent(START_URL);
@@ -22,6 +24,125 @@ var PageManager = {
         MenuManager.onContentChange(event,target);
         SearchManager.onContentChange(event);
         feather.replace();
+
+
+        if(typeof ArchitektCustom !== "undefined"){
+            if(typeof ArchitektCustom.onContentChange != "undefined"){
+                ArchitektCustom.onContentChange(event, target);
+            }
+        }
+
+        $('.form-select').each(function(){
+            if($(this).attr('bind') === '1'){
+                return ;
+            }
+            $(this).attr('bind','1');
+
+            minLength = 2;
+            if(typeof $(this).data('minlength') !== "undefined"){
+                minLength = parseInt($(this).data('minlength'));
+            }
+
+
+            config = {
+                object: $(this),
+                theme: "classic",
+                minimumInputLength: minLength,
+                language: "fr",
+                width: '100%',
+                escapeMarkup: function(markup) {
+                    return markup;
+                }
+            };
+
+            if(!$(this).data('required')){
+                config.allowClear = true;
+                config.placeholder = 'Choisir...';
+            }
+
+            if($(this).data('add')){
+                config.tags = true;
+                var url = $(this).data('add');
+                var number = $(this).data('add-number');
+                config.createTag = function (params) {
+                    var term = $.trim(params.term);
+                    console.log(url);
+
+                    if (term === '') {
+                        return null;
+                    }
+
+                    return {
+                        id: term,
+                        text: '(nouveau) '+term,
+                        number: number,
+                        url: url,
+                        newTag: true
+                    }
+                };
+            }
+
+            if($(this).data('source')){
+                config.ajax = {
+                    url: $(this).data('source'),
+                    dataType: 'json',
+                    context: $(this),
+                    data: function (params) {
+                        return {
+                            q: params.term, // search term
+                            page: params.page,
+                            parent : $($(this).data('search-filter')).val()
+                        };
+                    }
+                }
+            }
+
+            $(this).select2(config);
+
+            if($(this).data('selected')){
+
+                let selected = {
+                    id: $(this).data('selected'),
+                    text: $(this).data('selectedname'),
+                }
+                var option = new Option(selected.text, selected.id, true, true);
+                $(this).append(option).trigger('change');
+
+                // manually trigger the `select2:select` event
+                $(this).trigger({
+                    type: 'select2:select',
+                    params: {
+                        data: selected
+                    }
+                });
+            }
+
+            if($(this).data('onchange')) {
+                $(this).unbind('change').bind('select2:select', {exec:$(this).data('onchange')}, function (e) {
+                    eval(e.data.exec+"(e.params.data)");
+                })
+            }
+
+            $(this).parent().find('.select2-selection').on('focus',{parent:$(this).parent()}, function(e){
+                e.preventDefault();
+
+                $(e.data.parent).find('.form-select').select2('open');
+
+                $(e.data.parent).find('input').on('keydown',{parent:$(this).parent()}, function(e){
+                    console.log(e.key);
+                    console.log(e.keyCode);
+                })
+            });
+            $(this).on("select2:open", function (e) {
+                document.querySelector('.select2-search__field').focus();
+            });
+           /* $(this).on("select2:close", function (e) { console.log("select2:close", e); });
+            $(this).on("select2:select", function (e) { console.log("select2:select", e); });
+            $(this).on("select2:unselect", function (e) { console.log("select2:unselect", e); });*/
+
+        });
+
+
     },
 
     appendContent: function (url, target) {
@@ -33,6 +154,7 @@ var PageManager = {
             success: function (data) {
                 var stateObj = {foo: "archi"};
                 $(this).append(data);
+
                 PageManager.onContentChange('append');
             },
             error: function (jqXHR, textStatus, errorThrown) {
@@ -48,29 +170,17 @@ var PageManager = {
         });
     },
 
-    replaceContent: function (url, target, changeAddress, event) {
-        if (typeof event === "undefined") {
-            event = 'replace';
-        }
-        if (typeof target === "undefined") {
-            target = $('#' + PageManager.mainContentContainer);
-            changeAddress = true;
-        } else {
-            target = $(target);
-        }
-        if (typeof changeAddress === "undefined") {
-            changeAddress = false;
-        }
+    prependContent: function (url, target) {
+        target = $(target);
+        changeAddress = false;
         $.ajax({
             url: url,
             context: target,
             success: function (data) {
                 var stateObj = {foo: "archi"};
-                if (changeAddress) {
-                    history.pushState(stateObj, "Architekt", url);
-                }
-                $(this).html(data);
-                PageManager.onContentChange(event,target);
+                $(this).prepend(data);
+
+                PageManager.onContentChange('prepend');
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 if (403 === jqXHR.status) {
@@ -81,6 +191,66 @@ var PageManager = {
                 } else {
                     MessageManager.display('danger', 'Un problème est survenu');
                 }
+            }
+        });
+    },
+
+    keepModalOpen: function(){
+      this.modalClose = false;
+    },
+
+    modalWillClose: function(){
+      this.modalClose = true;
+    },
+
+    replaceContent: function (url, target, changeAddress, event, callback) {
+        if (typeof event === "undefined") {
+            event = 'replace';
+        }
+        if (typeof target === "undefined") {
+            mainContainer = true;
+            target = $('#' + PageManager.mainContentContainer);
+            changeAddress = true;
+        } else {
+            mainContainer = false;
+            target = $(target);
+        }
+        if (typeof changeAddress === "undefined") {
+            changeAddress = false;
+        }
+        LoaderManager.roller(target);
+        $.ajax({
+            url: url,
+            context: target,
+            success: function (data) {
+                var stateObj = {foo: "archi"};
+                if (changeAddress) {
+                    history.pushState(stateObj, "Architekt", url);
+                }
+                $(this).html(data);
+                PageManager.onContentChange(event,target);
+                if(PageManager.modalClose) ArchitektModal.close();
+
+                if(callback){
+                    eval(callback+"()");
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                if (403 === jqXHR.status) {
+                    MessageManager.display('danger', 'Page non accessible');
+                    PageManager.reload(jqXHR.responseText);
+                } else if (302 === jqXHR.status) {
+                    PageManager.reload(jqXHR.responseText);
+                } else {
+                    MessageManager.display('danger', 'Un problème est survenu');
+                    if(mainContainer) {
+                        PageManager.replaceContent('/Redirect/error/404');
+                    }
+                    else{
+                        LoaderManager.error(target);
+                    }
+                }
+
             }
         });
     },
@@ -107,7 +277,13 @@ var LinkManager = {
         });
     },
 
-    onContentChange: function () {
+    onContentChange: function (event) {
+        if( event === "append"){
+            this.onAppendEnd();
+        }
+        if( event === "prepend"){
+            this.onPrependEnd();
+        }
         this.replace();
     },
 
@@ -122,10 +298,6 @@ var LinkManager = {
         }
         let real = on.attr('real');
 
-        if (typeof real !== "undefined") {
-            return true;
-        }
-
         let confirmText = on.attr('confirm');
 
         if(typeof confirmText !== "undefined"){
@@ -133,6 +305,11 @@ var LinkManager = {
                 return false;
             }
         }
+
+        if (typeof real !== "undefined") {
+            return true;
+        }
+
 
         let eventType = on.attr('eventType');
 
@@ -156,6 +333,11 @@ var LinkManager = {
             return false;
         }
 
+        if ("prepend" === eventType) {
+            this.prepend(on);
+            return false;
+        }
+
         this.replaceContent(on);
         return false;
     },
@@ -163,7 +345,42 @@ var LinkManager = {
         let target = on.data('target');
         let url = on.data('url');
         target = $('#' + target);
+        $(on)
+            .attr('appendProgress' , '1')
+            .prop('disabled',true)
+            .attr('oldContent',$(on).html())
+            .html('En cours...');
         PageManager.appendContent(url, target);
+    },
+    onAppendEnd: function() {
+
+        $('[appendProgress=1]').each(function(){
+            $(this).attr('appendProgress' , '0')
+                .prop('disabled',false)
+                .html($(this).attr('oldContent'));
+        })
+
+    },
+    prepend: function (on) {
+        let target = on.data('target');
+        let url = on.data('url');
+        target = $('#' + target);
+        $(on)
+            .attr('prependProgress' , '1')
+            .prop('disabled',true)
+            .attr('oldContent',$(on).html())
+            .html('En cours...');
+
+        PageManager.prependContent(url, target);
+    },
+    onPrependEnd: function() {
+
+        $('[prependProgress=1]').each(function(){
+            $(this).attr('prependProgress' , '0')
+                .prop('disabled',false)
+                .html($(this).attr('oldContent'));
+        })
+
     },
     modal: function (on) {
         console.log('call modal');
@@ -206,12 +423,11 @@ var LinkManager = {
             url: url,
             success: function (response) {
                 ResponseManager.parse(response);
-                FormManager.enable();
-                PageManager.onContentChange('action');
+                FormManager.enable()
+                if(response.length) PageManager.onContentChange('action');
 
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus);
                 if (403 === jqXHR.status) {
                     MessageManager.display('danger', 'Page non accessible');
                 } else if (404 === jqXHR.status) {
@@ -221,7 +437,7 @@ var LinkManager = {
                 } else {
                     MessageManager.display('danger', 'Un problème est survenu - action (' + jqXHR.status + ')');
                 }
-                FormManager.enable();
+                FormManager.enable()
             },
             dataType: 'json'
         });
@@ -252,11 +468,15 @@ var LinkManager = {
         let target = on.data('target');
         let url = on.data('url');
 
-        if (typeof target !== "undefined") {
-            target = $('#' + target);
-        }
-
         PageManager.replaceContent(url, target);
+    }
+}
+var LoaderManager = {
+    roller: function(target){
+        $(target).html('<div class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>')
+    },
+    error: function(target){
+        $(target).html('<i class="mdi mdi-close-circle text-danger"> Echec</i>')
     }
 }
 
@@ -365,49 +585,73 @@ var ListManager = {
                 retrieve: true
             });
 
-            $(this).find('tr[itemId] td:not([customAction])').unbind('click').on('click', {datatable:datatable}, function (e) {
-                if ($(this).parent('tr').attr('action')) {
-                    PageManager.replaceContent($(this).parent('tr').attr('action'));
-                }
-                if ($(this).parent('tr').attr('modal')) {
-                    LinkManager.click($(this).parent('tr'),'modal');
-                }
-                if ($(this).parent('tr').attr('appendUrl')) {
-                    PageManager.appendContent($(this).parent('tr').attr('appendUrl'),$(this).parent('tr').attr('appendTarget'));
-                }
-                if ($(this).parent('tr').attr('select')) {
-                    $('#' + $(this).parent('tr').attr('select')).val($(this).parent('tr').attr('itemId')).trigger('change');
-                }
 
-                if ($(this).parent('tr').attr('removeRow') === '1') {
-                    e.data.datatable.row($(this).parent('tr')).remove().draw();
-                }
-            }).css('cursor', 'pointer');
-        })
+        });
+
+        $('tr[itemId] td:not([customAction])').unbind('click').on('click', function () {
+            let eventType = $(this).parent('tr').attr('eventType');
+            if (eventType) {
+                LinkManager.click($(this).parent('tr'),eventType);
+                return false;
+            }
+            if ($(this).parent('tr').attr('action')) {
+                PageManager.replaceContent($(this).parent('tr').attr('action'));
+                return false;
+            }
+            if ($(this).parent('tr').attr('appendUrl')) {
+                PageManager.appendContent($(this).parent('tr').attr('appendUrl'),$(this).parent('tr').attr('appendTarget'));
+                return false;
+            }
+            if ($(this).parent('tr').attr('select')) {
+                $('#' + $(this).parent('tr').attr('select')).val($(this).parent('tr').attr('itemId')).trigger('change');
+                return false;
+            }
+            return false;
+        }).css('cursor', 'pointer');
+
+        $('tr[itemId] td:not([customAction])').unbind('click').on('click', function () {
+            let eventType = $(this).parent('tr').attr('eventType');
+            if (eventType) {
+                LinkManager.click($(this).parent('tr'),eventType);
+                return false;
+            }
+            if ($(this).parent('tr').attr('action')) {
+                PageManager.replaceContent($(this).parent('tr').attr('action'));
+                return false;
+            }
+            if ($(this).parent('tr').attr('appendUrl')) {
+                PageManager.appendContent($(this).parent('tr').attr('appendUrl'),$(this).parent('tr').attr('appendTarget'));
+                return false;
+            }
+            if ($(this).parent('tr').attr('select')) {
+                $('#' + $(this).parent('tr').attr('select')).val($(this).parent('tr').attr('itemId')).trigger('change');
+                return false;
+            }
+            return false;
+        }).css('cursor', 'pointer');
 
     }
 }
 
 var FormManager = {
     bind: function () {
-       /* $('form:not([bind])').each(function () {
-            let buttons = $(this).find('button[role=submit]');
-            if (buttons.length > 0) {
-                $(this).attr('bind', 1);
-                buttons.bind('click', {form: this}, function (e) {
-                    console.log($(this)[0]);
-                    return false;
-                    FormManager.submit($(this), $(this).attr('action'));
-                });
-            }
-            return false;
-        })*/
-        $('form:not([bind])')
-            .attr('bind', 1)
-            .on('submit', function () {
-                FormManager.submit($(this), $(this).attr('action'));
+
+        let buttons = $('button.btn-submit');
+        if (buttons.length > 0) {
+            buttons.unbind('click').bind('click', {form: this}, function (e) {
+                if($(this).parents('form').length){
+                    $(this).parents('form').append('<input type="hidden" name="submitButton" value="'+$(this).attr('name')+'">');
+                    FormManager.submit($(this),$(this).parents('form').attr('action'));
+                }
                 return false;
             });
+        }
+
+       $('form:not([bind])').attr('bind','1')
+           .on('submit', function () {
+               FormManager.submit($(this), $(this).attr('action'));
+               return false;
+           });
 
     },
 
@@ -421,6 +665,19 @@ var FormManager = {
         FormManager.sendForm(form, action);
     },
     sendForm: function (form, action,  callbacks) {
+
+        button = null;
+        if($(form).prop("tagName") !== "FORM"){
+            button = $(form);
+            form = $(form).parents('form');
+        }
+
+        if($(form).find('.signature_img').length){
+            var canvas = document.getElementsByTagName("canvas");
+            var img    = canvas[0].toDataURL("image/png");
+            $(form).find('.signature_img').val(img);
+        }
+
         $.ajax({
             type: "POST",
             url: action,
@@ -464,6 +721,11 @@ var FormManager = {
 
     onResponse: function (form, response) {
         if (response.success) {
+
+            if(response.warning){
+                this.onValidationWarning(form, response);
+                return true;
+            }
             this.onValidationSuccess(form, response);
             return true;
         }
@@ -497,13 +759,39 @@ var FormManager = {
         MessageManager.display('danger', mainMessage);
         this.enable(form);
     },
+    onValidationWarning: function (form, response) {
+        let mainMessage = "<b>"+response.message+"</b>";
+        for (var i in response.details) {
+            let constraintDetails = response.details[i];
+
+            for (var j in constraintDetails.fields) {
+                this.manageFieldContraints(constraintDetails.fields[j], constraintDetails.success, constraintDetails.message);
+                if( !constraintDetails.success){
+                    mainMessage+="<li>"+constraintDetails.message+"</li>";
+                }
+            }
+        }
+
+        response.message = mainMessage;
+        response.messageType = 'warning';
+
+        ResponseManager.parse(response,'form');
+    },
 
     manageFieldContraints: function (field, isSuccess, message) {
 
         let fieldItem = $("#" + field + "-input");
+        let fieldInput = fieldItem;
+
+        if(fieldItem.parent().find('.select2-selection').length > 0){
+            fieldItem = fieldItem.parent().find('.select2-selection');
+            fieldInput = fieldItem.find('input');
+        }
+
 
         fieldItem.attr('title', '');
         fieldItem.removeClass('is-valid is-invalid');
+
 
         if (true === isSuccess) {
             fieldItem.addClass('is-valid');
@@ -519,8 +807,8 @@ var FormManager = {
             $("#" + field + "-group .invalid-feedback").hide();
         }
 
-        if (!fieldItem.data('bindChange')) {
-            fieldItem.bind('keypress change', function () {
+        if (!fieldInput.data('bindChange')) {
+            fieldInput.bind('keypress change', function () {
                 $(this).attr('title', '');
                 $(this).removeClass('is-valid is-invalid');
                 let group = '#' + ($(this).attr('id').replace('-input', '')) + '-group';
@@ -584,14 +872,14 @@ var ResponseManager =
     {
         parse: function (response, event) {
 
-            if (typeof response.reloadTo != "undefined") {
+            if (typeof response.reloadTo !== "undefined") {
                 PageManager.reload(response.reloadTo);
             } else {
-                if (typeof response.message != "undefined") {
-                    MessageManager.display("success", response.message);
+                if (typeof response.message !== "undefined") {
+                    MessageManager.display(typeof response.messageType !== "undefined" ? response.messageType : "success", response.message);
                 }
-                if (typeof response.returnTo != "undefined") {
-                    if (typeof response.returnTarget != "undefined") {
+                if (typeof response.returnTo !== "undefined") {
+                    if (typeof response.returnTarget !== "undefined") {
                         PageManager.replaceContent(response.returnTo, response.returnTarget);
                     } else {
                         PageManager.replaceContent(response.returnTo);

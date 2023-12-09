@@ -70,5 +70,8 @@
 .table-{$CLASS_NAME} tfoot tr{
     border-color:transparent;
  }
+.text-{$CLASS_NAME}{
+    color:var(--cw-{$CLASS_NAME}-color) !important;
+ }
 
 /** END GENERATED {$CLASS_NAME} **/

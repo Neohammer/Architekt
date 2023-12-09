@@ -48,6 +48,12 @@ class BaseConstraints
                 || false !== \DateTime::createFromFormat('Y-m-d', $date);
     }
 
+    public static function validateDatetime(string $datetime): bool
+    {
+        return false !== \DateTime::createFromFormat('d/m/Y\TH:i', $datetime)
+            || false !== \DateTime::createFromFormat('Y-m-d\TH:i', $datetime);
+    }
+
     public static function dateIsBefore(string $date, string $date_before): bool
     {
         return $date < $date_before;

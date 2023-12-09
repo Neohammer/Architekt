@@ -9,6 +9,7 @@ class Validation
 {
     private array $errors;
     private array $successes;
+    private array $warnings;
 
     private static function cleanField(string $field)
     {
@@ -26,6 +27,19 @@ class Validation
         Transaction::start();
         $this->errors = [];
         $this->successes = [];
+        $this->warnings = [];
+    }
+
+    public function addResponse(ResponseForm $formResponse): static
+    {
+        foreach ($formResponse->validation->errors as $error) {
+            $this->errors[] = $error;
+        }
+        foreach ($formResponse->validation->successes as $success) {
+            $this->successes[] = $success;
+        }
+
+        return $this;
     }
 
     public function addError(string $field, string $message): void
@@ -49,6 +63,14 @@ class Validation
         ];
     }
 
+    public function addWarning(string $field, string $message): void
+    {
+        $this->warnings[] = [
+            'field' => self::cleanField($field),
+            'message' => $message
+        ];
+    }
+
     public function response(?string $successMessage = null, ?string $failMessage = null, ?array $args = null): ResponseForm
     {
         if ($this->isSuccess()) {
@@ -60,10 +82,12 @@ class Validation
         return new ResponseForm($this, $successMessage, $failMessage, $args);
     }
 
-    public function buildErrorsDetails(): array
+    public function buildDetails(): array
     {
         $details = [];
         $onErrors = [];
+        $onWarnings = [];
+
         foreach ($this->errors as $error) {
             $onErrors[] = $error['field'];
             $details[] = [
@@ -72,8 +96,20 @@ class Validation
                 'message' => $error['message']
             ];
         }
+
+        foreach ($this->warnings as $warning) {
+            $onWarnings[] = $warning['field'];
+            $details[] = [
+                'fields' => [$warning['field']],
+                'success' => false,
+                'message' => $warning['message']
+            ];
+        }
         foreach ($this->successes as $success) {
             if (in_array($success['field'], $onErrors)) {
+                continue;
+            }
+            if (in_array($success['field'], $onWarnings)) {
                 continue;
             }
             $details[] = [
@@ -83,5 +119,10 @@ class Validation
             ];
         }
         return $details;
+    }
+
+    public function hasWarnings(): bool
+    {
+        return count($this->warnings) > 0;
     }
 }

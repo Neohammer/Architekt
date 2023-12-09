@@ -671,13 +671,24 @@ class Application
 
     public function addCssClass(string $cssClass, string $bgColor, string $textColor)
     {
-        $colors = [
+        //GARAGE
+       /* $colors = [
             'customer' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
             'quotation' => ['bgColor'=>'7ab4e1','textColor'=>'FFFFFF'],
             'repairOrder' => ['bgColor'=>'F4661B','textColor'=>'FFFFFF'],
             'bill' => ['bgColor'=>'e8ce45','textColor'=>'000000'],
+            'credit' => ['bgColor'=>'c99bb1','textColor'=>'000000'],
             'vehicle' => ['bgColor'=>'B3B191','textColor'=>'FFFFFF'],
             'calendar' => ['bgColor'=>'A5DF00','textColor'=>'FFFFFF'],
+            'inventory' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
+            'accounting' => ['bgColor'=>'97d3cc','textColor'=>'000000'],
+        ];*/
+
+        $colors = [
+            'organization' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
+            'groups' => ['bgColor'=>'B3B191','textColor'=>'FFFFFF'],
+            'person' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
+            'internal' => ['bgColor'=>'97d3cc','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {

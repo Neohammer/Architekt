@@ -26,11 +26,11 @@ trait UserLoginTrait
         }
 
         if (array_key_exists(static::SESSION_NAME, $_COOKIE)) {
-            $User = new static();
-            $User->_search()->and($user, 'hash', $_COOKIE[static::SESSION_NAME]);
-            if ($User->_next()) {
-                $User->sessionRegister();
-                return $User;
+            $user = new static();
+            $user->_search()->and($user, 'hash', $_COOKIE[static::SESSION_NAME]);
+            if ($user->_next()) {
+                $user->sessionRegister();
+                return $user;
             }
         }
         return null;

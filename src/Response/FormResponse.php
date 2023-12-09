@@ -7,20 +7,13 @@ use Architekt\View\Message;
 
 class FormResponse extends BaseResponse
 {
-    private Validation $validation;
-    private ?string $successMessage;
-    private ?string $failMessage;
-
     public function __construct(
-        Validation $validation,
-        ?string    $successMessage,
-        ?string    $failMessage,
-        ?array     $args = null
+        public Validation $validation,
+        private ?string   $successMessage,
+        private ?string   $failMessage,
+        ?array            $args = null
     )
     {
-        $this->validation = $validation;
-        $this->successMessage = $successMessage;
-        $this->failMessage = $failMessage;
         parent::init($args);
     }
 
@@ -29,6 +22,10 @@ class FormResponse extends BaseResponse
         return $this->validation->isSuccess();
     }
 
+    public function hasWarnings(): bool
+    {
+        return $this->validation->hasWarnings();
+    }
 
     public function send(): void
     {
@@ -41,7 +38,8 @@ class FormResponse extends BaseResponse
         return array_merge(
             [
                 'success' => $this->isSuccess(),
-                'details' => $this->validation->buildErrorsDetails()
+                'warning' => $this->hasWarnings(),
+                'details' => $this->validation->buildDetails()
             ],
             parent::buildRoute(),
             $this->buildMessage()
@@ -72,10 +70,9 @@ class FormResponse extends BaseResponse
 
     public function sendMessage(): static
     {
-        if($this->isSuccess()){
+        if ($this->isSuccess()) {
             Message::addSuccess($this->message());
-        }
-        else{
+        } else {
             Message::addError($this->message());
         }
 
