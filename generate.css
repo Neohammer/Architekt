@@ -1,312 +1,78 @@
-/** GENERATED organization **/
+/** GENERATED training **/
 
 :root{
-    --cw-organization-text-color: #FFFFFF;
-    --cw-organization-color:#83A697;
-    --cw-organization-color-rgb: 131,166,151;
-    --cw-organization-color-darken1:#779689;
-    --cw-organization-color-darken2:#6D8A7D;
+    --cw-training-text-color: #FFFFFF;
+    --cw-training-color:#83A697;
+    --cw-training-color-rgb: 131,166,151;
+    --cw-training-color-darken1:#779689;
+    --cw-training-color-darken2:#6D8A7D;
 }
 
-.btn-organization{
-    --bs-btn-color: var(--cw-organization-text-color) !important;
-    --bs-btn-bg: var(--cw-organization-color) !important;
-    --bs-btn-border-color: var(--cw-organization-color) !important;
-    --bs-btn-hover-color: var(--cw-organization-text-color) !important;
-    --bs-btn-hover-bg: var(--cw-organization-color-darken2) !important;
-    --bs-btn-hover-border-color: var(--cw-organization-color-darken1) !important;
-    --bs-btn-active-color: var(--cw-organization-text-color) !important;
-    --bs-btn-active-bg: var(--cw-organization-color-darken1) !important;
-    --bs-btn-active-border-color: var(--cw-organization-color-darken2) !important;
+.btn-training{
+    --bs-btn-color: var(--cw-training-text-color) !important;
+    --bs-btn-bg: var(--cw-training-color) !important;
+    --bs-btn-border-color: var(--cw-training-color) !important;
+    --bs-btn-hover-color: var(--cw-training-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-training-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-training-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-training-text-color) !important;
+    --bs-btn-active-bg: var(--cw-training-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-training-color-darken2) !important;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: var(--cw-organization-text-color) !important;
-    --bs-btn-disabled-bg: var(--cw-organization-color) !important;
-    --bs-btn-disabled-border-color: var(--cw-organization-color) !important;
+    --bs-btn-disabled-color: var(--cw-training-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-training-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-training-color) !important;
 }
 
-.buttons-organization .btn-actions.active{
-    border: solid 3px var(--cw-organization-color);
+.buttons-training .btn-actions.active{
+    border: solid 3px var(--cw-training-color);
 }
 
-.bg-organization{
-    background-color: var(--cw-organization-color) !important;
-    color:var(--cw-organization-text-color) !important;
+.bg-training{
+    background-color: var(--cw-training-color) !important;
+    color:var(--cw-training-text-color) !important;
 }
 
-.card-header.bg-organization{
-    background: linear-gradient(0deg, rgba(var(--cw-organization-color-rgb),0.7) 0%, rgba(var(--cw-organization-color-rgb),0.9) 100%) !important;
-    color:var(--cw-organization-text-color) !important;
+.card-header.bg-training{
+    background: linear-gradient(0deg, rgba(var(--cw-training-color-rgb),0.7) 0%, rgba(var(--cw-training-color-rgb),0.9) 100%) !important;
+    color:var(--cw-training-text-color) !important;
 
-    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-organization-color-rgb),0.41) !important;
-    box-shadow: 0px 7px 7px 0px rgba(var(--cw-organization-color-rgb),0.41) !important;
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-training-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-training-color-rgb),0.41) !important;
     border-bottom:0px !important;
 }
 
-.border-organization{
-    border: rgba(var(--cw-organization-color-rgb), 0.3) !important;
+.border-training{
+    border: rgba(var(--cw-training-color-rgb), 0.3) !important;
 }
 
-.table-organization:not(.table-striped) tbody td {
-    background-color: rgba(var(--cw-organization-color-rgb), 0.2) !important;
+.table-training:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-training-color-rgb), 0.2) !important;
 }
-.table-organization:not(.table-striped) tbody th {
-    background-color: rgba(var(--cw-organization-color-rgb), 0.7) !important;
-    color:var(--cw-organization-text-color);
+.table-training:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-training-color-rgb), 0.7) !important;
+    color:var(--cw-training-text-color);
 }
-.table-striped.table-organization > tbody > tr:nth-of-type(odd) > * {
-    --bs-table-accent-bg: rgba(var(--cw-organization-color-rgb), 0.2) !important;
-}
-
-.table-organization thead th{
-    background: rgb(var(--cw-organization-color-rgb)) !important;
-    background: linear-gradient(0deg, rgba(var(--cw-organization-color-rgb),0.3) 0%, rgba(var(--cw-organization-color-rgb),0.5) 100%) !important;
-    color:var(--cw-organization-text-color) !important;
-    border-color:var(--cw-organization-text-color) !important;
+.table-striped.table-training > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-training-color-rgb), 0.2) !important;
 }
 
-.table-organization thead tr{
+.table-training thead th{
+    background: rgb(var(--cw-training-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-training-color-rgb),0.3) 0%, rgba(var(--cw-training-color-rgb),0.5) 100%) !important;
+    color:var(--cw-training-text-color) !important;
+    border-color:var(--cw-training-text-color) !important;
+}
+
+.table-training thead tr{
      border-color:transparent;
  }
-.table-organization tfoot tr{
+.table-training tfoot tr{
     border-color:transparent;
  }
-.text-organization{
-    color:var(--cw-organization-color) !important;
+.text-training{
+    color:var(--cw-training-color) !important;
  }
 
-/** END GENERATED organization **/
-
-/** GENERATED groups **/
-
-:root{
-    --cw-groups-text-color: #FFFFFF;
-    --cw-groups-color:#B3B191;
-    --cw-groups-color-rgb: 179,177,145;
-    --cw-groups-color-darken1:#A2A083;
-    --cw-groups-color-darken2:#959378;
-}
-
-.btn-groups{
-    --bs-btn-color: var(--cw-groups-text-color) !important;
-    --bs-btn-bg: var(--cw-groups-color) !important;
-    --bs-btn-border-color: var(--cw-groups-color) !important;
-    --bs-btn-hover-color: var(--cw-groups-text-color) !important;
-    --bs-btn-hover-bg: var(--cw-groups-color-darken2) !important;
-    --bs-btn-hover-border-color: var(--cw-groups-color-darken1) !important;
-    --bs-btn-active-color: var(--cw-groups-text-color) !important;
-    --bs-btn-active-bg: var(--cw-groups-color-darken1) !important;
-    --bs-btn-active-border-color: var(--cw-groups-color-darken2) !important;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: var(--cw-groups-text-color) !important;
-    --bs-btn-disabled-bg: var(--cw-groups-color) !important;
-    --bs-btn-disabled-border-color: var(--cw-groups-color) !important;
-}
-
-.buttons-groups .btn-actions.active{
-    border: solid 3px var(--cw-groups-color);
-}
-
-.bg-groups{
-    background-color: var(--cw-groups-color) !important;
-    color:var(--cw-groups-text-color) !important;
-}
-
-.card-header.bg-groups{
-    background: linear-gradient(0deg, rgba(var(--cw-groups-color-rgb),0.7) 0%, rgba(var(--cw-groups-color-rgb),0.9) 100%) !important;
-    color:var(--cw-groups-text-color) !important;
-
-    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-groups-color-rgb),0.41) !important;
-    box-shadow: 0px 7px 7px 0px rgba(var(--cw-groups-color-rgb),0.41) !important;
-    border-bottom:0px !important;
-}
-
-.border-groups{
-    border: rgba(var(--cw-groups-color-rgb), 0.3) !important;
-}
-
-.table-groups:not(.table-striped) tbody td {
-    background-color: rgba(var(--cw-groups-color-rgb), 0.2) !important;
-}
-.table-groups:not(.table-striped) tbody th {
-    background-color: rgba(var(--cw-groups-color-rgb), 0.7) !important;
-    color:var(--cw-groups-text-color);
-}
-.table-striped.table-groups > tbody > tr:nth-of-type(odd) > * {
-    --bs-table-accent-bg: rgba(var(--cw-groups-color-rgb), 0.2) !important;
-}
-
-.table-groups thead th{
-    background: rgb(var(--cw-groups-color-rgb)) !important;
-    background: linear-gradient(0deg, rgba(var(--cw-groups-color-rgb),0.3) 0%, rgba(var(--cw-groups-color-rgb),0.5) 100%) !important;
-    color:var(--cw-groups-text-color) !important;
-    border-color:var(--cw-groups-text-color) !important;
-}
-
-.table-groups thead tr{
-     border-color:transparent;
- }
-.table-groups tfoot tr{
-    border-color:transparent;
- }
-.text-groups{
-    color:var(--cw-groups-color) !important;
- }
-
-/** END GENERATED groups **/
-
-/** GENERATED person **/
-
-:root{
-    --cw-person-text-color: #FFFFFF;
-    --cw-person-color:#e66465;
-    --cw-person-color-rgb: 230,100,101;
-    --cw-person-color-darken1:#D15A5B;
-    --cw-person-color-darken2:#BF5354;
-}
-
-.btn-person{
-    --bs-btn-color: var(--cw-person-text-color) !important;
-    --bs-btn-bg: var(--cw-person-color) !important;
-    --bs-btn-border-color: var(--cw-person-color) !important;
-    --bs-btn-hover-color: var(--cw-person-text-color) !important;
-    --bs-btn-hover-bg: var(--cw-person-color-darken2) !important;
-    --bs-btn-hover-border-color: var(--cw-person-color-darken1) !important;
-    --bs-btn-active-color: var(--cw-person-text-color) !important;
-    --bs-btn-active-bg: var(--cw-person-color-darken1) !important;
-    --bs-btn-active-border-color: var(--cw-person-color-darken2) !important;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: var(--cw-person-text-color) !important;
-    --bs-btn-disabled-bg: var(--cw-person-color) !important;
-    --bs-btn-disabled-border-color: var(--cw-person-color) !important;
-}
-
-.buttons-person .btn-actions.active{
-    border: solid 3px var(--cw-person-color);
-}
-
-.bg-person{
-    background-color: var(--cw-person-color) !important;
-    color:var(--cw-person-text-color) !important;
-}
-
-.card-header.bg-person{
-    background: linear-gradient(0deg, rgba(var(--cw-person-color-rgb),0.7) 0%, rgba(var(--cw-person-color-rgb),0.9) 100%) !important;
-    color:var(--cw-person-text-color) !important;
-
-    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-person-color-rgb),0.41) !important;
-    box-shadow: 0px 7px 7px 0px rgba(var(--cw-person-color-rgb),0.41) !important;
-    border-bottom:0px !important;
-}
-
-.border-person{
-    border: rgba(var(--cw-person-color-rgb), 0.3) !important;
-}
-
-.table-person:not(.table-striped) tbody td {
-    background-color: rgba(var(--cw-person-color-rgb), 0.2) !important;
-}
-.table-person:not(.table-striped) tbody th {
-    background-color: rgba(var(--cw-person-color-rgb), 0.7) !important;
-    color:var(--cw-person-text-color);
-}
-.table-striped.table-person > tbody > tr:nth-of-type(odd) > * {
-    --bs-table-accent-bg: rgba(var(--cw-person-color-rgb), 0.2) !important;
-}
-
-.table-person thead th{
-    background: rgb(var(--cw-person-color-rgb)) !important;
-    background: linear-gradient(0deg, rgba(var(--cw-person-color-rgb),0.3) 0%, rgba(var(--cw-person-color-rgb),0.5) 100%) !important;
-    color:var(--cw-person-text-color) !important;
-    border-color:var(--cw-person-text-color) !important;
-}
-
-.table-person thead tr{
-     border-color:transparent;
- }
-.table-person tfoot tr{
-    border-color:transparent;
- }
-.text-person{
-    color:var(--cw-person-color) !important;
- }
-
-/** END GENERATED person **/
-
-/** GENERATED internal **/
-
-:root{
-    --cw-internal-text-color: #FFFFFF;
-    --cw-internal-color:#97d3cc;
-    --cw-internal-color-rgb: 151,211,204;
-    --cw-internal-color-darken1:#89BFB9;
-    --cw-internal-color-darken2:#7DAFAA;
-}
-
-.btn-internal{
-    --bs-btn-color: var(--cw-internal-text-color) !important;
-    --bs-btn-bg: var(--cw-internal-color) !important;
-    --bs-btn-border-color: var(--cw-internal-color) !important;
-    --bs-btn-hover-color: var(--cw-internal-text-color) !important;
-    --bs-btn-hover-bg: var(--cw-internal-color-darken2) !important;
-    --bs-btn-hover-border-color: var(--cw-internal-color-darken1) !important;
-    --bs-btn-active-color: var(--cw-internal-text-color) !important;
-    --bs-btn-active-bg: var(--cw-internal-color-darken1) !important;
-    --bs-btn-active-border-color: var(--cw-internal-color-darken2) !important;
-    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
-    --bs-btn-disabled-color: var(--cw-internal-text-color) !important;
-    --bs-btn-disabled-bg: var(--cw-internal-color) !important;
-    --bs-btn-disabled-border-color: var(--cw-internal-color) !important;
-}
-
-.buttons-internal .btn-actions.active{
-    border: solid 3px var(--cw-internal-color);
-}
-
-.bg-internal{
-    background-color: var(--cw-internal-color) !important;
-    color:var(--cw-internal-text-color) !important;
-}
-
-.card-header.bg-internal{
-    background: linear-gradient(0deg, rgba(var(--cw-internal-color-rgb),0.7) 0%, rgba(var(--cw-internal-color-rgb),0.9) 100%) !important;
-    color:var(--cw-internal-text-color) !important;
-
-    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-internal-color-rgb),0.41) !important;
-    box-shadow: 0px 7px 7px 0px rgba(var(--cw-internal-color-rgb),0.41) !important;
-    border-bottom:0px !important;
-}
-
-.border-internal{
-    border: rgba(var(--cw-internal-color-rgb), 0.3) !important;
-}
-
-.table-internal:not(.table-striped) tbody td {
-    background-color: rgba(var(--cw-internal-color-rgb), 0.2) !important;
-}
-.table-internal:not(.table-striped) tbody th {
-    background-color: rgba(var(--cw-internal-color-rgb), 0.7) !important;
-    color:var(--cw-internal-text-color);
-}
-.table-striped.table-internal > tbody > tr:nth-of-type(odd) > * {
-    --bs-table-accent-bg: rgba(var(--cw-internal-color-rgb), 0.2) !important;
-}
-
-.table-internal thead th{
-    background: rgb(var(--cw-internal-color-rgb)) !important;
-    background: linear-gradient(0deg, rgba(var(--cw-internal-color-rgb),0.3) 0%, rgba(var(--cw-internal-color-rgb),0.5) 100%) !important;
-    color:var(--cw-internal-text-color) !important;
-    border-color:var(--cw-internal-text-color) !important;
-}
-
-.table-internal thead tr{
-     border-color:transparent;
- }
-.table-internal tfoot tr{
-    border-color:transparent;
- }
-.text-internal{
-    color:var(--cw-internal-color) !important;
- }
-
-/** END GENERATED internal **/
+/** END GENERATED training **/
 

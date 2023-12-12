@@ -45,7 +45,7 @@ class BaseConstraints
     public static function validateDate(string $date): bool
     {
         return false !== \DateTime::createFromFormat('d/m/Y', $date)
-                || false !== \DateTime::createFromFormat('Y-m-d', $date);
+            || false !== \DateTime::createFromFormat('Y-m-d', $date);
     }
 
     public static function validateDatetime(string $datetime): bool
@@ -183,5 +183,15 @@ class BaseConstraints
         }
 
         return null;
+    }
+
+    /**
+     */
+    public static function validateFileFromUrl(
+        File   $file,
+        string $url
+    ): ?File
+    {
+        return File::download($url, $file);
     }
 }

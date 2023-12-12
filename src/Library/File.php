@@ -30,25 +30,29 @@ class File extends DBEntity
     protected static ?string $_table_prefix = ARCHITEKT_DATATABLE_PREFIX;
     protected static ?string $_table = 'file';
 
-    public static function createFromContent(string $content, string $extension, int $sourceId): ?self
+    public static function createFromUrl(string $url, string $name, ?File $file = null): ?self
     {
-        $hash = md5($content);
-        $path = self::getBasePath();
-        $directory = self::getRelativePath($hash);
-        $filename = $path . '/' . $hash;
+        $fileUniq = md5(uniqid() . time());
+        $fileRelativePath = static::getRelativePath($fileUniq);
+        $filePath = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
 
-        if (file_put_contents($filename, $content)) {
+        if (file_put_contents($filePath, file_get_contents($url))) {
 
+            $fileHash = md5_file($filePath);
             if (self::$transactionStarted) {
-                self::$transactionFiles[] = $filename;
+                self::$transactionFiles[] = $filePath;
             }
 
-            $file = new self();
+            if (!$file) {
+                $file = new self();
+            }
             $file->_set([
-                'source_id' => $sourceId,
-                'hash' => $hash,
-                'type' => $extension,
-                'directory' => $directory,
+                'uniqid' => $fileUniq,
+                'hash' => $fileHash,
+                'mime_type' => mime_content_type($filePath),
+                'name' => $name,
+                'size' => filesize($filePath),
+                'directory' => $fileRelativePath . DIRECTORY_SEPARATOR
             ])->_save();
 
             return $file;
@@ -63,17 +67,17 @@ class File extends DBEntity
         $fileUniq = md5(uniqid() . time());
 
         $fileRelativePath = static::getRelativePath($fileUniq);
-        $filename = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
+        $filePath = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
         $move = @move_uploaded_file(
             $uploadFile->temporaryName(),
-            $filename
+            $filePath
         );
 
         if (false === $move) {
             return null;
         }
         if (self::$transactionStarted) {
-            self::$transactionFiles[] = $filename;
+            self::$transactionFiles[] = $filePath;
         }
 
         if (null === $file) {
@@ -132,18 +136,12 @@ class File extends DBEntity
         return $file;
     }
 
-    public static function download(string $url, int $sourceId): ?self
+    public static function download(string $url, ?self $file = null): ?self
     {
-        $content = file_get_contents($url);
-
         $parts = explode('.', $url);
-        $extension = $parts[sizeof($parts) - 1];
+        $filename = $parts[sizeof($parts) - 2];
 
-        if (false !== $content) {
-            return self::createFromContent($content, $extension, $sourceId);
-        }
-
-        return null;
+        return self::createFromUrl($url, $filename, $file);
     }
 
     public static function transactionStart(): void
@@ -194,6 +192,20 @@ class File extends DBEntity
             'image/jpeg',
             'image/png',
             'image/gif',
+        ]);
+    }
+
+    public function isMusic(): bool
+    {
+        return in_array($this->_get('mime_type'), [
+            'audio/mpeg',
+        ]);
+    }
+
+    public function isVideo(): bool
+    {
+        return in_array($this->_get('mime_type'), [
+            'video/mp4',
         ]);
     }
 
@@ -257,11 +269,11 @@ class File extends DBEntity
 
     private static function getBasePath(): string
     {
-        return PATH_FILER . DIRECTORY_SEPARATOR. 'Library';
+        return PATH_FILER . DIRECTORY_SEPARATOR . 'Library';
     }
 
     public function filePath(): string
     {
-        return self::getBasePath(). DIRECTORY_SEPARATOR . static::getRelativePath($this->_get('uniqid')). DIRECTORY_SEPARATOR. $this->_get('uniqid');
+        return self::getBasePath() . DIRECTORY_SEPARATOR . static::getRelativePath($this->_get('uniqid')) . DIRECTORY_SEPARATOR . $this->_get('uniqid');
     }
 }

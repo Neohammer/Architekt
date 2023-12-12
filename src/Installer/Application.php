@@ -684,11 +684,15 @@ class Application
             'accounting' => ['bgColor'=>'97d3cc','textColor'=>'000000'],
         ];*/
 
-        $colors = [
+        /*$colors = [
             'organization' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
             'groups' => ['bgColor'=>'B3B191','textColor'=>'FFFFFF'],
             'person' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
             'internal' => ['bgColor'=>'97d3cc','textColor'=>'FFFFFF'],
+        ];*/
+
+        $colors = [
+            'training' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {

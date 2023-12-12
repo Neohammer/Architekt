@@ -21,6 +21,20 @@ if (array_key_exists(1, $_SERVER['argv'])) {
         case "toJson":
             Command::toJson(ARCHITEKT_COMPOSER_INSTALL_DIR);
             break;
+        case "addCssClass":
+            Command::addCssClass(
+                path: ARCHITEKT_COMPOSER_INSTALL_DIR,
+                cssClass: $_SERVER['argv'][2],
+                bgColor: $_SERVER['argv'][3],
+                textColor: $_SERVER['argv'][4],
+                projectCode: $_SERVER['argv'][5],
+                applicationCode: $_SERVER['argv'][6],
+            );
+
+            $startColor = '#ff3366';
+            $startColorText = '#ffffff';
+
+            break;
         case "WebVendors":
 
             switch($_SERVER['argv'][2]){
