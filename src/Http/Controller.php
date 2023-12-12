@@ -124,7 +124,6 @@ abstract class Controller
         $dirExists = is_dir($pathControllers . DIRECTORY_SEPARATOR . $askParams[0]);
         $dirIndexExists = is_dir($pathControllers . DIRECTORY_SEPARATOR . 'Index');
 
-
         if ($dirExists) {
             if(isset($askParams[2])){
                 if(self::__isValidMethod($askParams[2])) {
@@ -133,13 +132,14 @@ abstract class Controller
                         'method' => $askParams[2],
                         'params' => array_slice($askParams, 3),
                     ];
-                }else{
-                    $callables[] = [
-                        'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
-                        'method' => 'index',
-                        'params' => array_slice($askParams, 2),
-                    ];
                 }
+            }
+            else{
+                $callables[] = [
+                    'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                    'method' => 'index',
+                    'params' => array_slice($askParams, 2),
+                ];
             }
 
             if(self::__isValidMethod($askParams[1])) {
