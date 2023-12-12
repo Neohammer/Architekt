@@ -119,7 +119,6 @@ abstract class Controller
         $askParams[0] ??= 'index';
         $askParams[1] ??= 'index';
 
-
         $callables = [];
 
         $dirExists = is_dir($pathControllers . DIRECTORY_SEPARATOR . $askParams[0]);
@@ -127,13 +126,22 @@ abstract class Controller
 
 
         if ($dirExists) {
-            if(!isset($askParams[2]) || self::__isValidMethod($askParams[2])) {
-                $callables[] = [
-                    'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
-                    'method' => $askParams[2] ?? 'index',
-                    'params' => array_slice($askParams, array_key_exists(2, $askParams) ? 3 : 2),
-                ];
+            if(isset($askParams[2])){
+                if(self::__isValidMethod($askParams[2])) {
+                    $callables[] = [
+                        'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                        'method' => $askParams[2],
+                        'params' => array_slice($askParams, 3),
+                    ];
+                }else{
+                    $callables[] = [
+                        'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                        'method' => 'index',
+                        'params' => array_slice($askParams, 2),
+                    ];
+                }
             }
+
             if(self::__isValidMethod($askParams[1])) {
                 $callables[] = [
                     'class' => ucfirst($askParams[0]) . '\\Index',
@@ -166,7 +174,6 @@ abstract class Controller
                     'params' => array_slice($askParams, 1),
                 ];
             }
-
 
             if(self::__isValidMethod($askParams[0])) {
                 $callables[] = [
