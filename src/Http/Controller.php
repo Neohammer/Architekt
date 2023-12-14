@@ -133,6 +133,13 @@ abstract class Controller
                         'params' => array_slice($askParams, 3),
                     ];
                 }
+                else{
+                    $callables[] = [
+                        'class' => ucfirst($askParams[0]) . '\\' . ucfirst($askParams[1]),
+                        'method' => 'index',
+                        'params' => array_slice($askParams, 2),
+                    ];
+                }
             }
             else{
                 $callables[] = [
