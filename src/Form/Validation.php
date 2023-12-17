@@ -11,7 +11,7 @@ class Validation
     private array $successes;
     private array $warnings;
 
-    private static function cleanField(string $field)
+    private static function cleanField(string $field, string $fieldFormat)
     {
         $replacers = [
             '][' => '-',
@@ -19,7 +19,7 @@ class Validation
             ']' => ''
         ];
 
-        return str_replace(array_keys($replacers), $replacers, $field);
+        return str_replace(array_keys($replacers), $replacers, sprintf($fieldFormat, $field));
     }
 
     public function __construct()
@@ -42,10 +42,10 @@ class Validation
         return $this;
     }
 
-    public function addError(string $field, string $message): void
+    public function addError(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->errors[] = [
-            'field' => self::cleanField($field),
+            'field' => self::cleanField($field, $fieldFormat),
             'message' => $message
         ];
     }
@@ -55,18 +55,18 @@ class Validation
         return !sizeof($this->errors) > 0;
     }
 
-    public function addSuccess(string $field, string $message): void
+    public function addSuccess(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->successes[] = [
-            'field' => self::cleanField($field),
+            'field' => self::cleanField($field, $fieldFormat),
             'message' => $message
         ];
     }
 
-    public function addWarning(string $field, string $message): void
+    public function addWarning(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->warnings[] = [
-            'field' => self::cleanField($field),
+            'field' => self::cleanField($field, $fieldFormat),
             'message' => $message
         ];
     }

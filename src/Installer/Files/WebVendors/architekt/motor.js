@@ -23,7 +23,6 @@ var PageManager = {
         LinkManager.onContentChange(event);
         MenuManager.onContentChange(event,target);
         SearchManager.onContentChange(event);
-        feather.replace();
 
 
         if(typeof ArchitektCustom !== "undefined"){
@@ -744,19 +743,19 @@ var FormManager = {
         if (typeof response.reloadTo != "undefined") {
             PageManager.reload(response.reloadTo);
         }
-        let mainMessage = "<b>"+response.message+"</b>";
+        let mainMessage = ["<b>"+response.message+"</b>"];
         for (var i in response.details) {
             let constraintDetails = response.details[i];
 
             for (var j in constraintDetails.fields) {
                 this.manageFieldContraints(constraintDetails.fields[j], constraintDetails.success, constraintDetails.message);
                 if( !constraintDetails.success){
-                    mainMessage+="<li>"+constraintDetails.message+"</li>";
+                    mainMessage.push("<li>"+constraintDetails.message+"</li>");
                 }
             }
         }
 
-        MessageManager.display('danger', mainMessage);
+        MessageManager.display('danger', $.unique(mainMessage));
         this.enable(form);
     },
     onValidationWarning: function (form, response) {
@@ -879,11 +878,31 @@ var ResponseManager =
                     MessageManager.display(typeof response.messageType !== "undefined" ? response.messageType : "success", response.message);
                 }
                 if (typeof response.returnTo !== "undefined") {
-                    if (typeof response.returnTarget !== "undefined") {
-                        PageManager.replaceContent(response.returnTo, response.returnTarget);
-                    } else {
-                        PageManager.replaceContent(response.returnTo);
+                    if(typeof response.returnType === "undefined" || response.returnType === 'replace') {
+                        if (typeof response.returnTarget !== "undefined") {
+                            PageManager.replaceContent(response.returnTo, response.returnTarget);
+                        } else {
+                            PageManager.replaceContent(response.returnTo);
+                        }
                     }
+                    if( response.returnType === 'append') {
+                        if (typeof response.returnTarget !== "undefined") {
+                            PageManager.appendContent(response.returnTo, response.returnTarget);
+                        } else {
+                            PageManager.appendContent(response.returnTo);
+                        }
+                    }
+                    if( response.returnType === 'prepend') {
+                        if (typeof response.returnTarget !== "undefined") {
+                            PageManager.prependContent(response.returnTo, response.returnTarget);
+                        } else {
+                            PageManager.prependContent(response.returnTo);
+                        }
+                    }
+                }
+
+                if(typeof response.hideBlock !== "undefined"){
+                    $(response.hideBlock).hide();
                 }
             }
         }

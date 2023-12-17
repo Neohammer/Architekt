@@ -692,7 +692,12 @@ class Application
         ];*/
 
         $colors = [
-            'training' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
+            'training' => ['bgColor'=>'4591dc','textColor'=>'FFFFFF'],
+            'tool' => ['bgColor'=>'94378a','textColor'=>'FFFFFF'],
+            'link' => ['bgColor'=>'dc4583','textColor'=>'FFFFFF'],
+            'customer' => ['bgColor'=>'cb318d','textColor'=>'FFFFFF'],
+            'homework' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
+            'quiz' => ['bgColor'=>'c99bb1','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {

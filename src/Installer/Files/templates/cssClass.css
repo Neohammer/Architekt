@@ -74,4 +74,8 @@
     color:var(--cw-{$CLASS_NAME}-color) !important;
  }
 
+.{$CLASS_NAME}.form-check-input:checked {
+    background-color: var(--cw-{$CLASS_NAME}-color);
+    border-color: var(--cw-{$CLASS_NAME}-color);
+}
 /** END GENERATED {$CLASS_NAME} **/

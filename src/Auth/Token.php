@@ -6,12 +6,6 @@ use Architekt\DB\DBEntity;
 
 abstract class Token extends DBEntity
 {
-
-
-    public const USER_CREATE_CONFIRMATION = 'accountCreate';
-    public const PASSWORD_RECOVER = 'passwordRecover';
-    public const PASSWORD_CHOOSE = 'passwordChoose';
-
     protected static ?string $_table = 'token';
 
     public static function get(
@@ -24,10 +18,9 @@ abstract class Token extends DBEntity
             return null;
         }
 
-        $that = new static;
-        $that
+        ($that = new static)
             ->_search()
-            ->and($user);
+            ->and($that, $user);
 
         while ($that->_next()) {
             if ($that->hasExpired()) {

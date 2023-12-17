@@ -2,10 +2,10 @@
 
 :root{
     --cw-training-text-color: #FFFFFF;
-    --cw-training-color:#83A697;
-    --cw-training-color-rgb: 131,166,151;
-    --cw-training-color-darken1:#779689;
-    --cw-training-color-darken2:#6D8A7D;
+    --cw-training-color:#4591dc;
+    --cw-training-color-rgb: 69,145,220;
+    --cw-training-color-darken1:#3E83C7;
+    --cw-training-color-darken2:#3978B7;
 }
 
 .btn-training{
@@ -74,5 +74,419 @@
     color:var(--cw-training-color) !important;
  }
 
+.training.form-check-input:checked {
+    background-color: var(--cw-training-color);
+    border-color: var(--cw-training-color);
+}
 /** END GENERATED training **/
+
+/** GENERATED tool **/
+
+:root{
+    --cw-tool-text-color: #FFFFFF;
+    --cw-tool-color:#94378a;
+    --cw-tool-color-rgb: 148,55,138;
+    --cw-tool-color-darken1:#86317D;
+    --cw-tool-color-darken2:#7B2D73;
+}
+
+.btn-tool{
+    --bs-btn-color: var(--cw-tool-text-color) !important;
+    --bs-btn-bg: var(--cw-tool-color) !important;
+    --bs-btn-border-color: var(--cw-tool-color) !important;
+    --bs-btn-hover-color: var(--cw-tool-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-tool-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-tool-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-tool-text-color) !important;
+    --bs-btn-active-bg: var(--cw-tool-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-tool-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-tool-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-tool-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-tool-color) !important;
+}
+
+.buttons-tool .btn-actions.active{
+    border: solid 3px var(--cw-tool-color);
+}
+
+.bg-tool{
+    background-color: var(--cw-tool-color) !important;
+    color:var(--cw-tool-text-color) !important;
+}
+
+.card-header.bg-tool{
+    background: linear-gradient(0deg, rgba(var(--cw-tool-color-rgb),0.7) 0%, rgba(var(--cw-tool-color-rgb),0.9) 100%) !important;
+    color:var(--cw-tool-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-tool-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-tool-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-tool{
+    border: rgba(var(--cw-tool-color-rgb), 0.3) !important;
+}
+
+.table-tool:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-tool-color-rgb), 0.2) !important;
+}
+.table-tool:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-tool-color-rgb), 0.7) !important;
+    color:var(--cw-tool-text-color);
+}
+.table-striped.table-tool > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-tool-color-rgb), 0.2) !important;
+}
+
+.table-tool thead th{
+    background: rgb(var(--cw-tool-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-tool-color-rgb),0.3) 0%, rgba(var(--cw-tool-color-rgb),0.5) 100%) !important;
+    color:var(--cw-tool-text-color) !important;
+    border-color:var(--cw-tool-text-color) !important;
+}
+
+.table-tool thead tr{
+     border-color:transparent;
+ }
+.table-tool tfoot tr{
+    border-color:transparent;
+ }
+.text-tool{
+    color:var(--cw-tool-color) !important;
+ }
+
+.tool.form-check-input:checked {
+    background-color: var(--cw-tool-color);
+    border-color: var(--cw-tool-color);
+}
+/** END GENERATED tool **/
+
+/** GENERATED link **/
+
+:root{
+    --cw-link-text-color: #FFFFFF;
+    --cw-link-color:#dc4583;
+    --cw-link-color-rgb: 220,69,131;
+    --cw-link-color-darken1:#C73E77;
+    --cw-link-color-darken2:#B7396D;
+}
+
+.btn-link{
+    --bs-btn-color: var(--cw-link-text-color) !important;
+    --bs-btn-bg: var(--cw-link-color) !important;
+    --bs-btn-border-color: var(--cw-link-color) !important;
+    --bs-btn-hover-color: var(--cw-link-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-link-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-link-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-link-text-color) !important;
+    --bs-btn-active-bg: var(--cw-link-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-link-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-link-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-link-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-link-color) !important;
+}
+
+.buttons-link .btn-actions.active{
+    border: solid 3px var(--cw-link-color);
+}
+
+.bg-link{
+    background-color: var(--cw-link-color) !important;
+    color:var(--cw-link-text-color) !important;
+}
+
+.card-header.bg-link{
+    background: linear-gradient(0deg, rgba(var(--cw-link-color-rgb),0.7) 0%, rgba(var(--cw-link-color-rgb),0.9) 100%) !important;
+    color:var(--cw-link-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-link-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-link-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-link{
+    border: rgba(var(--cw-link-color-rgb), 0.3) !important;
+}
+
+.table-link:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-link-color-rgb), 0.2) !important;
+}
+.table-link:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-link-color-rgb), 0.7) !important;
+    color:var(--cw-link-text-color);
+}
+.table-striped.table-link > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-link-color-rgb), 0.2) !important;
+}
+
+.table-link thead th{
+    background: rgb(var(--cw-link-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-link-color-rgb),0.3) 0%, rgba(var(--cw-link-color-rgb),0.5) 100%) !important;
+    color:var(--cw-link-text-color) !important;
+    border-color:var(--cw-link-text-color) !important;
+}
+
+.table-link thead tr{
+     border-color:transparent;
+ }
+.table-link tfoot tr{
+    border-color:transparent;
+ }
+.text-link{
+    color:var(--cw-link-color) !important;
+ }
+
+.link.form-check-input:checked {
+    background-color: var(--cw-link-color);
+    border-color: var(--cw-link-color);
+}
+/** END GENERATED link **/
+
+/** GENERATED customer **/
+
+:root{
+    --cw-customer-text-color: #FFFFFF;
+    --cw-customer-color:#cb318d;
+    --cw-customer-color-rgb: 203,49,141;
+    --cw-customer-color-darken1:#B82C80;
+    --cw-customer-color-darken2:#A92875;
+}
+
+.btn-customer{
+    --bs-btn-color: var(--cw-customer-text-color) !important;
+    --bs-btn-bg: var(--cw-customer-color) !important;
+    --bs-btn-border-color: var(--cw-customer-color) !important;
+    --bs-btn-hover-color: var(--cw-customer-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-customer-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-customer-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-customer-text-color) !important;
+    --bs-btn-active-bg: var(--cw-customer-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-customer-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-customer-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-customer-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-customer-color) !important;
+}
+
+.buttons-customer .btn-actions.active{
+    border: solid 3px var(--cw-customer-color);
+}
+
+.bg-customer{
+    background-color: var(--cw-customer-color) !important;
+    color:var(--cw-customer-text-color) !important;
+}
+
+.card-header.bg-customer{
+    background: linear-gradient(0deg, rgba(var(--cw-customer-color-rgb),0.7) 0%, rgba(var(--cw-customer-color-rgb),0.9) 100%) !important;
+    color:var(--cw-customer-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-customer-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-customer-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-customer{
+    border: rgba(var(--cw-customer-color-rgb), 0.3) !important;
+}
+
+.table-customer:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-customer-color-rgb), 0.2) !important;
+}
+.table-customer:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-customer-color-rgb), 0.7) !important;
+    color:var(--cw-customer-text-color);
+}
+.table-striped.table-customer > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-customer-color-rgb), 0.2) !important;
+}
+
+.table-customer thead th{
+    background: rgb(var(--cw-customer-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-customer-color-rgb),0.3) 0%, rgba(var(--cw-customer-color-rgb),0.5) 100%) !important;
+    color:var(--cw-customer-text-color) !important;
+    border-color:var(--cw-customer-text-color) !important;
+}
+
+.table-customer thead tr{
+     border-color:transparent;
+ }
+.table-customer tfoot tr{
+    border-color:transparent;
+ }
+.text-customer{
+    color:var(--cw-customer-color) !important;
+ }
+
+.customer.form-check-input:checked {
+    background-color: var(--cw-customer-color);
+    border-color: var(--cw-customer-color);
+}
+/** END GENERATED customer **/
+
+/** GENERATED homework **/
+
+:root{
+    --cw-homework-text-color: #FFFFFF;
+    --cw-homework-color:#83A697;
+    --cw-homework-color-rgb: 131,166,151;
+    --cw-homework-color-darken1:#779689;
+    --cw-homework-color-darken2:#6D8A7D;
+}
+
+.btn-homework{
+    --bs-btn-color: var(--cw-homework-text-color) !important;
+    --bs-btn-bg: var(--cw-homework-color) !important;
+    --bs-btn-border-color: var(--cw-homework-color) !important;
+    --bs-btn-hover-color: var(--cw-homework-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-homework-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-homework-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-homework-text-color) !important;
+    --bs-btn-active-bg: var(--cw-homework-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-homework-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-homework-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-homework-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-homework-color) !important;
+}
+
+.buttons-homework .btn-actions.active{
+    border: solid 3px var(--cw-homework-color);
+}
+
+.bg-homework{
+    background-color: var(--cw-homework-color) !important;
+    color:var(--cw-homework-text-color) !important;
+}
+
+.card-header.bg-homework{
+    background: linear-gradient(0deg, rgba(var(--cw-homework-color-rgb),0.7) 0%, rgba(var(--cw-homework-color-rgb),0.9) 100%) !important;
+    color:var(--cw-homework-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-homework-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-homework-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-homework{
+    border: rgba(var(--cw-homework-color-rgb), 0.3) !important;
+}
+
+.table-homework:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-homework-color-rgb), 0.2) !important;
+}
+.table-homework:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-homework-color-rgb), 0.7) !important;
+    color:var(--cw-homework-text-color);
+}
+.table-striped.table-homework > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-homework-color-rgb), 0.2) !important;
+}
+
+.table-homework thead th{
+    background: rgb(var(--cw-homework-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-homework-color-rgb),0.3) 0%, rgba(var(--cw-homework-color-rgb),0.5) 100%) !important;
+    color:var(--cw-homework-text-color) !important;
+    border-color:var(--cw-homework-text-color) !important;
+}
+
+.table-homework thead tr{
+     border-color:transparent;
+ }
+.table-homework tfoot tr{
+    border-color:transparent;
+ }
+.text-homework{
+    color:var(--cw-homework-color) !important;
+ }
+
+.homework.form-check-input:checked {
+    background-color: var(--cw-homework-color);
+    border-color: var(--cw-homework-color);
+}
+/** END GENERATED homework **/
+
+/** GENERATED quiz **/
+
+:root{
+    --cw-quiz-text-color: #FFFFFF;
+    --cw-quiz-color:#c99bb1;
+    --cw-quiz-color-rgb: 201,155,177;
+    --cw-quiz-color-darken1:#B68CA0;
+    --cw-quiz-color-darken2:#A78193;
+}
+
+.btn-quiz{
+    --bs-btn-color: var(--cw-quiz-text-color) !important;
+    --bs-btn-bg: var(--cw-quiz-color) !important;
+    --bs-btn-border-color: var(--cw-quiz-color) !important;
+    --bs-btn-hover-color: var(--cw-quiz-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-quiz-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-quiz-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-quiz-text-color) !important;
+    --bs-btn-active-bg: var(--cw-quiz-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-quiz-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-quiz-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-quiz-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-quiz-color) !important;
+}
+
+.buttons-quiz .btn-actions.active{
+    border: solid 3px var(--cw-quiz-color);
+}
+
+.bg-quiz{
+    background-color: var(--cw-quiz-color) !important;
+    color:var(--cw-quiz-text-color) !important;
+}
+
+.card-header.bg-quiz{
+    background: linear-gradient(0deg, rgba(var(--cw-quiz-color-rgb),0.7) 0%, rgba(var(--cw-quiz-color-rgb),0.9) 100%) !important;
+    color:var(--cw-quiz-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-quiz-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-quiz-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-quiz{
+    border: rgba(var(--cw-quiz-color-rgb), 0.3) !important;
+}
+
+.table-quiz:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-quiz-color-rgb), 0.2) !important;
+}
+.table-quiz:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-quiz-color-rgb), 0.7) !important;
+    color:var(--cw-quiz-text-color);
+}
+.table-striped.table-quiz > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-quiz-color-rgb), 0.2) !important;
+}
+
+.table-quiz thead th{
+    background: rgb(var(--cw-quiz-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-quiz-color-rgb),0.3) 0%, rgba(var(--cw-quiz-color-rgb),0.5) 100%) !important;
+    color:var(--cw-quiz-text-color) !important;
+    border-color:var(--cw-quiz-text-color) !important;
+}
+
+.table-quiz thead tr{
+     border-color:transparent;
+ }
+.table-quiz tfoot tr{
+    border-color:transparent;
+ }
+.text-quiz{
+    color:var(--cw-quiz-color) !important;
+ }
+
+.quiz.form-check-input:checked {
+    background-color: var(--cw-quiz-color);
+    border-color: var(--cw-quiz-color);
+}
+/** END GENERATED quiz **/
 
