@@ -68,12 +68,13 @@ class EmailNotification
         try {
             $mail = new PHPMailer(true);
 
+            $mail->CharSet = "UTF-8";
             $mail->addAddress($recipient);
             $mail->setFrom(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
             $mail->addReplyTo(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
             //Content
             $mail->isHTML();
-            $mail->Subject = utf8_decode($this->subject);
+            $mail->Subject = $this->subject;
             $mail->Body = $this->template->fetch('_header.html')
                 . $this->template->fetch($this->templateFile . '.html')
                 . $this->template->fetch('_footer.html');
