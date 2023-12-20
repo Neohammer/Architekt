@@ -16,6 +16,8 @@ class InlineResponse extends BaseResponse
         $this->error = false;
         $this->errorMessage = null;
         $this->successMessage = null;
+
+        parent::init();
     }
 
     public function success(?string $message = null): static
