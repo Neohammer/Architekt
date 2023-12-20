@@ -490,3 +490,167 @@
 }
 /** END GENERATED quiz **/
 
+/** GENERATED email **/
+
+:root{
+    --cw-email-text-color: #FFFFFF;
+    --cw-email-color:#e66465;
+    --cw-email-color-rgb: 230,100,101;
+    --cw-email-color-darken1:#D15A5B;
+    --cw-email-color-darken2:#BF5354;
+}
+
+.btn-email{
+    --bs-btn-color: var(--cw-email-text-color) !important;
+    --bs-btn-bg: var(--cw-email-color) !important;
+    --bs-btn-border-color: var(--cw-email-color) !important;
+    --bs-btn-hover-color: var(--cw-email-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-email-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-email-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-email-text-color) !important;
+    --bs-btn-active-bg: var(--cw-email-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-email-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-email-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-email-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-email-color) !important;
+}
+
+.buttons-email .btn-actions.active{
+    border: solid 3px var(--cw-email-color);
+}
+
+.bg-email{
+    background-color: var(--cw-email-color) !important;
+    color:var(--cw-email-text-color) !important;
+}
+
+.card-header.bg-email{
+    background: linear-gradient(0deg, rgba(var(--cw-email-color-rgb),0.7) 0%, rgba(var(--cw-email-color-rgb),0.9) 100%) !important;
+    color:var(--cw-email-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-email-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-email-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-email{
+    border: rgba(var(--cw-email-color-rgb), 0.3) !important;
+}
+
+.table-email:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-email-color-rgb), 0.2) !important;
+}
+.table-email:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-email-color-rgb), 0.7) !important;
+    color:var(--cw-email-text-color);
+}
+.table-striped.table-email > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-email-color-rgb), 0.2) !important;
+}
+
+.table-email thead th{
+    background: rgb(var(--cw-email-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-email-color-rgb),0.3) 0%, rgba(var(--cw-email-color-rgb),0.5) 100%) !important;
+    color:var(--cw-email-text-color) !important;
+    border-color:var(--cw-email-text-color) !important;
+}
+
+.table-email thead tr{
+     border-color:transparent;
+ }
+.table-email tfoot tr{
+    border-color:transparent;
+ }
+.text-email{
+    color:var(--cw-email-color) !important;
+ }
+
+.email.form-check-input:checked {
+    background-color: var(--cw-email-color);
+    border-color: var(--cw-email-color);
+}
+/** END GENERATED email **/
+
+/** GENERATED meeting **/
+
+:root{
+    --cw-meeting-text-color: #FFFFFF;
+    --cw-meeting-color:#A5DF00;
+    --cw-meeting-color-rgb: 165,223,0;
+    --cw-meeting-color-darken1:#96CA00;
+    --cw-meeting-color-darken2:#89B900;
+}
+
+.btn-meeting{
+    --bs-btn-color: var(--cw-meeting-text-color) !important;
+    --bs-btn-bg: var(--cw-meeting-color) !important;
+    --bs-btn-border-color: var(--cw-meeting-color) !important;
+    --bs-btn-hover-color: var(--cw-meeting-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-meeting-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-meeting-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-meeting-text-color) !important;
+    --bs-btn-active-bg: var(--cw-meeting-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-meeting-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-meeting-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-meeting-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-meeting-color) !important;
+}
+
+.buttons-meeting .btn-actions.active{
+    border: solid 3px var(--cw-meeting-color);
+}
+
+.bg-meeting{
+    background-color: var(--cw-meeting-color) !important;
+    color:var(--cw-meeting-text-color) !important;
+}
+
+.card-header.bg-meeting{
+    background: linear-gradient(0deg, rgba(var(--cw-meeting-color-rgb),0.7) 0%, rgba(var(--cw-meeting-color-rgb),0.9) 100%) !important;
+    color:var(--cw-meeting-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-meeting-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-meeting-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-meeting{
+    border: rgba(var(--cw-meeting-color-rgb), 0.3) !important;
+}
+
+.table-meeting:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-meeting-color-rgb), 0.2) !important;
+}
+.table-meeting:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-meeting-color-rgb), 0.7) !important;
+    color:var(--cw-meeting-text-color);
+}
+.table-striped.table-meeting > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-meeting-color-rgb), 0.2) !important;
+}
+
+.table-meeting thead th{
+    background: rgb(var(--cw-meeting-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-meeting-color-rgb),0.3) 0%, rgba(var(--cw-meeting-color-rgb),0.5) 100%) !important;
+    color:var(--cw-meeting-text-color) !important;
+    border-color:var(--cw-meeting-text-color) !important;
+}
+
+.table-meeting thead tr{
+     border-color:transparent;
+ }
+.table-meeting tfoot tr{
+    border-color:transparent;
+ }
+.text-meeting{
+    color:var(--cw-meeting-color) !important;
+ }
+
+.meeting.form-check-input:checked {
+    background-color: var(--cw-meeting-color);
+    border-color: var(--cw-meeting-color);
+}
+/** END GENERATED meeting **/
+

@@ -698,6 +698,8 @@ class Application
             'customer' => ['bgColor'=>'cb318d','textColor'=>'FFFFFF'],
             'homework' => ['bgColor'=>'83A697','textColor'=>'FFFFFF'],
             'quiz' => ['bgColor'=>'c99bb1','textColor'=>'FFFFFF'],
+            'email' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
+            'meeting' => ['bgColor'=>'A5DF00','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {

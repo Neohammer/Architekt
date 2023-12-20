@@ -10,6 +10,7 @@ class Validation
     private array $errors;
     private array $successes;
     private array $warnings;
+    private array $args;
 
     private static function cleanField(string $field, string $fieldFormat)
     {
@@ -28,6 +29,7 @@ class Validation
         $this->errors = [];
         $this->successes = [];
         $this->warnings = [];
+        $this->args = [];
     }
 
     public function addResponse(ResponseForm $formResponse): static
@@ -38,6 +40,8 @@ class Validation
         foreach ($formResponse->validation->successes as $success) {
             $this->successes[] = $success;
         }
+
+        $this->args = array_merge($this->args, $formResponse->args());
 
         return $this;
     }
@@ -79,7 +83,11 @@ class Validation
             Transaction::rollback();
         }
 
-        return new ResponseForm($this, $successMessage, $failMessage, $args);
+        if ($args) {
+            $this->args = array_merge($this->args, $args);
+        }
+
+        return new ResponseForm($this, $successMessage, $failMessage, $this->args);
     }
 
     public function buildDetails(): array

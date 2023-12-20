@@ -2,12 +2,13 @@
 
 namespace Architekt\Form;
 
+use Architekt\DB\Entity;
+use Architekt\DB\Interfaces\DBEntityInterface;
 use Architekt\Form\Exceptions\FileUploadErrorException;
 use Architekt\Form\Exceptions\FileUploadFailException;
 use Architekt\Form\Exceptions\FileUploadRequiredException;
 use Architekt\Library\File;
 use Architekt\Library\UploadFile;
-use Architekt\DB\Entity;
 
 class BaseConstraints
 {
@@ -20,7 +21,7 @@ class BaseConstraints
             return null;
         }
 
-        if($regexp && !preg_match(sprintf('|^%s$|',$regexp),$string)){
+        if ($regexp && !preg_match(sprintf('|^%s$|', $regexp), $string)) {
             return null;
         }
 
@@ -30,7 +31,7 @@ class BaseConstraints
 
     public static function isEmptyString(?string $value): bool
     {
-        if($value === null){
+        if ($value === null) {
             return true;
         }
 
@@ -194,4 +195,33 @@ class BaseConstraints
     {
         return File::download($url, $file);
     }
+
+
+    protected static function checkString(
+        Validation        $validation,
+        DBEntityInterface $entity,
+        ?string           $string,
+        ?string           $stringKey,
+        string            $isValidMessage,
+        bool              $mandatory = false,
+        ?string           $isEmptyMessage = null,
+        bool              $isUniq = false,
+        ?string           $isNotUniqMessage = null,
+    ): void
+    {
+        $string = trim($string ?? '');
+        if (self::isEmptyString($string)) {
+            if ($mandatory) {
+                $validation->addError($stringKey, $isEmptyMessage);
+            } else {
+                $entity->_set($stringKey);
+            }
+        } elseif ($isUniq && !$entity->isFieldValueUnique($stringKey, $string)) {
+            $validation->addError($stringKey, sprintf($isNotUniqMessage, $string));
+        } else {
+            $validation->addSuccess($stringKey, sprintf($isValidMessage, $string));
+            $entity->_set($stringKey, $string);
+        }
+    }
+
 }

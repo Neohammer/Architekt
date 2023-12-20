@@ -27,4 +27,6 @@ interface DBEntityInterface
     public function _strangerKey(): string;
 
     public function _table(bool $withPrefix = true): string;
+
+    public function isFieldValueUnique(string $field, mixed $value, array $filter = []): bool;
 }

@@ -9,13 +9,13 @@ abstract class BaseResponse
     protected ?string $redirectTarget;
     protected ?string $redirectType;
     protected ?string $hideBlock;
-    protected ?array $args;
+    protected array $args;
 
     abstract public function send(): void;
 
     protected function init(?array $args = []): void
     {
-        $this->args = $args;
+        $this->args = $args ?? [];
         $this->reloadRoute = null;
         $this->redirectRoute = null;
         $this->redirectTarget = null;
@@ -70,6 +70,11 @@ abstract class BaseResponse
         }
 
         return $route;
+    }
+
+    public function args(): array
+    {
+        return $this->args;
     }
 
     public function getArg(string $key): mixed
