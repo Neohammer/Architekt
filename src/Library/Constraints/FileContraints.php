@@ -41,7 +41,7 @@ class FileContraints extends BaseConstraints
             );
         }
 
-        if ($uploadResponse) {
+        if ($uploadResponse && $uploadResponse->isSuccess()) {
             /** @var File $file */
             $file = $uploadResponse->getArg('file');
 
@@ -71,9 +71,10 @@ class FileContraints extends BaseConstraints
                     ])
                     ->_save();
             }
-        }
-        elseif($required){
-            $validation->addError('file', 'Vous devez préciser un fichier');
+        } elseif ($required) {
+            if($uploadResponse) {
+                $validation->addResponse($uploadResponse);
+            }
         }
 
         return $validation->response(
@@ -127,24 +128,31 @@ class FileContraints extends BaseConstraints
 
         if (self::isEmptyString($url)) {
             $validation->addError($urlTag, 'Url invalide');
+        } elseif (!str_starts_with($url, 'http')) {
+            $validation->addError($urlTag, 'Url invalide');
         } else {
             $parts = explode('.', $url);
-            $filename = $parts[sizeof($parts) - 2];
 
-            if ($file = File::createFromUrl(
-                $url,
-                $filename,
-                $file
-            )) {
-                $validation->addSuccess($urlTag, 'Fichier créé à partir de l\'url');
+            if (!$parts) {
+                $validation->addError($urlTag, 'Url non reconnue');
             } else {
-                $validation->addError($urlTag, 'Impossible de créer le fichier depuis l\'url');
+                $filename = $parts[sizeof($parts) - 2];
+
+                if ($file = File::createFromUrl(
+                    $url,
+                    $filename,
+                    $file
+                )) {
+                    $validation->addSuccess($urlTag, 'Fichier créé à partir de l\'url');
+                } else {
+                    $validation->addError($urlTag, 'Impossible de créer le fichier depuis l\'url');
+                }
             }
         }
 
         return $validation->response(
             'Fichier ajouté',
-            'Imposible d\'ajouter le fichier',
+            'Impossible d\'ajouter le fichier',
             ['file' => $file]
         );
     }

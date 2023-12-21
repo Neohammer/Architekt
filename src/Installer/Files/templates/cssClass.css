@@ -24,6 +24,13 @@
     --bs-btn-disabled-border-color: var(--cw-{$CLASS_NAME}-color) !important;
 }
 
+.btn-{$CLASS_NAME}.nav-link {
+    color:var(--cw-{$CLASS_NAME}-text-color) !important;
+}
+.btn-{$CLASS_NAME}.nav-link:hover {
+    color:var(--cw-{$CLASS_NAME}-text-color) !important;
+}
+
 .buttons-{$CLASS_NAME} .btn-actions.active{
     border: solid 3px var(--cw-{$CLASS_NAME}-color);
 }
@@ -73,6 +80,7 @@
 .text-{$CLASS_NAME}{
     color:var(--cw-{$CLASS_NAME}-color) !important;
  }
+
 
 .{$CLASS_NAME}.form-check-input:checked {
     background-color: var(--cw-{$CLASS_NAME}-color);

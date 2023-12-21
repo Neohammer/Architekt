@@ -24,6 +24,13 @@
     --bs-btn-disabled-border-color: var(--cw-training-color) !important;
 }
 
+.btn-training.nav-link {
+    color:var(--cw-training-text-color) !important;
+}
+.btn-training.nav-link:hover {
+    color:var(--cw-training-text-color) !important;
+}
+
 .buttons-training .btn-actions.active{
     border: solid 3px var(--cw-training-color);
 }
@@ -74,6 +81,7 @@
     color:var(--cw-training-color) !important;
  }
 
+
 .training.form-check-input:checked {
     background-color: var(--cw-training-color);
     border-color: var(--cw-training-color);
@@ -104,6 +112,13 @@
     --bs-btn-disabled-color: var(--cw-tool-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-tool-color) !important;
     --bs-btn-disabled-border-color: var(--cw-tool-color) !important;
+}
+
+.btn-tool.nav-link {
+    color:var(--cw-tool-text-color) !important;
+}
+.btn-tool.nav-link:hover {
+    color:var(--cw-tool-text-color) !important;
 }
 
 .buttons-tool .btn-actions.active{
@@ -156,6 +171,7 @@
     color:var(--cw-tool-color) !important;
  }
 
+
 .tool.form-check-input:checked {
     background-color: var(--cw-tool-color);
     border-color: var(--cw-tool-color);
@@ -186,6 +202,13 @@
     --bs-btn-disabled-color: var(--cw-link-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-link-color) !important;
     --bs-btn-disabled-border-color: var(--cw-link-color) !important;
+}
+
+.btn-link.nav-link {
+    color:var(--cw-link-text-color) !important;
+}
+.btn-link.nav-link:hover {
+    color:var(--cw-link-text-color) !important;
 }
 
 .buttons-link .btn-actions.active{
@@ -238,6 +261,7 @@
     color:var(--cw-link-color) !important;
  }
 
+
 .link.form-check-input:checked {
     background-color: var(--cw-link-color);
     border-color: var(--cw-link-color);
@@ -268,6 +292,13 @@
     --bs-btn-disabled-color: var(--cw-customer-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-customer-color) !important;
     --bs-btn-disabled-border-color: var(--cw-customer-color) !important;
+}
+
+.btn-customer.nav-link {
+    color:var(--cw-customer-text-color) !important;
+}
+.btn-customer.nav-link:hover {
+    color:var(--cw-customer-text-color) !important;
 }
 
 .buttons-customer .btn-actions.active{
@@ -320,6 +351,7 @@
     color:var(--cw-customer-color) !important;
  }
 
+
 .customer.form-check-input:checked {
     background-color: var(--cw-customer-color);
     border-color: var(--cw-customer-color);
@@ -350,6 +382,13 @@
     --bs-btn-disabled-color: var(--cw-homework-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-homework-color) !important;
     --bs-btn-disabled-border-color: var(--cw-homework-color) !important;
+}
+
+.btn-homework.nav-link {
+    color:var(--cw-homework-text-color) !important;
+}
+.btn-homework.nav-link:hover {
+    color:var(--cw-homework-text-color) !important;
 }
 
 .buttons-homework .btn-actions.active{
@@ -402,6 +441,7 @@
     color:var(--cw-homework-color) !important;
  }
 
+
 .homework.form-check-input:checked {
     background-color: var(--cw-homework-color);
     border-color: var(--cw-homework-color);
@@ -432,6 +472,13 @@
     --bs-btn-disabled-color: var(--cw-quiz-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-quiz-color) !important;
     --bs-btn-disabled-border-color: var(--cw-quiz-color) !important;
+}
+
+.btn-quiz.nav-link {
+    color:var(--cw-quiz-text-color) !important;
+}
+.btn-quiz.nav-link:hover {
+    color:var(--cw-quiz-text-color) !important;
 }
 
 .buttons-quiz .btn-actions.active{
@@ -484,6 +531,7 @@
     color:var(--cw-quiz-color) !important;
  }
 
+
 .quiz.form-check-input:checked {
     background-color: var(--cw-quiz-color);
     border-color: var(--cw-quiz-color);
@@ -514,6 +562,13 @@
     --bs-btn-disabled-color: var(--cw-email-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-email-color) !important;
     --bs-btn-disabled-border-color: var(--cw-email-color) !important;
+}
+
+.btn-email.nav-link {
+    color:var(--cw-email-text-color) !important;
+}
+.btn-email.nav-link:hover {
+    color:var(--cw-email-text-color) !important;
 }
 
 .buttons-email .btn-actions.active{
@@ -566,6 +621,7 @@
     color:var(--cw-email-color) !important;
  }
 
+
 .email.form-check-input:checked {
     background-color: var(--cw-email-color);
     border-color: var(--cw-email-color);
@@ -596,6 +652,13 @@
     --bs-btn-disabled-color: var(--cw-meeting-text-color) !important;
     --bs-btn-disabled-bg: var(--cw-meeting-color) !important;
     --bs-btn-disabled-border-color: var(--cw-meeting-color) !important;
+}
+
+.btn-meeting.nav-link {
+    color:var(--cw-meeting-text-color) !important;
+}
+.btn-meeting.nav-link:hover {
+    color:var(--cw-meeting-text-color) !important;
 }
 
 .buttons-meeting .btn-actions.active{
@@ -647,6 +710,7 @@
 .text-meeting{
     color:var(--cw-meeting-color) !important;
  }
+
 
 .meeting.form-check-input:checked {
     background-color: var(--cw-meeting-color);
