@@ -92,16 +92,16 @@ class Template extends Smarty
             ->addMediaJs($lib);
     }
 
-    public function addMediaCss(string $css): self
+    public function addMediaCss(string $css, int $version = 1): self
     {
-        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . '/' . $css . '.css';
+        $this->medias['css'][] = str_starts_with($css, 'http') ? $css : Application::$configurator->get('medias') . '/' . $css . '.css?v='.$version;
 
         return $this;
     }
 
-    public function addMediaJs(string $js, string $position = 'bottom'): self
+    public function addMediaJs(string $js, int $version = 1): self
     {
-        $this->medias['js'][$position][] = str_starts_with($js, 'http') ? $js : Application::$configurator->get('medias') . '/' . $js . '.js';
+        $this->medias['js']['bottom'][] = str_starts_with($js, 'http') ? $js : Application::$configurator->get('medias') . '/' . $js . '.js?v='.$version;
 
         return $this;
     }
