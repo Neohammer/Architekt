@@ -44,7 +44,12 @@ class FileContraints extends BaseConstraints
         if ($uploadResponse && $uploadResponse->isSuccess()) {
             /** @var File $file */
             $file = $uploadResponse->getArg('file');
-
+        }
+        if ($required && !$file) {
+            if ($uploadResponse) {
+                $validation->addResponse($uploadResponse);
+            }
+        }else{
             $title = trim($title ?? '');
             $titleTag = sprintf($inputTag, 'title');
             if (self::isEmptyString($title)) {
@@ -70,10 +75,6 @@ class FileContraints extends BaseConstraints
                         'origin_id' => $originEntity
                     ])
                     ->_save();
-            }
-        } elseif ($required) {
-            if($uploadResponse) {
-                $validation->addResponse($uploadResponse);
             }
         }
 
