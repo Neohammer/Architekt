@@ -209,6 +209,16 @@ class File extends DBEntity
         ]);
     }
 
+    public function isPdf(): bool
+    {
+        return $this->_get('mime_type') === 'application/pdf';
+    }
+
+    public function canBeDisplay(): bool
+    {
+        return $this->isImage() || $this->isMusic() || $this->isVideo() || $this->isPdf();
+    }
+
     public function headers(): self
     {
         header('Content-type: ' . $this->_get('mime_type'));
@@ -274,6 +284,10 @@ class File extends DBEntity
 
     public function filePath(): string
     {
-        return self::getBasePath() . DIRECTORY_SEPARATOR . static::getRelativePath($this->_get('uniqid')) . DIRECTORY_SEPARATOR . $this->_get('uniqid');
+        return
+            self::getBasePath() . DIRECTORY_SEPARATOR .
+            //$this->_get('privacy'). DIRECTORY_SEPARATOR.
+            static::getRelativePath($this->_get('uniqid')) . DIRECTORY_SEPARATOR .
+            $this->_get('uniqid');
     }
 }

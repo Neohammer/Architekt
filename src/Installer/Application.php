@@ -690,7 +690,45 @@ class Application
             'person' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
             'internal' => ['bgColor'=>'97d3cc','textColor'=>'FFFFFF'],
         ];*/
-
+       /*
+?>
+<style>
+    .training{
+        color:#4591dc;
+    }
+    .tool{
+        color:#94378a;
+    }
+    .link{
+        color:#dc4583;
+    }
+    .customer{
+        color:#cb318d;
+    }
+    .homework{
+        color:#83A697;
+    }
+    .quiz{
+        color:#c99bb1;
+    }
+    .email{
+        color:#e66465;
+    }
+    .meeting{
+        color:#A5DF00;
+    }
+    .files{
+        color: #b46024;
+    }
+    .links{
+        color: #6ea646;
+    }
+    .share{
+        color: #48b799;
+    }
+</style>
+<?php
+        */
         $colors = [
             'training' => ['bgColor'=>'4591dc','textColor'=>'FFFFFF'],
             'tool' => ['bgColor'=>'94378a','textColor'=>'FFFFFF'],
@@ -700,6 +738,9 @@ class Application
             'quiz' => ['bgColor'=>'c99bb1','textColor'=>'FFFFFF'],
             'email' => ['bgColor'=>'e66465','textColor'=>'FFFFFF'],
             'meeting' => ['bgColor'=>'A5DF00','textColor'=>'FFFFFF'],
+            'files' => ['bgColor'=>'b46024','textColor'=>'FFFFFF'],
+            'links' => ['bgColor'=>'6ea646','textColor'=>'FFFFFF'],
+            'share' => ['bgColor'=>'48b799','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {
