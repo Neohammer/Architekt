@@ -2,29 +2,35 @@
 
 namespace Architekt\Notifications;
 
+use Architekt\Library\File;
 use Architekt\Logger;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class EmailNotification
 {
     private array $recipients;
+    /** @var File[] */
+    private array $attachments;
     private ?string $subject;
     private ?string $templateFile;
     private ?EmailTemplate $template;
     public static bool $active = true;
+    public static bool $debug = false;
 
     public static function build(
         string|array $recipient,
         string       $subject,
         string       $templateFile,
-        mixed        $templateVars = null
+        mixed        $templateVars = null,
+        File|array $attachments = [],
     ): void
     {
         new self(
             $recipient,
             $subject,
             $templateFile,
-            $templateVars
+            $templateVars,
+            $attachments
         );
     }
 
@@ -32,7 +38,8 @@ class EmailNotification
         string|array $recipient,
         string       $subject,
         string       $templateFile,
-        mixed        $templateVars = null
+        mixed        $templateVars = null,
+        File|array $attachments = [],
     )
     {
         $this->recipients = is_array($recipient) ? $recipient : [$recipient];
@@ -44,6 +51,7 @@ class EmailNotification
             $this->template->assign($templateVars);
         }
         $this->templateFile = $templateFile;
+        $this->attachments = is_array($attachments) ? $attachments : [$attachments];
 
         $this->_send();
     }
@@ -72,6 +80,11 @@ class EmailNotification
             $mail->addAddress($recipient);
             $mail->setFrom(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
             $mail->addReplyTo(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
+
+
+            foreach ($this->attachments as $file) {
+                $mail->addAttachment($file->filePath(), $file->_get('name'));
+            }
             //Content
             $mail->isHTML();
             $mail->Subject = $this->subject;
@@ -82,6 +95,11 @@ class EmailNotification
                 . $this->template->fetch($this->templateFile . '.txt')
                 . $this->template->fetch('_footer.txt');
 
+            if(self::$debug) {
+                file_put_contents(sprintf(PATH_APPLICATION . '/web/tests/%s.html', $uniq = uniqid()), $mail->Body);
+                file_put_contents(sprintf(PATH_APPLICATION . '/web/tests/%s.txt', $uniq), $mail->Body);
+                return true;
+            }
 
             if (!$mail->send()) {
                 Logger::critical(sprintf(

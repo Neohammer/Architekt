@@ -61,6 +61,41 @@ class File extends DBEntity
         return null;
     }
 
+
+    public static function createFromString(string $string, string $name, ?File $file = null): ?self
+    {
+        $fileUniq = md5(uniqid() . time());
+        $fileRelativePath = static::getRelativePath($fileUniq);
+        $filePath = self::getBasePath() . $fileRelativePath . DIRECTORY_SEPARATOR . $fileUniq;
+
+        if (file_put_contents($filePath, $string)) {
+
+            $fileHash = md5_file($filePath);
+            if (self::$transactionStarted) {
+                self::$transactionFiles[] = $filePath;
+            }
+
+            if (!$file) {
+                $file = new self();
+            }
+            $file->_set([
+                'uniqid' => $fileUniq,
+                'hash' => $fileHash,
+                'mime_type' => mime_content_type($filePath),
+                'name' => $name,
+                'size' => filesize($filePath),
+                'directory' => $fileRelativePath . DIRECTORY_SEPARATOR
+            ])->_save();
+
+            return $file;
+        }
+
+        return null;
+    }
+
+
+
+
     public static function upload(UploadFile $uploadFile, ?File $file = null): ?self
     {
         $fileHash = md5_file($uploadFile->temporaryName());

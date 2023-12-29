@@ -45,9 +45,74 @@ class FileContraints extends BaseConstraints
             /** @var File $file */
             $file = $uploadResponse->getArg('file');
         }
-        if ($required && !$file) {
-            if ($uploadResponse) {
+        if (!$file) {
+            if ($required && $uploadResponse) {
                 $validation->addResponse($uploadResponse);
+            }
+        }else{
+            $title = trim($title ?? '');
+            $titleTag = sprintf($inputTag, 'title');
+            if (self::isEmptyString($title)) {
+                $validation->addError($titleTag, 'Titre du fichier obligatoire');
+            } else {
+                $validation->addSuccess($titleTag, 'Titre du fichier valide');
+                $file->_set('title', $title);
+            }
+
+            $description = trim($description ?? '');
+            $descriptionTag = sprintf($inputTag, 'description');
+            $file->_set('description');
+            if (!self::isEmptyString($description)) {
+                $file->_set('description', $description);
+                $validation->addSuccess($descriptionTag, 'Description valide');
+            }
+
+            if ($validation->isSuccess()) {
+                $file
+                    ->_set([
+                        'privacy' => $privacy,
+                        'origin' => $origin,
+                        'origin_id' => $originEntity
+                    ])
+                    ->_save();
+            }
+        }
+
+        return $validation->response(
+            'Fichier ajouté',
+            'Impossible d\'ajouter le fichier',
+            ['file' => $file]
+        );
+    }
+
+    public static function tryFromString(
+        string            $origin,
+        DBEntityInterface $originEntity,
+        string            $content,
+        string            $filename,
+        string            $title,
+        ?string           $description = null,
+        string            $privacy = 'private',
+        string            $inputTag = '%s',
+        ?File             $file = null,
+        ?bool             $required = false,
+    ): FormResponse
+    {
+        $validation = new Validation();
+
+        $createResponse = self::tryCreateFromString(
+            $filename,
+            $content,
+            $file,
+        );
+
+        if ($createResponse && $createResponse->isSuccess()) {
+            /** @var File $file */
+            $file = $createResponse->getArg('file');
+        }
+        if (!$file) {
+            if ($required && $createResponse) {
+                $validation->addResponse($createResponse);
             }
         }else{
             $title = trim($title ?? '');
@@ -148,6 +213,35 @@ class FileContraints extends BaseConstraints
                 } else {
                     $validation->addError($urlTag, 'Impossible de créer le fichier depuis l\'url');
                 }
+            }
+        }
+
+        return $validation->response(
+            'Fichier ajouté',
+            'Impossible d\'ajouter le fichier',
+            ['file' => $file]
+        );
+    }
+
+    public static function tryCreateFromString(
+        string $filename,
+        string $content,
+        ?File   $file = null,
+    ): FormResponse
+    {
+        $validation = new Validation();
+        if(!$file){
+            $file = new File();
+        }
+
+        if(self::isEmptyString($content)){
+            $validation->addError('content', 'Le contenu ne peut être vide');
+        }
+        else{
+            $file = File::createFromString($content, $filename, $file);
+
+            if(!$file){
+                $validation->addError('content', 'Erreur lors de la création');
             }
         }
 
