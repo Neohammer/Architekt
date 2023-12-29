@@ -93,11 +93,13 @@ abstract class Controller
     protected function _entityCheck(DBEntityInterface $entity, ?string $id = null): mixed
     {
         if (null === $id) {
+            Logger::warning(sprintf('%s init fail', get_class($entity)));
             Request::to403();
         }
 
         $entity->__construct($id);
         if (!$entity->_isLoaded()) {
+            Logger::warning(sprintf('%s load %d fail', get_class($entity), $id));
             Request::to404();
         }
 
