@@ -48,25 +48,25 @@ abstract class Controller
         $hasToBeLoggedAsUser = $settings->method($method)->loggedUser()->hasToBeLogged() ?? $settings->loggedUser()->hasToBeLogged();
 
         if (!$hasToBeLoggedAsUser) {
-            Logger::info(sprintf('%s : not logged require', $method));
+           // Logger::info(sprintf('%s : not logged require', $method));
 
             return true;
         }
 
         if (!$this->__user()) {
-            Logger::warning(sprintf('%s : require logged user', $method));
+           // Logger::warning(sprintf('%s : require logged user', $method));
 
             return false;
         }
 
         if (!$accesses = $settings->method($method)->accessesUser()->get()) {
-            Logger::info(sprintf('%s : not user accesses require', $method));
+           // Logger::info(sprintf('%s : not user accesses require', $method));
 
             return true;
         }
 
         if (!$this->__user()) {
-            Logger::warning(sprintf('%s : require logged user to check access', $method));
+           // Logger::warning(sprintf('%s : require logged user to check access', $method));
 
             return false;
         }
@@ -80,12 +80,12 @@ abstract class Controller
                 return true;
             }
             if ($profile->allowController($userController, $accessToCheck->code)) {
-                Logger::info(sprintf('%s : access found > %s', $method, $accessToCheck->code));
+               // Logger::info(sprintf('%s : access found > %s', $method, $accessToCheck->code));
                 return true;
             }
         }
 
-        Logger::warning(sprintf('%s : generic user fail', $method));
+       // Logger::warning(sprintf('%s : generic user fail', $method));
 
         return false;
     }
