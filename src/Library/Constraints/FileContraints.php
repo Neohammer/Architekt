@@ -22,17 +22,22 @@ class FileContraints extends BaseConstraints
         ?array            $posted = null,
         ?string           $url = null,
         ?bool             $required = false,
+        string            $inputFileName = 'file',
     ): FormResponse
     {
         $validation = new Validation();
         $uploadResponse = null;
 
-        if ($posted && self::isUploadValid($posted)) {
-            $uploadResponse = self::tryUploadFromForm(
-                $file ?? new File(),
-                $posted,
-                $inputTag
-            );
+        if ($posted) {
+            if (self::isUploadValid($posted)) {
+                $uploadResponse = self::tryUploadFromForm(
+                    $file ?? new File(),
+                    $posted,
+                    $inputTag
+                );
+            } elseif ($required) {
+                $validation->addError($inputFileName, 'Vous devez sélectionner un fichier');
+            }
         } elseif ($url) {
             $uploadResponse = self::tryUploadFromUrl(
                 $file ?? new File(),
@@ -49,7 +54,7 @@ class FileContraints extends BaseConstraints
             if ($required && $uploadResponse) {
                 $validation->addResponse($uploadResponse);
             }
-        }else{
+        } else {
             $title = trim($title ?? '');
             $titleTag = sprintf($inputTag, 'title');
             if (self::isEmptyString($title)) {
@@ -114,7 +119,7 @@ class FileContraints extends BaseConstraints
             if ($required && $createResponse) {
                 $validation->addResponse($createResponse);
             }
-        }else{
+        } else {
             $title = trim($title ?? '');
             $titleTag = sprintf($inputTag, 'title');
             if (self::isEmptyString($title)) {
@@ -226,21 +231,20 @@ class FileContraints extends BaseConstraints
     public static function tryCreateFromString(
         string $filename,
         string $content,
-        ?File   $file = null,
+        ?File  $file = null,
     ): FormResponse
     {
         $validation = new Validation();
-        if(!$file){
+        if (!$file) {
             $file = new File();
         }
 
-        if(self::isEmptyString($content)){
+        if (self::isEmptyString($content)) {
             $validation->addError('content', 'Le contenu ne peut être vide');
-        }
-        else{
+        } else {
             $file = File::createFromString($content, $filename, $file);
 
-            if(!$file){
+            if (!$file) {
                 $validation->addError('content', 'Erreur lors de la création');
             }
         }
