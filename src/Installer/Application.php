@@ -726,6 +726,9 @@ class Application
     .share{
         color: #48b799;
     }
+    .account{
+        color: #98a5be;
+    }
 </style>
 <?php
         */
@@ -741,6 +744,7 @@ class Application
             'files' => ['bgColor'=>'b46024','textColor'=>'FFFFFF'],
             'links' => ['bgColor'=>'6ea646','textColor'=>'FFFFFF'],
             'share' => ['bgColor'=>'48b799','textColor'=>'FFFFFF'],
+            'account' => ['bgColor'=>'98a5be','textColor'=>'FFFFFF'],
         ];
         $content = '';
         foreach($colors as $cssClass=>$color) {

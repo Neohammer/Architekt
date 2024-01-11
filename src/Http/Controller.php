@@ -324,7 +324,7 @@ abstract class Controller
         return $this;
     }
 
-    public function viewFile(): string
+    public function _viewFile(): string
     {
         return $this->viewFile;
     }

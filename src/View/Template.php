@@ -33,12 +33,12 @@ class Template extends Smarty
 
     public function render(): self
     {
-        return $this->display($this->controller->viewFile());
+        return $this->display($this->controller->_viewFile());
     }
 
     public function getHtml(): string
     {
-        return $this->get($this->controller->viewFile());
+        return $this->get($this->controller->_viewFile());
     }
 
     public function setController(Controller $controller): self

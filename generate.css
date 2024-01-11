@@ -50,7 +50,7 @@
 }
 
 .border-training{
-    border: rgba(var(--cw-training-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-training-color-rgb), 0.3) !important;
 }
 
 .table-training:not(.table-striped) tbody td {
@@ -140,7 +140,7 @@
 }
 
 .border-tool{
-    border: rgba(var(--cw-tool-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-tool-color-rgb), 0.3) !important;
 }
 
 .table-tool:not(.table-striped) tbody td {
@@ -230,7 +230,7 @@
 }
 
 .border-link{
-    border: rgba(var(--cw-link-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-link-color-rgb), 0.3) !important;
 }
 
 .table-link:not(.table-striped) tbody td {
@@ -320,7 +320,7 @@
 }
 
 .border-customer{
-    border: rgba(var(--cw-customer-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-customer-color-rgb), 0.3) !important;
 }
 
 .table-customer:not(.table-striped) tbody td {
@@ -410,7 +410,7 @@
 }
 
 .border-homework{
-    border: rgba(var(--cw-homework-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-homework-color-rgb), 0.3) !important;
 }
 
 .table-homework:not(.table-striped) tbody td {
@@ -500,7 +500,7 @@
 }
 
 .border-quiz{
-    border: rgba(var(--cw-quiz-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-quiz-color-rgb), 0.3) !important;
 }
 
 .table-quiz:not(.table-striped) tbody td {
@@ -590,7 +590,7 @@
 }
 
 .border-email{
-    border: rgba(var(--cw-email-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-email-color-rgb), 0.3) !important;
 }
 
 .table-email:not(.table-striped) tbody td {
@@ -680,7 +680,7 @@
 }
 
 .border-meeting{
-    border: rgba(var(--cw-meeting-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-meeting-color-rgb), 0.3) !important;
 }
 
 .table-meeting:not(.table-striped) tbody td {
@@ -770,7 +770,7 @@
 }
 
 .border-files{
-    border: rgba(var(--cw-files-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-files-color-rgb), 0.3) !important;
 }
 
 .table-files:not(.table-striped) tbody td {
@@ -860,7 +860,7 @@
 }
 
 .border-links{
-    border: rgba(var(--cw-links-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-links-color-rgb), 0.3) !important;
 }
 
 .table-links:not(.table-striped) tbody td {
@@ -950,7 +950,7 @@
 }
 
 .border-share{
-    border: rgba(var(--cw-share-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-share-color-rgb), 0.3) !important;
 }
 
 .table-share:not(.table-striped) tbody td {
@@ -987,4 +987,95 @@
     border-color: var(--cw-share-color);
 }
 /** END GENERATED share **/
+
+/** GENERATED account **/
+
+:root{
+    --cw-account-text-color: #FFFFFF;
+    --cw-account-color:#98a5be;
+    --cw-account-color-rgb: 152,165,190;
+    --cw-account-color-darken1:#8A96AC;
+    --cw-account-color-darken2:#7E899E;
+}
+
+.btn-account{
+    --bs-btn-color: var(--cw-account-text-color) !important;
+    --bs-btn-bg: var(--cw-account-color) !important;
+    --bs-btn-border-color: var(--cw-account-color) !important;
+    --bs-btn-hover-color: var(--cw-account-text-color) !important;
+    --bs-btn-hover-bg: var(--cw-account-color-darken2) !important;
+    --bs-btn-hover-border-color: var(--cw-account-color-darken1) !important;
+    --bs-btn-active-color: var(--cw-account-text-color) !important;
+    --bs-btn-active-bg: var(--cw-account-color-darken1) !important;
+    --bs-btn-active-border-color: var(--cw-account-color-darken2) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: var(--cw-account-text-color) !important;
+    --bs-btn-disabled-bg: var(--cw-account-color) !important;
+    --bs-btn-disabled-border-color: var(--cw-account-color) !important;
+}
+
+.btn-account.nav-link {
+    color:var(--cw-account-text-color) !important;
+}
+.btn-account.nav-link:hover {
+    color:var(--cw-account-text-color) !important;
+}
+
+.buttons-account .btn-actions.active{
+    border: solid 3px var(--cw-account-color);
+}
+
+.bg-account{
+    background-color: var(--cw-account-color) !important;
+    color:var(--cw-account-text-color) !important;
+}
+
+.card-header.bg-account{
+    background: linear-gradient(0deg, rgba(var(--cw-account-color-rgb),0.7) 0%, rgba(var(--cw-account-color-rgb),0.9) 100%) !important;
+    color:var(--cw-account-text-color) !important;
+
+    -webkit-box-shadow: 0px 7px 7px 0px rgba(var(--cw-account-color-rgb),0.41) !important;
+    box-shadow: 0px 7px 7px 0px rgba(var(--cw-account-color-rgb),0.41) !important;
+    border-bottom:0px !important;
+}
+
+.border-account{
+    border-color: rgba(var(--cw-account-color-rgb), 0.3) !important;
+    border-width: var(--bs-border-width);
+}
+
+.table-account:not(.table-striped) tbody td {
+    background-color: rgba(var(--cw-account-color-rgb), 0.2) !important;
+}
+.table-account:not(.table-striped) tbody th {
+    background-color: rgba(var(--cw-account-color-rgb), 0.7) !important;
+    color:var(--cw-account-text-color);
+}
+.table-striped.table-account > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-accent-bg: rgba(var(--cw-account-color-rgb), 0.2) !important;
+}
+
+.table-account thead th{
+    background: rgb(var(--cw-account-color-rgb)) !important;
+    background: linear-gradient(0deg, rgba(var(--cw-account-color-rgb),0.3) 0%, rgba(var(--cw-account-color-rgb),0.5) 100%) !important;
+    color:var(--cw-account-text-color) !important;
+    border-color:var(--cw-account-text-color) !important;
+}
+
+.table-account thead tr{
+     border-color:transparent;
+ }
+.table-account tfoot tr{
+    border-color:transparent;
+ }
+.text-account{
+    color:var(--cw-account-color) !important;
+ }
+
+
+.account.form-check-input:checked {
+    background-color: var(--cw-account-color);
+    border-color: var(--cw-account-color);
+}
+/** END GENERATED account **/
 

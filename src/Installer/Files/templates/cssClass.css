@@ -50,7 +50,7 @@
 }
 
 .border-{$CLASS_NAME}{
-    border: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.3) !important;
+    border-color: rgba(var(--cw-{$CLASS_NAME}-color-rgb), 0.3) !important;
 }
 
 .table-{$CLASS_NAME}:not(.table-striped) tbody td {
