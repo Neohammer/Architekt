@@ -256,6 +256,20 @@ class FileContraints extends BaseConstraints
         );
     }
 
+    public static function tryDelete(
+        File $file
+    ): FormResponse
+    {
+        $validation = new Validation();
+
+        $file->_delete();
+
+        return $validation->response(
+            'Fichier supprimé',
+            'Impossible de supprimer le fichier',
+        );
+    }
+
     private static function isUploadValid(
         array $postedFile,
     ): bool
