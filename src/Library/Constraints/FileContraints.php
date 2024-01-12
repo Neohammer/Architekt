@@ -14,14 +14,16 @@ class FileContraints extends BaseConstraints
     public static function tryUpload(
         string            $origin,
         DBEntityInterface $originEntity,
-        string            $title,
+        array             $posted,
+        ?string           $title = null,
         ?string           $description = null,
         string            $privacy = 'private',
         string            $inputTag = '%s',
         ?File             $file = null,
-        ?array            $posted = null,
         ?string           $url = null,
         ?bool             $required = false,
+        ?bool             $titleRequired = false,
+        ?bool             $descriptionRequired = false,
         string            $inputFileName = 'file',
     ): FormResponse
     {
@@ -56,20 +58,24 @@ class FileContraints extends BaseConstraints
             }
         } else {
             $title = trim($title ?? '');
-            $titleTag = sprintf($inputTag, 'title');
             if (self::isEmptyString($title)) {
-                $validation->addError($titleTag, 'Titre du fichier obligatoire');
+                if ($titleRequired) {
+                    $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+                }
             } else {
-                $validation->addSuccess($titleTag, 'Titre du fichier valide');
+                $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
                 $file->_set('title', $title);
             }
 
             $description = trim($description ?? '');
-            $descriptionTag = sprintf($inputTag, 'description');
             $file->_set('description');
-            if (!self::isEmptyString($description)) {
+            if (self::isEmptyString($description)) {
+                if ($descriptionRequired) {
+                    $validation->addError('description', 'Description obligatoire', $inputTag);
+                }
+            } else {
                 $file->_set('description', $description);
-                $validation->addSuccess($descriptionTag, 'Description valide');
+                $validation->addSuccess('description', 'Description valide', $inputTag);
             }
 
             if ($validation->isSuccess()) {
@@ -95,12 +101,14 @@ class FileContraints extends BaseConstraints
         DBEntityInterface $originEntity,
         string            $content,
         string            $filename,
-        string            $title,
+        ?string           $title = null,
         ?string           $description = null,
         string            $privacy = 'private',
         string            $inputTag = '%s',
         ?File             $file = null,
         ?bool             $required = false,
+        ?bool             $titleRequired = false,
+        ?bool             $descriptionRequired = false,
     ): FormResponse
     {
         $validation = new Validation();
@@ -121,20 +129,24 @@ class FileContraints extends BaseConstraints
             }
         } else {
             $title = trim($title ?? '');
-            $titleTag = sprintf($inputTag, 'title');
             if (self::isEmptyString($title)) {
-                $validation->addError($titleTag, 'Titre du fichier obligatoire');
+                if ($titleRequired) {
+                    $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+                }
             } else {
-                $validation->addSuccess($titleTag, 'Titre du fichier valide');
+                $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
                 $file->_set('title', $title);
             }
 
             $description = trim($description ?? '');
-            $descriptionTag = sprintf($inputTag, 'description');
             $file->_set('description');
-            if (!self::isEmptyString($description)) {
+            if (self::isEmptyString($description)) {
+                if ($descriptionRequired) {
+                    $validation->addError('description', 'Description obligatoire', $inputTag);
+                }
+            } else {
                 $file->_set('description', $description);
-                $validation->addSuccess($descriptionTag, 'Description valide');
+                $validation->addSuccess('description', 'Description valide', $inputTag);
             }
 
             if ($validation->isSuccess()) {
@@ -228,7 +240,7 @@ class FileContraints extends BaseConstraints
         );
     }
 
-    public static function tryCreateFromString(
+    private static function tryCreateFromString(
         string $filename,
         string $content,
         ?File  $file = null,
