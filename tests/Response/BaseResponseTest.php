@@ -16,7 +16,8 @@ final class BaseResponseTest extends TestCase
         $response->setRedirect('/redirectUrl/to');
 
         self::assertSame([
-            'returnTo' => '/redirectUrl/to'
+            'returnTo' => '/redirectUrl/to',
+            'returnType' => 'replace',
         ], $response->test_buildRoute());
 
 
@@ -32,6 +33,7 @@ final class BaseResponseTest extends TestCase
         self::assertSame([
             'returnTo' => '/redirectUrl/to',
             'returnTarget' => 'container',
+            'returnType' => 'replace',
         ], $response->test_buildRoute());
 
 

@@ -10,23 +10,33 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 trait MySQLRecordFilterTrait
 {
-    private function buildFilters(array|DBRecordRow $DBRecordRows, bool $useDatatable = false): void
+    private function buildFilters(array|string|DBRecordRow $DBRecordRows, bool $useDatatable = false): void
     {
         if (!is_array($DBRecordRows)) {
             $DBRecordRows = [$DBRecordRows];
         }
 
+        $operatorSkip = false;
         foreach ($DBRecordRows as $DBRecordRow) {
-            foreach ($DBRecordRow->filters() as $filter) {
 
+            if(is_string($DBRecordRow)){
+                $this->filters[] = $DBRecordRow;
+                $operatorSkip = true;
+                continue;
+            }
+            foreach ($DBRecordRow->filters() as $filter) {
+                $filterText = '';
                 if (sizeof($this->filters) > 0) {
-                    if ($filter->type() === DBRecordRowFilter::TYPE_AND) {
-                        $filterText = 'AND ';
-                    } elseif ($filter->type() === DBRecordRowFilter::TYPE_OR) {
-                        $filterText = 'OR ';
-                    } else {
-                        throw new MissingOptionsException(sprintf('MysqlRecordDelete does not support Filter with %s type', $filter->type()));
+                    if(!$operatorSkip){
+                        if ($filter->type() === DBRecordRowFilter::TYPE_AND) {
+                            $filterText.= 'AND ';
+                        } elseif ($filter->type() === DBRecordRowFilter::TYPE_OR) {
+                            $filterText.= 'OR ';
+                        } else {
+                            throw new MissingOptionsException(sprintf('MysqlRecordDelete does not support Filter with %s type', $filter->type()));
+                        }
                     }
+                    $operatorSkip = false;
                 } else {
                     $filterText = ' WHERE ';
                 }
@@ -273,5 +283,27 @@ trait MySQLRecordFilterTrait
                 $this->innerFilters[] = $filterText;
             }
         }
+    }
+
+
+    public function filterAnd(): static
+    {
+        $this->filterRows[] = 'AND (';
+
+        return $this;
+    }
+
+    public function filterOr(): static
+    {
+        $this->filterRows[] = 'OR (';
+
+        return $this;
+    }
+
+    public function filterEnd(): static
+    {
+        $this->filterRows[] = ')';
+
+        return $this;
     }
 }

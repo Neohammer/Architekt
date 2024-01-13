@@ -24,4 +24,10 @@ interface DBRecordSearchInterface extends DBQueryBuilderInterface
     public function orderAsc(DBRecordColumn $DBRecordColumn): static;
 
     public function orderDesc(DBRecordColumn $DBRecordColumn): static;
+
+    public function filterAnd(): static;
+
+    public function filterOr(): static;
+
+    public function filterEnd(): static;
 }

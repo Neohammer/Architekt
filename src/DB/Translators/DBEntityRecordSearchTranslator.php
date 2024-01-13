@@ -225,6 +225,27 @@ class DBEntityRecordSearchTranslator
         return $this->connexion->recordSearchFetcher($this->search);
     }
 
+    public function andOpen(): static
+    {
+        $this->search->filterAnd();
+
+        return $this;
+    }
+
+    public function orOpen(): static
+    {
+        $this->search->filterOr();
+
+        return $this;
+    }
+
+    public function close(): static
+    {
+        $this->search->filterEnd();
+
+        return $this;
+    }
+
     public function and(DBEntityInterface $entity, ...$args): static
     {
         return $this->filter($entity, 'and', $args);

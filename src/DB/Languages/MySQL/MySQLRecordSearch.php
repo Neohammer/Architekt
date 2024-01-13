@@ -10,7 +10,6 @@ use Architekt\DB\Interfaces\DBRecordSearchInterface;
 
 class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
 {
-
     use MySQLRecordFilterTrait;
 
     /** @var DBRecordColumn[] $select */

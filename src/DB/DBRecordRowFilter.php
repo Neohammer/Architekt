@@ -34,7 +34,6 @@ class DBRecordRowFilter
         $this->egalityType = $egalityType;
     }
 
-
     public static function buildAnd(
         string $key,
         mixed  $value
@@ -315,7 +314,6 @@ class DBRecordRowFilter
             self::EGALITY_BETWEEN
         );
     }
-
 
     public function key(): string
     {

@@ -18,6 +18,7 @@ final class FormTest extends TestCase
 
         self::assertSame([
             'success' => true,
+            'warning' => false,
             'details' => [],
             'message' => 'Success message',
         ], $response->test_buildRoute());
@@ -41,6 +42,7 @@ final class FormTest extends TestCase
 
         self::assertSame([
             'success' => true,
+            'warning' => false,
             'details' => [
                 [
                     'fields' => ['input'],
@@ -79,6 +81,7 @@ final class FormTest extends TestCase
         self::assertSame(
             [
             'success' => false,
+            'warning' => false,
             'details' => [
                 [
                     'fields' => ['input'],
