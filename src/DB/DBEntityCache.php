@@ -6,14 +6,17 @@ trait DBEntityCache
 {
     static private array $cache = [];
 
-    public static function fromCache(?int $id): static
+    public static function fromCache(null|int|DBEntity $key): static
     {
-        if(!$id){
+        if(!$key){
             return new static;
         }
-        if (!array_key_exists($id, self::$cache)) {
-            self::$cache[$id] = new static($id);
+        if($key instanceof DBEntity){
+            $key = $key->_get((new static)->_strangerKey());
         }
-        return self::$cache[$id];
+        if (!array_key_exists($key, self::$cache)) {
+            self::$cache[$key] = new static($key);
+        }
+        return self::$cache[$key];
     }
 }
