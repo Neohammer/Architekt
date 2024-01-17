@@ -30,11 +30,15 @@ class EmailSendGridMotor implements EmailMotorInterface
 
     public function from(string $email, string $name): static
     {
+        $this->sendGridEmail->setFrom($email, $name);
+
         return $this;
     }
 
     public function replyTo(string $email, string $name): static
     {
+        $this->sendGridEmail->setReplyTo($email, $name);
+
         return $this;
     }
 
