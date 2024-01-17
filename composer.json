@@ -23,10 +23,11 @@
         "architekt"
     ],
     "require": {
-        "smarty/smarty": "^4.3"
+        "smarty/smarty": "^4.3",
+        "sendgrid/sendgrid": "~7"
     },
     "require-dev": {
-        "phpunit/phpunit": "10.4.x-dev",
+        "phpunit/phpunit": "10.5.x-dev",
         "friendsofphp/php-cs-fixer": "^3.19",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-phpunit": "^1.3"

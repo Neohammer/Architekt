@@ -6,13 +6,11 @@ use Architekt\Library\File;
 use Architekt\Logger;
 use Architekt\Notifications\EmailTemplate;
 use Architekt\Notifications\Interfaces\EmailMotorInterface;
-use SendGrid\Mail\Attachment;
 use SendGrid\Mail\Mail;
-use SendGrid\SendGrid;
 
 class EmailSendGridMotor implements EmailMotorInterface
 {
-    private SendGrid $sendGrid;
+    private \SendGrid $sendGrid;
     private Mail $sendGridEmail;
     private EmailTemplate $templateEmail;
     private array $templateVars;
@@ -20,7 +18,7 @@ class EmailSendGridMotor implements EmailMotorInterface
 
     public function __construct()
     {
-        $this->sendGrid = new SendGrid(SENDGRID_API_KEY);
+        $this->sendGrid = new \SendGrid(SENDGRID_API_KEY);
         $this->sendGridEmail = new Mail();
         $this->templateVars = [];
     }
