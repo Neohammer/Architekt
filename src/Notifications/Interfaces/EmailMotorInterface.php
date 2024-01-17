@@ -3,6 +3,7 @@
 namespace Architekt\Notifications\Interfaces;
 
 use Architekt\Library\File;
+use Architekt\Notifications\EmailTemplate;
 
 interface EmailMotorInterface
 {
@@ -15,7 +16,7 @@ interface EmailMotorInterface
 
     public function subject(string $subject): static;
 
-    public function template(string $templateIdentifier, array $templateVars = []): static;
+    public function template(EmailTemplate $emailTemplate, array $templateVars = []): static;
 
     public function send(string $email): bool;
 
