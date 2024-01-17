@@ -65,7 +65,10 @@ class EmailSendGridMotor implements EmailMotorInterface
      */
     public function send(string $email): bool
     {
+        $this->templateVars = $this->templateVars['json'];
+        unset($this->templateVars['json']);
         $this->templateVars['content']['texts']['subject'] = $this->subject;
+
         $this->sendGridEmail->addTo($email, substitutions: $this->templateVars);
 
         try {
