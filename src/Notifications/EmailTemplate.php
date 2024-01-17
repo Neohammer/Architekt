@@ -57,12 +57,26 @@ class EmailTemplate extends DBEntity
         return Administrator::fromCache($this->_get('administrator_id'));
     }
 
+    public function templateCode(): string
+    {
+        return $this->_get('template_code');
+    }
+
     public function htmlBodySmarty(): string
     {
         return preg_replace(
             array_keys(self::$sendGridReplacers),
             self::$sendGridReplacers,
             $this->_get('body_html')
+        );
+    }
+
+    public function htmlTextSmarty(): string
+    {
+        return preg_replace(
+            array_keys(self::$sendGridReplacers),
+            self::$sendGridReplacers,
+            $this->_get('body_text')
         );
     }
 
@@ -80,15 +94,7 @@ class EmailTemplate extends DBEntity
 
     public function varsDefault(): array
     {
-        $defaults = [];
-
-        if ($this->_get('vars_default') && preg_match_all('/([A-Z_]+)=([^\\n|\\r]+)/', $this->_get('vars_default'), $founds)) {
-            foreach ($founds[1] ?? [] as $key => $var) {
-                $defaults[$var] = $founds[2][$key];
-            }
-        }
-
-        return array_merge($defaults, $this->varsCommon());
+        return json_decode($this->_get('vars_default'), true);
     }
 
     public function vars(): array
