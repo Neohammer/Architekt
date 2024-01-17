@@ -134,7 +134,7 @@ class Template extends Smarty
 
         return
             ($header ? $this->fetch($header) : '')
-            . $this->fetch($template . '.' . self::EXTENSION)
+            . $this->fetch($template . (!str_starts_with($template, 'string:') ? '.' . self::EXTENSION : ''))
             . ($this->controller->isJson && !$this->controller->isModal ? $this->getHtmlTitleScript() : '')
             . ($footer ? $this->fetch($footer) : '');
     }

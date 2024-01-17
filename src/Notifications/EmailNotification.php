@@ -4,53 +4,61 @@ namespace Architekt\Notifications;
 
 use Architekt\Library\File;
 use Architekt\Logger;
-use PHPMailer\PHPMailer\PHPMailer;
+use Architekt\Notifications\Interfaces\EmailMotorInterface;
+use Architekt\Notifications\Motors\EmailLocalMotor;
+use Architekt\Notifications\Motors\EmailPhpMailerMotor;
+use Architekt\Notifications\Motors\EmailSendGridMotor;
 
 class EmailNotification
 {
     private array $recipients;
     /** @var File[] */
     private array $attachments;
-    private ?string $subject;
-    private ?string $templateFile;
-    private ?EmailTemplate $template;
+    public static string $motorName = 'SendGrid';
     public static bool $active = true;
     public static bool $debug = false;
 
+    public static function motor(): ?EmailMotorInterface
+    {
+        if (self::$motorName === 'PHPMailer') {
+            return new EmailPhpMailerMotor();
+        }
+        if (self::$motorName === 'SendGrid') {
+            return new EmailSendGridMotor();
+        }
+        if (self::$motorName === 'Local') {
+            return new EmailLocalMotor();
+        }
+
+        return null;
+    }
+
     public static function build(
+        EmailTemplate $emailTemplate,
         string|array $recipient,
         string       $subject,
-        string       $templateFile,
         mixed        $templateVars = null,
-        File|array $attachments = [],
+        File|array   $attachments = [],
     ): void
     {
         new self(
+            $emailTemplate,
             $recipient,
             $subject,
-            $templateFile,
             $templateVars,
             $attachments
         );
     }
 
     private function __construct(
-        string|array $recipient,
-        string       $subject,
-        string       $templateFile,
-        mixed        $templateVars = null,
-        File|array $attachments = [],
+        private EmailTemplate $emailTemplate,
+        string|array   $recipient,
+        private string $subject,
+        private array  $templateVars = [],
+        File|array     $attachments = [],
     )
     {
         $this->recipients = is_array($recipient) ? $recipient : [$recipient];
-
-        $this->subject = $subject;
-
-        $this->template = (new EmailTemplate())->init();
-        if ($templateVars) {
-            $this->template->assign($templateVars);
-        }
-        $this->templateFile = $templateFile;
         $this->attachments = is_array($attachments) ? $attachments : [$attachments];
 
         $this->_send();
@@ -71,46 +79,30 @@ class EmailNotification
 
     private function _sendMail(string $recipient): bool
     {
-        $this->template->assign(['RECIPIENT' => $recipient]);
-
         try {
-            $mail = new PHPMailer(true);
-
-            $mail->CharSet = "UTF-8";
-            $mail->addAddress($recipient);
-            $mail->setFrom(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
-            $mail->addReplyTo(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME);
-
+            ($mail = self::motor())
+                ->encoding("UTF-8")
+                ->from(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME)
+                ->replyTo(EMAIL_SENDER_EMAIL, EMAIL_SENDER_NAME)
+                ->subject($this->subject)
+                ->template($this->emailTemplate, $this->templateVars);
 
             foreach ($this->attachments as $file) {
-                $mail->addAttachment($file->filePath(), $file->_get('name'));
-            }
-            //Content
-            $mail->isHTML();
-            $mail->Subject = $this->subject;
-            $mail->Body = $this->template->fetch('_header.html')
-                . $this->template->fetch($this->templateFile . '.html')
-                . $this->template->fetch('_footer.html');
-            $mail->AltBody = $this->template->fetch('_header.txt')
-                . $this->template->fetch($this->templateFile . '.txt')
-                . $this->template->fetch('_footer.txt');
-
-            if(self::$debug) {
-                file_put_contents(sprintf(PATH_APPLICATION . '/web/tests/%s.html', $uniq = uniqid()), $mail->Body);
-                file_put_contents(sprintf(PATH_APPLICATION . '/web/tests/%s.txt', $uniq), $mail->Body);
-                return true;
+                $mail->attachment($file);
             }
 
-            if (!$mail->send()) {
+
+            if (!$mail->send($recipient)) {
                 Logger::critical(sprintf(
                     'Email not sent to %s : %s',
                     $recipient,
                     $this->subject
                 ));
-
                 return false;
             }
+
             return true;
+
         } catch (\Exception $e) {
             var_dump($e->getMessage());
             return false;
