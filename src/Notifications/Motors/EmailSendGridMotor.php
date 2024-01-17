@@ -44,6 +44,7 @@ class EmailSendGridMotor implements EmailMotorInterface
 
     public function subject(string $subject): static
     {
+        $this->sendGridEmail->setSubject($subject);
         $this->subject = $subject;
 
         return $this;
