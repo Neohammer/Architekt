@@ -66,7 +66,7 @@ class Formatter
 
     }
 
-    public function month(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function month(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         $month = $params['month'];
         if (str_contains($month, '-')) {
@@ -79,7 +79,7 @@ class Formatter
         );
     }
 
-    public function hour(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function hour(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         $hour = $params['hour'];
         if (str_contains($hour, ' ')) {
@@ -94,7 +94,7 @@ class Formatter
         );
     }
 
-    public function price(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function price(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         return sprintf('%s%s',
             number_format(floatval($params['price']) ?? 0, '2', ',', ' '),
@@ -102,12 +102,12 @@ class Formatter
         );
     }
 
-    public function accountingPrice(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function accountingPrice(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         return number_format(floatval($params['price']) ?? 0, '2', ',', ' ');
     }
 
-    public function percent(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function percent(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         return sprintf('%s%s',
             number_format(floatval($params['percent']) ?? 0, '0', ',', ''),
