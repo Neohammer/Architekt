@@ -94,7 +94,12 @@ class EmailTemplate extends DBEntity
 
     public function varsDefault(): array
     {
-        return json_decode($this->_get('vars_default'), true);
+        return $this->_get('vars_default') ? json_decode($this->_get('vars_default'), true) : [];
+    }
+
+    public function varsExplanation(): array
+    {
+        return $this->_get('vars_explanation') ? json_decode($this->_get('vars_explanation'), true) : [];
     }
 
     public function vars(): array
@@ -105,7 +110,7 @@ class EmailTemplate extends DBEntity
         $return = [];
 
         foreach ($varsHTML as $varHtml) {
-            if(!array_key_exists($varHtml, $varsCommon)) {
+            if (!array_key_exists($varHtml, $varsCommon)) {
                 $return[$varHtml] = $vars[$varHtml] ?? 'html';
             }
         }
