@@ -2,7 +2,7 @@
 
 namespace Users;
 
-class LoginAttempt extends \Architekt\Auth\LoginAttempt
+class Attempt extends \Architekt\Auth\Attempt
 {
     protected const QUOTA = 5;
     protected const LOCK_TIME = '+5 minutes';

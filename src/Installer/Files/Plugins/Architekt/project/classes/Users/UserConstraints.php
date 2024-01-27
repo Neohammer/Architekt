@@ -28,7 +28,7 @@ class UserConstraints extends BaseConstraints
     {
         $user->sessionRegister();
         UserEvent::onLogin($user);
-        LoginAttempt::clear();
+        Attempt::clear();
     }
 
     protected static function loginSuccessMessage(User $user): string
@@ -269,8 +269,8 @@ class UserConstraints extends BaseConstraints
         $successMessage = 'Connexion réussie';
         $failMessage = 'Connexion échouée';
 
-        LoginAttempt::add();
-        if (!LoginAttempt::can()) {
+        Attempt::add();
+        if (!Attempt::can()) {
             $failMessage = 'Trop de tentatives de connexion';
             $validation->addError('loginAttempt', $failMessage);
 

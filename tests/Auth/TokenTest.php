@@ -33,9 +33,9 @@ class TokenTestSample extends Token
     public static function buildFake(): static
     {
         return self::build(
-            UserTestSample::buildFake(),
             'test',
-            '+5 minutes'
+            '+5 minutes',
+            UserTestSample::buildFake()
         );
     }
 

@@ -36,15 +36,15 @@ abstract class Token extends DBEntity
     }
 
     protected static function build(
-        User   $user,
         string $code,
-        string $dateTag
+        string $dateTag,
+        ?User   $user = null
     ): static
     {
         $that = new static;
         $that
             ->_set([
-                $user,
+                'user_id' => $user,
                 'key' => static::generateKey(),
                 'code' => $code,
                 'datetime' => date('Y-m-d H:i:s', strtotime($dateTag))

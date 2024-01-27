@@ -4,7 +4,7 @@ namespace Architekt\Auth;
 
 use Architekt\Http\Request;
 
-abstract class LoginAttempt
+abstract class Attempt
 {
 
     public static function add(): void
@@ -35,7 +35,6 @@ abstract class LoginAttempt
 
     public static function left(): int
     {
-        return 1;
         return max(static::QUOTA - (int)Request::session(static::VAR_ATTEMPT,0), 0);
     }
 
