@@ -103,7 +103,7 @@ class UserConstraints extends BaseConstraints
             return $response;
         }
 
-        if (!$token = Token::get($user, Token::USER_CREATE_CONFIRMATION, $key)) {
+        if (!$token = Token::get(Token::USER_CREATE_CONFIRMATION, $key, $user)) {
             $response->error('Clé de confirmation introuvable');
 
             return $response;
@@ -173,7 +173,7 @@ class UserConstraints extends BaseConstraints
             $validation->addError('password', 'Utilisateur inconnu');
         }
 
-        if (!$token = Token::get($user, Token::PASSWORD_CHOOSE, $key)) {
+        if (!$token = Token::get(Token::PASSWORD_CHOOSE, $key, $user)) {
             $validation->addError('password', 'Clé de confirmation introuvable');
         }
 
@@ -220,7 +220,7 @@ class UserConstraints extends BaseConstraints
             return $response;
         }
 
-        if (!Token::get($user, Token::PASSWORD_CHOOSE, $key)) {
+        if (!Token::get(Token::PASSWORD_CHOOSE, $key, $user)) {
             $response->error('Clé de confirmation introuvable');
 
             return $response;
@@ -362,7 +362,7 @@ class UserConstraints extends BaseConstraints
             return $response;
         }
 
-        if (!Token::get($user, Token::PASSWORD_RECOVER, $key)) {
+        if (!Token::get(Token::PASSWORD_RECOVER, $key, $user)) {
             $response->error('Clé de confirmation introuvable');
         }
 
@@ -377,7 +377,7 @@ class UserConstraints extends BaseConstraints
     {
         $validation = new Validation();
         $user = new User($userPrimary);;
-        if (!$token = Token::get($user, Token::PASSWORD_RECOVER, $key)) {
+        if (!$token = Token::get(Token::PASSWORD_RECOVER, $key, $user)) {
             $validation->addError('password', 'Clé de confirmation introuvable');
         }
 

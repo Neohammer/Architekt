@@ -9,18 +9,24 @@ abstract class Token extends DBEntity
     protected static ?string $_table = 'token';
 
     public static function get(
-        User   $user,
         string $code,
-        string $key
+        string $key,
+        User   $user = null
     ): ?static
     {
         if (!static::checkKey($key)) {
             return null;
         }
 
-        ($that = new static)
-            ->_search()
-            ->and($that, $user);
+        $search = ($that = new static)->_search();
+
+        if ($user) {
+            $search->and($that, $user);
+        } else {
+            $search
+                ->and($that, 'key', $key)
+                ->limit();
+        }
 
         while ($that->_next()) {
             if ($that->hasExpired()) {
@@ -38,7 +44,7 @@ abstract class Token extends DBEntity
     protected static function build(
         string $code,
         string $dateTag,
-        ?User   $user = null
+        ?User  $user = null
     ): static
     {
         $that = new static;
