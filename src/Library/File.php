@@ -276,6 +276,12 @@ class File extends DBEntity
         return readfile($this->filePath());
     }
 
+    public function content(): string
+    {
+        return file_get_contents($this->filePath());
+    }
+
+
     public function _delete(): bool
     {
         return $this->unlink() && parent::_delete();

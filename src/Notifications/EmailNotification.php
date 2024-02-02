@@ -16,6 +16,7 @@ class EmailNotification
     private array $attachments;
     public static string $motorName = 'SendGrid';
     public static bool $active = true;
+    public int $sended = 0;
     public static bool $debug = false;
 
     public static function motor(): ?EmailMotorInterface
@@ -35,13 +36,13 @@ class EmailNotification
 
     public static function build(
         EmailTemplate $emailTemplate,
-        string|array $recipient,
-        string       $subject,
-        mixed        $templateVars = null,
-        File|array   $attachments = [],
-    ): void
+        string|array  $recipient,
+        string        $subject,
+        mixed         $templateVars = null,
+        File|array    $attachments = [],
+    ): static
     {
-        new self(
+        return new self(
             $emailTemplate,
             $recipient,
             $subject,
@@ -52,10 +53,10 @@ class EmailNotification
 
     private function __construct(
         private EmailTemplate $emailTemplate,
-        string|array   $recipient,
-        private string $subject,
-        private array  $templateVars = [],
-        File|array     $attachments = [],
+        string|array          $recipient,
+        private string        $subject,
+        private array         $templateVars = [],
+        File|array            $attachments = [],
     )
     {
         $this->recipients = is_array($recipient) ? $recipient : [$recipient];
@@ -101,10 +102,16 @@ class EmailNotification
                 return false;
             }
 
+            $this->sended++;
             return true;
 
         } catch (\Exception $e) {
-            var_dump($e->getMessage());
+            Logger::critical(sprintf(
+                'Email not sent to %s : %s > %s',
+                $recipient,
+                $this->subject,
+                $e->getMessage()
+            ));
             return false;
         }
     }
