@@ -244,7 +244,7 @@ abstract class Controller
 
         $controller
             ->initUser()
-            ->forward($methodCalled)
+            ->forward($methodCalled, true)
             ->$methodToCall(...$askParams);
 
     }
@@ -279,10 +279,10 @@ abstract class Controller
         return $verb . ucfirst($method);
     }
 
-    protected function forward(string $methodName): static
+    protected function forward(string $methodName, bool $checkAccess = false): static
     {
         $pathView = Application::$configurator->get('path') . DIRECTORY_SEPARATOR . 'views';
-        if (!$this->hasAccess($methodName)) {
+        if ($checkAccess && !$this->hasAccess($methodName)) {
             self::noAccessRedirect();
         }
         return $this
