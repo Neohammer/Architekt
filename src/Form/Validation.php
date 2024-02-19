@@ -12,7 +12,7 @@ class Validation
     private array $warnings;
     private array $args;
 
-    private static function cleanField(string $field, string $fieldFormat)
+    public static function cleanField(string $field, string $fieldFormat)
     {
         $replacers = [
             '][' => '-',
