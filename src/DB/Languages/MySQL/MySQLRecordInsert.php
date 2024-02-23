@@ -38,16 +38,14 @@ class MySQLRecordInsert extends MySQLTools implements DBQueryBuilderInterface
 
     private function buildFields()
     {
-        foreach($this->DBDatatableRow->values() as $field=>$value){
+        foreach ($this->DBDatatableRow->values() as $field => $value) {
             $this->fields[] = self::quote($field);
-            if($value === null){
+            if ($value === null) {
                 $this->values[] = 'NULL';
-            }
-            else{
-                $this->values[] = self::prepareFormat($field);
-                $this->params[self::prepareFormat($field)] = $value;
+            } else {
+                $this->values[] = ($key = self::prepareFormat($field));
+                $this->params[$key] = $value;
             }
         }
     }
-
 }

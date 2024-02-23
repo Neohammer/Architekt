@@ -21,7 +21,7 @@ abstract class MySQLTools
         return sprintf('`%s`', is_object($parameter) ? $parameter->name() : $parameter);
     }
 
-    final protected static function prepareFormat(array|string $parameter): array|string
+    final protected static function prepareFormat(array|string $parameter, bool $encode = true): array|string
     {
         if (is_array($parameter)) {
             foreach ($parameter as $k => $v) {
@@ -31,6 +31,6 @@ abstract class MySQLTools
             return $parameter;
         }
 
-        return sprintf(':%s', $parameter);
+        return sprintf(':%s', $encode ? uniqid($parameter) : $parameter);
     }
 }

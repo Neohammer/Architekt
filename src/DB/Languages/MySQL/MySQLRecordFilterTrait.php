@@ -62,12 +62,12 @@ trait MySQLRecordFilterTrait
                     }
                     $filterText .= sprintf(
                         ' BETWEEN %s AND %s',
-                        self::prepareFormat($filter->key().'0'),
-                        self::prepareFormat($filter->key().'1')
+                        $key1 = self::prepareFormat($filter->key().'0'),
+                        $key2 = self::prepareFormat($filter->key().'1')
                     );
 
-                    $this->params[self::prepareFormat($filter->key()).'0'] = $filter->value()[0];
-                    $this->params[self::prepareFormat($filter->key()).'1'] = $filter->value()[1];
+                    $this->params[$key1] = $filter->value()[0];
+                    $this->params[$key2] = $filter->value()[1];
                 } elseif ($filter->egalityType() === DBRecordRowFilter::EGALITY_CONTAINS) {
                     if (!$filter->affirmative()) {
                         $filterText .= ' NOT';
@@ -107,8 +107,8 @@ trait MySQLRecordFilterTrait
                             throw new MissingConfigurationException('Filtering on subfield with multiple filters is not supported yet');
                         }
                     } else {
-                        $filterText .= self::prepareFormat($filter->key());
-                        $this->params[self::prepareFormat($filter->key())] = $filter->value();
+                        $filterText .= ($key = self::prepareFormat($filter->key()));
+                        $this->params[$key] = $filter->value();
                     }
                 }
                 $this->filters[] = $filterText;
@@ -192,8 +192,8 @@ trait MySQLRecordFilterTrait
                             throw new MissingConfigurationException('Filtering on subfield with multiple filters is not supported yet');
                         }
                     } else {
-                        $filterText .= self::prepareFormat($filter->key());
-                        $this->params[self::prepareFormat($filter->key())] = $filter->value();
+                        $filterText .= ($key = self::prepareFormat($filter->key()));
+                        $this->params[$key] = $filter->value();
                     }
                 }
                 $this->leftFilters[] = $filterText;
@@ -276,8 +276,8 @@ trait MySQLRecordFilterTrait
                             throw new MissingConfigurationException('Filtering on subfield with multiple filters is not supported yet');
                         }
                     } else {
-                        $filterText .= self::prepareFormat($filter->key());
-                        $this->params[self::prepareFormat($filter->key())] = $filter->value();
+                        $filterText .= ($key = self::prepareFormat($filter->key()));
+                        $this->params[$key] = $filter->value();
                     }
                 }
                 $this->innerFilters[] = $filterText;
