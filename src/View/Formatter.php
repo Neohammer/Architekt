@@ -38,7 +38,7 @@ class Formatter
         return date($params['format'] ?? 'd/m/Y', strtotime($params['date']));
     }
 
-    public function userDate(array $params, Smarty_Internal_Template $smarty_obj): string
+    public function userDate(array $params, Smarty_Internal_Template $smarty_obj = null): string
     {
         $date = $params['date'];
         if (null === $date) {
