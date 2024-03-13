@@ -243,7 +243,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
                 $output[] = sprintf(
                     ' LEFT JOIN %s%s',
                     self::quote($datatable->name()),
-                    join('',$this->leftFilters)
+                    join(' ',$this->leftFilters)
 
                 );
             }
@@ -253,7 +253,7 @@ class MySQLRecordSearch extends MySQLTools implements DBRecordSearchInterface
                 $output[] = sprintf(
                     ' INNER JOIN %s%s',
                     self::quote($datatable->name()),
-                    join('',$this->innerFilters)
+                    join(' ',$this->innerFilters)
 
                 );
             }
