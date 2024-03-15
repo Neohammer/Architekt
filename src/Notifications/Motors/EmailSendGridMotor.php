@@ -6,6 +6,7 @@ use Architekt\Library\File;
 use Architekt\Logger;
 use Architekt\Notifications\EmailTemplate;
 use Architekt\Notifications\Interfaces\EmailMotorInterface;
+use SendGrid\Mail\Attachment;
 use SendGrid\Mail\Mail;
 
 class EmailSendGridMotor implements EmailMotorInterface
