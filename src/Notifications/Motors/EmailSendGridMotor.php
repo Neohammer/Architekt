@@ -91,7 +91,7 @@ class EmailSendGridMotor implements EmailMotorInterface
     public function attachment(File $file): static
     {
         $this->sendGridEmail->addAttachment(
-            new Attachment($file->base64(), $file->_get('mime_type'), $file->_get('name'))
+            new Attachment($file->base64Content(), $file->_get('mime_type'), $file->_get('name'))
         );
 
         return $this;

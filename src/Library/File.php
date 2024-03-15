@@ -217,8 +217,13 @@ class File extends DBEntity
         return sprintf(
             'data:%s;base64,%s',
             $this->_get('mime_type'),
-            base64_encode(file_get_contents($this->filePath()))
+            $this->base64Content()
         );
+    }
+
+    public function base64Content(): string
+    {
+        return base64_encode(file_get_contents($this->filePath()));
     }
 
     public function isImage(): bool
