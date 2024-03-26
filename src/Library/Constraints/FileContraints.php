@@ -11,6 +11,8 @@ use Architekt\Response\FormResponse;
 
 class FileContraints extends BaseConstraints
 {
+    public static bool $_titleAndDescriptionActive = false;
+
     public static function tryUpload(
         string            $origin,
         DBEntityInterface $originEntity,
@@ -57,25 +59,27 @@ class FileContraints extends BaseConstraints
                 $validation->addResponse($uploadResponse);
             }
         } else {
-            $title = trim($title ?? '');
-            if (self::isEmptyString($title)) {
-                if ($titleRequired) {
-                    $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+            if(self::$_titleAndDescriptionActive) {
+                $title = trim($title ?? '');
+                if (self::isEmptyString($title)) {
+                    if ($titleRequired) {
+                        $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+                    }
+                } else {
+                    $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
+                    $file->_set('title', $title);
                 }
-            } else {
-                $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
-                $file->_set('title', $title);
-            }
 
-            $description = trim($description ?? '');
-            $file->_set('description');
-            if (self::isEmptyString($description)) {
-                if ($descriptionRequired) {
-                    $validation->addError('description', 'Description obligatoire', $inputTag);
+                $description = trim($description ?? '');
+                $file->_set('description');
+                if (self::isEmptyString($description)) {
+                    if ($descriptionRequired) {
+                        $validation->addError('description', 'Description obligatoire', $inputTag);
+                    }
+                } else {
+                    $file->_set('description', $description);
+                    $validation->addSuccess('description', 'Description valide', $inputTag);
                 }
-            } else {
-                $file->_set('description', $description);
-                $validation->addSuccess('description', 'Description valide', $inputTag);
             }
 
             if ($validation->isSuccess()) {
@@ -128,25 +132,27 @@ class FileContraints extends BaseConstraints
                 $validation->addResponse($createResponse);
             }
         } else {
-            $title = trim($title ?? '');
-            if (self::isEmptyString($title)) {
-                if ($titleRequired) {
-                    $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+            if(self::$_titleAndDescriptionActive) {
+                $title = trim($title ?? '');
+                if (self::isEmptyString($title)) {
+                    if ($titleRequired) {
+                        $validation->addError('title', 'Titre du fichier obligatoire', $inputTag);
+                    }
+                } else {
+                    $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
+                    $file->_set('title', $title);
                 }
-            } else {
-                $validation->addSuccess('title', 'Titre du fichier valide', $inputTag);
-                $file->_set('title', $title);
-            }
 
-            $description = trim($description ?? '');
-            $file->_set('description');
-            if (self::isEmptyString($description)) {
-                if ($descriptionRequired) {
-                    $validation->addError('description', 'Description obligatoire', $inputTag);
+                $description = trim($description ?? '');
+                $file->_set('description');
+                if (self::isEmptyString($description)) {
+                    if ($descriptionRequired) {
+                        $validation->addError('description', 'Description obligatoire', $inputTag);
+                    }
+                } else {
+                    $file->_set('description', $description);
+                    $validation->addSuccess('description', 'Description valide', $inputTag);
                 }
-            } else {
-                $file->_set('description', $description);
-                $validation->addSuccess('description', 'Description valide', $inputTag);
             }
 
             if ($validation->isSuccess()) {

@@ -130,4 +130,9 @@ class EmailTemplate extends DBEntity
             'AUTHOR_PINTEREST' => $this->administrator()->_get('pinterest'),
         ];
     }
+
+    public function isDefault(): bool
+    {
+        return (int)$this->_get('default') === 1;
+    }
 }
