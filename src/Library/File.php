@@ -207,6 +207,16 @@ class File extends DBEntity
         return $this->_get('title');
     }
 
+    public function uniqid(): string
+    {
+        return $this->_get('uniqid');
+    }
+
+    public function isSame(File $compare): bool
+    {
+        return $this->uniqid() === $compare->uniqid();
+    }
+
     public function author(): User
     {
         return User::fromCache($this->_get('author_id'));
