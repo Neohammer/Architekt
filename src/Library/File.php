@@ -232,7 +232,7 @@ class File extends DBEntity
         return
             strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'))
             &&
-            (!$strict || strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change')));
+            ($strict || strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change')));
     }
 
     public function author(): User
