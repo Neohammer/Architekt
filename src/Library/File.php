@@ -212,9 +212,24 @@ class File extends DBEntity
         return $this->_get('uniqid');
     }
 
+    public function datetime(): string
+    {
+        return $this->_get('datetime');
+    }
+
+    public function datetimeChange(): string
+    {
+        return $this->_get('datetime_change');
+    }
+
     public function isSame(File $compare): bool
     {
         return $this->uniqid() === $compare->uniqid();
+    }
+
+    public function isOlder(File $compare): bool
+    {
+        return strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'));
     }
 
     public function author(): User
