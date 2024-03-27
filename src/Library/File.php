@@ -227,9 +227,12 @@ class File extends DBEntity
         return $this->uniqid() === $compare->uniqid();
     }
 
-    public function isOlder(File $compare): bool
+    public function isOlderThan(File $compare , bool $strict = false): bool
     {
-        return strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'));
+        return
+            strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'))
+            &&
+            (!$strict || strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change')));
     }
 
     public function author(): User
