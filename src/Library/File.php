@@ -229,10 +229,13 @@ class File extends DBEntity
 
     public function isOlderThan(File $compare , bool $strict = false): bool
     {
-        return
-            strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'))
-            &&
-            ($strict || strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change')));
+        $older = strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'));
+
+        if($strict){
+            return $older;
+        }
+
+        return $older ||  strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change'));
     }
 
     public function author(): User
