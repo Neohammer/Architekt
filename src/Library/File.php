@@ -215,6 +215,21 @@ class File extends DBEntity
         return $this->_get('datetime');
     }
 
+    public function title(): string
+    {
+        return $this->_get('title');
+    }
+
+    public function name(): string
+    {
+        return $this->_get('name');
+    }
+
+    public function description(): string
+    {
+        return $this->_get('description');
+    }
+
     public function datetimeChange(): string
     {
         return $this->_get('datetime_change');
