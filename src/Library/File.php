@@ -94,8 +94,6 @@ class File extends DBEntity
     }
 
 
-
-
     public static function upload(UploadFile $uploadFile, ?File $file = null): ?self
     {
         $fileHash = md5_file($uploadFile->temporaryName());
@@ -227,15 +225,15 @@ class File extends DBEntity
         return $this->uniqid() === $compare->uniqid();
     }
 
-    public function isOlderThan(File $compare , bool $strict = false): bool
+    public function isOlderThan(File $compare, bool $strict = false): bool
     {
         $older = strtotime($this->_get('datetime_change')) < strtotime($compare->_get('datetime_change'));
 
-        if($strict){
+        if ($strict) {
             return $older;
         }
 
-        return $older ||  strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change'));
+        return $older || strtotime($this->_get('datetime_change')) === strtotime($compare->_get('datetime_change'));
     }
 
     public function author(): User
