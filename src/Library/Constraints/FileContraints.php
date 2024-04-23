@@ -32,7 +32,13 @@ class FileContraints extends BaseConstraints
         $validation = new Validation();
         $uploadResponse = null;
 
-        if ($posted) {
+        if ($url) {
+            $uploadResponse = self::tryUploadFromUrl(
+                $file ?? new File(),
+                $url,
+                $inputTag
+            );
+        } elseif ($posted) {
             if (self::isUploadValid($posted)) {
                 $uploadResponse = self::tryUploadFromForm(
                     $file ?? new File(),
@@ -42,12 +48,6 @@ class FileContraints extends BaseConstraints
             } elseif ($required) {
                 $validation->addError($inputFileName, 'Vous devez sélectionner un fichier');
             }
-        } elseif ($url) {
-            $uploadResponse = self::tryUploadFromUrl(
-                $file ?? new File(),
-                $url,
-                $inputTag
-            );
         }
 
         if ($uploadResponse && $uploadResponse->isSuccess()) {
@@ -59,7 +59,7 @@ class FileContraints extends BaseConstraints
                 $validation->addResponse($uploadResponse);
             }
         } else {
-            if(self::$_titleAndDescriptionActive) {
+            if (self::$_titleAndDescriptionActive) {
                 $title = trim($title ?? '');
                 if (self::isEmptyString($title)) {
                     if ($titleRequired) {
@@ -132,7 +132,7 @@ class FileContraints extends BaseConstraints
                 $validation->addResponse($createResponse);
             }
         } else {
-            if(self::$_titleAndDescriptionActive) {
+            if (self::$_titleAndDescriptionActive) {
                 $title = trim($title ?? '');
                 if (self::isEmptyString($title)) {
                     if ($titleRequired) {
