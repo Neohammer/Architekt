@@ -4,46 +4,44 @@
 </head>
 <body>
 
-<!-- Begin page -->
-<div class="main-wrapper">
+<!-- partial:partials/_navbar.html -->
+<nav class="navbar">
+    <div class="navbar-content">
+        <a class="navbar-brand d-none d-lg-inline" href="{UrlAdmin::home()}">Admin</a>
 
-        {include file="./menu.html"}
-
-        <div class="page-wrapper">
-
-            <!-- partial:partials/_navbar.html -->
-            <nav class="navbar">
-                <a href="#" class="sidebar-toggler">
-                    <i data-feather="menu"></i>
-                </a>
-                <div class="navbar-content">
-                    <form class="search-form">
-                        <div class="input-group">
-                            <div class="input-group-text">
-                                <i data-feather="search"></i>
-                            </div>
-                            <input type="text" class="form-control" id="navbarForm" placeholder="Search here...">
-                        </div>
-                    </form>
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            {include file='./languages.html'}
-                        </li>
-                        <li class="nav-item dropdown">
-                            {include file='./apps.html'}
-                        </li>
-                        <li class="nav-item dropdown">
-                            {include file='./messages.html'}
-                        </li>
-                        <li class="nav-item dropdown">
-                            {include file='./notifications.html'}
-                        </li>
-                        <li class="nav-item dropdown">
-                            {include file='./user.html'}
-                        </li>
-                    </ul>
+        <form class="ms-0 ms-lg-3 mt-1 me-0 me-lg-3 mn-wd-50p search-form" style="display:flex !important">
+            <div class="input-group">
+                <div class="input-group-text">
+                    <a href="{UrlAdmin::menu1()}"><i data-feather="search"></i></a>
                 </div>
-            </nav>
-            <!-- partial -->
+                <input type="text" class="form-control" id="searchBar" placeholder="Rechercher...">
+            </div>
+        </form>
 
-            <div class="page-content" id="content">
+        <ul class="navbar-nav text-center">
+            <li class="nav-item text-center">
+                <a href="{UrlAdmin::menu2()}" class="nav-link active btn btn-meeting p-2">
+                    {Icon::public()}
+                    <span class="link-title">
+                            Agenda
+                        </span>
+                </a>
+            </li>
+            <li class="nav-item text-center">
+                <a href="{UrlAdmin::menu3()}" class="nav-link active btn btn-customer p-2">
+                    {Icon::creditCard()}
+                    <span class="link-title">Clients</span>
+                </a>
+            </li>
+
+            <li class="nav-item dropdown me-2 ms-md-5">
+                {include file='./user.html'}
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- partial -->
+<div class="container-fluid">
+
+    <div class="page-content" id="content">

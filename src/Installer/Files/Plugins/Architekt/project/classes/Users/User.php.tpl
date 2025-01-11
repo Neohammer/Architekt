@@ -21,4 +21,9 @@ class User extends \Architekt\Auth\User
 
     protected const COOKIE_LIFETIME = '+ 7 days';
 
+    public function profile(): Profile
+    {
+        return Profile::fromCache($this->_get('profile_id'));
+    }
+
 }

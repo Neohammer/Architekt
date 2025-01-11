@@ -15,6 +15,7 @@ if ($this->application->isAdmin) {
 }
 
 foreach ($applicationsConcerned as $application) {
+
     if (!$application->hasCustomUser()) {
         continue;
     }
@@ -26,6 +27,7 @@ foreach ($applicationsConcerned as $application) {
     $template = $this->template()
         ->assign('ParentApplicationControllerName', $code)
         ->assign($application->templateVarsFromApplicationUser());
+
 
 
     $this
@@ -56,6 +58,11 @@ foreach ($applicationsConcerned as $application) {
             $this->application->directoryControllers() . DIRECTORY_SEPARATOR . $applicationUserClass . DIRECTORY_SEPARATOR . 'RedirectController.php',
             $template,
             'templates/' . DIRECTORY_SEPARATOR . 'RedirectController.php.tpl'
+        )
+        ->fileCreate(
+            $this->project->directoryClasses() . DIRECTORY_SEPARATOR . $applicationUserClass . 'View.php',
+            $template,
+            'templates/' . DIRECTORY_SEPARATOR . 'ApplicationUserView.php.tpl'
         );
 
     $directoryFrom = $this->directoryFiles() . 'templates' . DIRECTORY_SEPARATOR . 'appUser' . DIRECTORY_SEPARATOR;

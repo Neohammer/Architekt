@@ -14,7 +14,7 @@ $datatablesToInstall[] = (new DBDatatable('profile'))
     ->addColumn(DBDatatableColumn::buildInt('application_id', 3))
     ->addColumn(DBDatatableColumn::buildBoolean('user')->setDefault(true))
     ->addColumn(DBDatatableColumn::buildString('name', 60))
-    ->addColumn(DBDatatableColumn::buildString('settings', 10000, true))
+    ->addColumn(DBDatatableColumn::buildString('settings', 10000, true)->setDefault(null))
     ->addColumn(DBDatatableColumn::buildBoolean('default')->setDefault(0));
 
 if ($this->application->hasCustomUser()) {

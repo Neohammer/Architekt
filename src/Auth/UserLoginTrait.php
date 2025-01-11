@@ -16,26 +16,6 @@ trait UserLoginTrait
         return md5(time() . uniqid());
     }
 
-    public static function loadFromSession(): ?static
-    {
-        if (array_key_exists(static::SESSION_NAME, $_SESSION) && (int)$_SESSION[static::SESSION_NAME] > 0) {
-            $user = new static($_SESSION[static::SESSION_NAME]);
-            if ($user->_isLoaded()) {
-                return $user;
-            }
-        }
-
-        if (array_key_exists(static::SESSION_NAME, $_COOKIE)) {
-            $user = new static();
-            $user->_search()->and($user, 'hash', $_COOKIE[static::SESSION_NAME]);
-            if ($user->_next()) {
-                $user->sessionRegister();
-                return $user;
-            }
-        }
-        return null;
-    }
-
     public function sessionRegister(bool $useCookie = false): void
     {
         if ($this->_isLoaded()) {

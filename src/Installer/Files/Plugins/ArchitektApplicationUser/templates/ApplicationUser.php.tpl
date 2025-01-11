@@ -2,11 +2,12 @@
 
 namespace Users;
 
+use Architekt\Auth\ApplicationUserInterface;
+use Architekt\Auth\ApplicationUserLoginTrait;
 use Architekt\Auth\Profile;
 use Architekt\Auth\UserLoginTrait;
 use Architekt\DB\DBEntity;
 use Architekt\DB\DBEntityCache;
-use Users\ApplicationUserInterface;
 
 if (!defined('ARCHITEKT_DATATABLE_PREFIX')) {
     define('ARCHITEKT_DATATABLE_PREFIX', 'at_');
@@ -16,6 +17,7 @@ class {$APPLICATION_USER_CAMEL} extends DBEntity implements ApplicationUserInter
 {
     use DBEntityCache;
     use UserLoginTrait;
+    use ApplicationUserLoginTrait;
 
     const SESSION_NAME = '{$APPLICATION_USER_LOW}';
 
