@@ -112,6 +112,13 @@ class Template extends Smarty
         return $this;
     }
 
+    public function forceRegen(): self
+    {
+        $this->force_compile = true;
+
+        return $this;
+    }
+
     public function get(string $template): bool|string
     {
         $this->init();
