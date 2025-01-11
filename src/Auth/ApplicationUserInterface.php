@@ -4,6 +4,8 @@ namespace Architekt\Auth;
 
 interface ApplicationUserInterface
 {
+    public function _isLoaded(): bool;
+
     public function user(): User;
 
     public function profile(): Profile;

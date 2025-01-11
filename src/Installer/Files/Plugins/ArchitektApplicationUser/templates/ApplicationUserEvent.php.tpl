@@ -15,4 +15,9 @@ class {$APPLICATION_USER_CAMEL}Event
     {
 
     }
+
+    public static function onLogout(ApplicationUser $user): void
+    {
+
+    }
 }

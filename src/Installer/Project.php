@@ -387,7 +387,7 @@ class Project
         return $this->architekt->directoryInstall() . DIRECTORY_SEPARATOR . $this->code;
     }
 
-    private function directoryClasses(): string
+    public function directoryClasses(): string
     {
         return $this->directory() . DIRECTORY_SEPARATOR . $this->nameClasses();
     }

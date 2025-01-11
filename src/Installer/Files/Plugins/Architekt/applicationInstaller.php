@@ -5,11 +5,28 @@ use Architekt\Installer\Command;
 
 $allowApplicationDirectoryCopy = true;
 
-$template = $this->template();
+$applicationCamel = $this->architekt->toCamelCase($this->application->code);
+$template = $this->template()->assign('APPLICATION_CAMEL', $applicationCamel);
+
 
 $this
     ->fileCreate(
-        $this->project->directoryClassesControllers() . DIRECTORY_SEPARATOR . sprintf('%sController.php', $this->architekt->toCamelCase($this->application->code)),
+        $this->project->directoryClassesControllers() . DIRECTORY_SEPARATOR . $applicationCamel . 'Controller.php',
         $template,
-        'templates/ParentApplicationController.php.tpl'
+        'templates' . DIRECTORY_SEPARATOR . 'ParentApplicationController.php.tpl'
+    )
+    ->fileCreate(
+        $this->project->directoryClasses() . DIRECTORY_SEPARATOR . 'Link'.$applicationCamel . '.php',
+        $template,
+        'templates' . DIRECTORY_SEPARATOR . 'ApplicationLink.php.tpl'
+    )
+    ->fileCreate(
+        $this->project->directoryClasses() . DIRECTORY_SEPARATOR . 'Link'.$applicationCamel . 'Options.php',
+        $template,
+        'templates' . DIRECTORY_SEPARATOR . 'ApplicationLinkOptions.php.tpl'
+    )
+    ->fileCreate(
+        $this->project->directoryClasses() . DIRECTORY_SEPARATOR . 'Url'.$applicationCamel . '.php',
+        $template,
+        'templates' . DIRECTORY_SEPARATOR . 'ApplicationUrl.php.tpl'
     );

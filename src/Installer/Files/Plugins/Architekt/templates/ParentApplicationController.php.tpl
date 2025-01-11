@@ -17,7 +17,7 @@ abstract class {$APPLICATION_CAMEL}Controller extends \Architekt\Http\Controller
 {
     use UserApplicationControllerTrait;
 
-    private ?User $__user = null;
+    private ?\Architekt\Auth\User $__user = null;
     private ?ApplicationUser $__applicationUser = null;
 
     abstract public function __plugin(): Plugin;
@@ -63,7 +63,7 @@ abstract class {$APPLICATION_CAMEL}Controller extends \Architekt\Http\Controller
         return $this;
     }
 
-    public function __user(): ?User
+    public function __user(): ?\Architekt\Auth\User
     {
         return $this->__user;
     }
