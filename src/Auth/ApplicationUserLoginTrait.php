@@ -2,8 +2,6 @@
 
 namespace Architekt\Auth;
 
-use Architekt\Http\Request;
-
 trait ApplicationUserLoginTrait
 {
     public static function loadFromSession(): ?ApplicationUserInterface
@@ -24,6 +22,24 @@ trait ApplicationUserLoginTrait
                 $user->sessionRegister();
                 return $user;
             }
+        }
+
+        return null;
+    }
+
+    protected static function retrieveIdFromSession(): ?int
+    {
+        if (array_key_exists(static::SESSION_NAME, $_SESSION) && (int)$_SESSION[static::SESSION_NAME] > 0) {
+            return $_SESSION[static::SESSION_NAME];
+        }
+
+        return null;
+    }
+
+    protected static function retrieveHashFromCookie(): ?string
+    {
+        if (array_key_exists(static::SESSION_NAME, $_COOKIE)) {
+            return $_COOKIE[static::SESSION_NAME];
         }
 
         return null;
