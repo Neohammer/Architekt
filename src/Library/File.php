@@ -339,8 +339,8 @@ class File extends DBEntity
     private function unlink(): bool
     {
         $file = self::getBasePath()
-            . self::getRelativePath($this->_get('hash'))
-            . $this->_get('hash');
+            . self::getRelativePath($this->_get('uniqid'))
+            . $this->_get('uniqid');
 
         if (file_exists($file)) return unlink($file);
 
