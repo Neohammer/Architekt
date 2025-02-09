@@ -129,6 +129,36 @@ class Validation
         return $details;
     }
 
+    public function errors(): array
+    {
+        $errors = [];
+        foreach ($this->errors as $error) {
+            $errors[$error['field']] = $error['message'];
+        }
+
+        return $errors;
+    }
+
+    public function warnings(): array
+    {
+        $warnings = [];
+        foreach ($this->warnings as $warning) {
+            $warnings[$warning['field']] = $warning['message'];
+        }
+
+        return $warnings;
+    }
+
+    public function successes(): array
+    {
+        $successes = [];
+        foreach ($this->successes as $success) {
+            $successes[$success['field']] = $success['message'];
+        }
+
+        return $successes;
+    }
+
     public function hasWarnings(): bool
     {
         return count($this->warnings) > 0;
