@@ -7,20 +7,30 @@ use Architekt\Transaction;
 
 class Validation
 {
+    private array $customFields = [];
     private array $errors;
     private array $successes;
     private array $warnings;
     private array $args;
 
-    public static function cleanField(string $field, string $fieldFormat = '%s')
+    public static function cleanField(string $field, string $fieldFormat = '%s', array $customFields = []): string
     {
+        if (array_key_exists($field, $customFields)) {
+            return $customFields[$field];
+        }
+
         $replacers = [
             '][' => '-',
             '[' => '',
             ']' => ''
         ];
 
-        return str_replace(array_keys($replacers), $replacers, sprintf($fieldFormat, $field));
+        $final = str_replace(array_keys($replacers), $replacers, sprintf($fieldFormat, $field));
+
+        if (array_key_exists($final, $customFields)) {
+            return $customFields[$final];
+        }
+        return $final;
     }
 
     public function __construct()
@@ -32,12 +42,24 @@ class Validation
         $this->args = [];
     }
 
-    public function addResponse(ResponseForm $formResponse): static
+    public function addResponse(ResponseForm $formResponse, string|array $sprintfOrArray = []): static
     {
         foreach ($formResponse->validation->errors as $error) {
+            $field = $error['field'];
+            if (is_array($field) && in_array($field, $sprintfOrArray)) {
+                $error['field'] = self::cleanField(sprintfOrArray[$field]);
+            }elseif(is_string($sprintfOrArray)){
+                $error['field'] = self::cleanField(sprintf($sprintfOrArray, $field));
+            }
             $this->errors[] = $error;
         }
         foreach ($formResponse->validation->successes as $success) {
+            $field = $success['field'];
+            if (is_array($field) && in_array($field, $sprintfOrArray)) {
+                $success['field'] = self::cleanField($sprintfOrArray[$field]);
+            }elseif(is_string($sprintfOrArray)){
+                $success['field'] = self::cleanField(sprintf($sprintfOrArray, $field));
+            }
             $this->successes[] = $success;
         }
 
@@ -49,9 +71,14 @@ class Validation
     public function addError(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->errors[] = [
-            'field' => self::cleanField($field, $fieldFormat),
+            'field' => self::cleanField($field, $fieldFormat, $this->customFields),
             'message' => $message
         ];
+    }
+
+    public function useFields(array $fields): void
+    {
+        $this->customFields = $fields;
     }
 
     public function isSuccess(): bool
@@ -62,7 +89,7 @@ class Validation
     public function addSuccess(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->successes[] = [
-            'field' => self::cleanField($field, $fieldFormat),
+            'field' => self::cleanField($field, $fieldFormat, $this->customFields),
             'message' => $message
         ];
     }
@@ -70,7 +97,7 @@ class Validation
     public function addWarning(string $field, string $message, string $fieldFormat = '%s'): void
     {
         $this->warnings[] = [
-            'field' => self::cleanField($field, $fieldFormat),
+            'field' => self::cleanField($field, $fieldFormat, $this->customFields),
             'message' => $message
         ];
     }
