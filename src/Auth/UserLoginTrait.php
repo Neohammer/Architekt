@@ -21,8 +21,8 @@ trait UserLoginTrait
         if ($this->_isLoaded()) {
             $_SESSION[static::SESSION_NAME] = $this->_primary();
             if($useCookie) {
-                setcookie(static::SESSION_NAME, $this->user()->_get('hash'), strtotime('+ 7 days'), '/');
-                $_COOKIE[static::SESSION_NAME] = $this->user()->_get('hash');
+                setcookie(static::SESSION_NAME, $this->_get('hash'), strtotime('+ 7 days'), '/');
+                $_COOKIE[static::SESSION_NAME] = $this->_get('hash');
             }
         }
     }
